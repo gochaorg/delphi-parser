@@ -34,6 +34,14 @@ public class ImListArray<A> implements ImList<A,ImListArray<A>> {
         return res;
     }
 
+    public static <A> ImListArray<A> of(OrderedRead<A> values){
+        if( values==null )throw new IllegalArgumentException("values == null");
+        var list = new ArrayList<A>();
+        var res = new ImListArray<A>(list);
+        values.forEach(list::add);
+        return res;
+    }
+
     @Override
     public int size() {
         return list.size();
@@ -80,5 +88,17 @@ public class ImListArray<A> implements ImList<A,ImListArray<A>> {
         var lst = new ArrayList<A>(this.list);
         lst.add(a);
         return new ImListArray<>(lst);
+    }
+
+    @Override
+    public ImListArray<A> prepend(A a) {
+        var lst = new ArrayList<A>(this.list);
+        lst.add(0,a);
+        return new ImListArray<>(lst);
+    }
+
+    @Override
+    public ImListArray<A> empty() {
+        return new ImListArray<>(List.of());
     }
 }

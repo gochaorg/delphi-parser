@@ -1,8 +1,15 @@
 package xyz.cofe.coll.im;
 
-public interface Tuple2<A,B> {
+import java.io.Serializable;
+
+public interface Tuple2<A,B> extends Serializable {
     A _1();
     B _2();
+
+    default <RES> RES map( Fn2<RES,A,B> f ){
+        if( f==null )throw new IllegalArgumentException("f==null");
+        return f.apply(_1(), _2());
+    }
 
     default <C> Tuple3<A,B,C> append(C c){
         return Tuple3.of(_1(),_2(),c);
