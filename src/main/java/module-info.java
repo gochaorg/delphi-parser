@@ -6,4 +6,5 @@ open module delphi.parser {
     requires com.google.errorprone.annotations;
     requires java.base;
     requires java.logging;
+    requires org.antlr.antlr4.runtime;
 }

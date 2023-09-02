@@ -1,8 +1,11 @@
 package xyz.cofe.coll.im;
 
-public interface Tuple3<A,B,C> extends Tuple2<A,B,Tuple3<A,B,C>> {
+public interface Tuple3<A,B,C> {
+    A _1();
+    B _2();
     C _3();
-    static <A,B,C,R extends Tuple3<A,B,C> & NextTuple> Tuple3<A,B,C> of(A a, B b, C c) {
+
+    static <A,B,C,R extends Tuple3<A,B,C>> Tuple3<A,B,C> of(A a, B b, C c) {
         return new Tuple3<A, B, C>() {
             @Override
             public C _3() {
@@ -17,11 +20,6 @@ public interface Tuple3<A,B,C> extends Tuple2<A,B,Tuple3<A,B,C>> {
             @Override
             public A _1() {
                 return a;
-            }
-
-            @Override
-            public <D> Tuple3<A, B, C> append(D d) {
-                return this;
             }
         };
     }
