@@ -3,11 +3,30 @@ package xyz.cofe.coll.im;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
-public interface OrderedRead<A>
+/**
+ * Позиционное чтение элементов коллекции
+ * @param <A> элемент списка/коллекции
+ */
+public interface PositionalRead<A>
     extends Countable, ForEach<A>, FoldLeft<A>, FoldRight<A>
 {
+    /**
+     * Чтение элемента списка
+     * @param index индекс элемента
+     * @return элемент
+     */
     Optional<A> get(int index);
+
+    /**
+     * Чтение "головы" / первого элемента
+     * @return элемент
+     */
     default Optional<A> head(){ return get(0); }
+
+    /**
+     * Чтение последнего элемента
+     * @return элемент
+     */
     default Optional<A> last(){ return get(size()-1); }
     default <B> B foldLeft(B init, BiFunction<B,A,B> fold ) {
         var acc = new Object[]{ init };

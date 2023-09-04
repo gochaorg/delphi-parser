@@ -12,7 +12,7 @@ implements
     ForEach<A>,
     Emptable<SELF>,
     One<SELF,A>,
-    OrderedRead<A>,
+    PositionalRead<A>,
     Append<SELF,A>,
     Tail<SELF,A>,
     Reverse<SELF>,
@@ -188,7 +188,7 @@ implements
     }
 
     @Override
-    public <B> ImList<B, ?> fmap(Function<A, OrderedRead<B>> fmapper) {
+    public <B> ImList<B, ?> fmap(Function<A, PositionalRead<B>> fmapper) {
         if(fmapper==null)throw new IllegalArgumentException("fmapper==null");
         var res = selfConstructor((B) null, null );
         var cur = this;

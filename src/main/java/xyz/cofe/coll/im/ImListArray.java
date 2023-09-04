@@ -34,7 +34,7 @@ public class ImListArray<A> implements ImList<A,ImListArray<A>> {
         return res;
     }
 
-    public static <A> ImListArray<A> of(OrderedRead<A> values){
+    public static <A> ImListArray<A> of(PositionalRead<A> values){
         if( values==null )throw new IllegalArgumentException("values == null");
         var list = new ArrayList<A>();
         var res = new ImListArray<A>(list);
@@ -68,7 +68,7 @@ public class ImListArray<A> implements ImList<A,ImListArray<A>> {
     }
 
     @Override
-    public <B> ImList<B, ?> fmap(Function<A, OrderedRead<B>> fmapper) {
+    public <B> ImList<B, ?> fmap(Function<A, PositionalRead<B>> fmapper) {
         if( fmapper==null )throw new IllegalArgumentException("fmapper == null");
         var list = new ArrayList<B>();
         for( var a : this.list ){
@@ -100,5 +100,17 @@ public class ImListArray<A> implements ImList<A,ImListArray<A>> {
     @Override
     public ImListArray<A> empty() {
         return new ImListArray<>(List.of());
+    }
+
+    @Override
+    public String toString(){
+        var sb = new StringBuilder();
+        forEach(a -> {
+            if(sb.length()>0) sb.append(", ");
+            sb.append(a!=null ? a.toString() : "null");
+        });
+        sb.insert(0,"[ ");
+        sb.append(" ]");
+        return sb.toString();
     }
 }
