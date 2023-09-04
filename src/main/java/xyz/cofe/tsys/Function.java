@@ -1,5 +1,5 @@
 package xyz.cofe.tsys;
 
-public interface Function {
+import xyz.cofe.coll.im.ImList;
 
-}
+public record Function(ImList<Argument,?> arguments, Type result) {}

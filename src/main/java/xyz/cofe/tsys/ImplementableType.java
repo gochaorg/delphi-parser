@@ -1,6 +1,6 @@
 package xyz.cofe.tsys;
 
-import com.google.common.collect.ImmutableList;
+import xyz.cofe.coll.im.ImList;
 
 /**
  * Унаследованный тип
@@ -10,5 +10,5 @@ public interface ImplementableType extends Type {
      * От каких типов наследуется
      * @return типы
      */
-    ImmutableList<Type> getImplements();
+    ImList<Type,?> implemented();
 }

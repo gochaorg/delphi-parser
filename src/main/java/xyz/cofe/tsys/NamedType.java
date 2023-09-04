@@ -8,5 +8,5 @@ public interface NamedType {
      * Возвращает имя типа
      * @return имя типа
      */
-    String getName();
+    String name();
 }

@@ -2,17 +2,8 @@ package xyz.cofe.tsys;
 
 /**
  * Поле класса/структуры
+ * @param name Имя поля
+ * @param type Тип поля
  */
-public interface Field {
-    /**
-     * Имя поля
-     * @return имя
-     */
-    String getName();
-
-    /**
-     * Тип поля
-     * @return тип
-     */
-    Type getType();
+public record Field( String name, Type type ) {
 }
