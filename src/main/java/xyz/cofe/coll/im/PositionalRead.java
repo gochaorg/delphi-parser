@@ -1,5 +1,7 @@
 package xyz.cofe.coll.im;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
@@ -57,5 +59,11 @@ public interface PositionalRead<A>
 
         //noinspection unchecked
         return (B)acc[0];
+    }
+
+    default List<A> toList(){
+        var lst = new ArrayList<A>();
+        forEach(lst::add);
+        return lst;
     }
 }

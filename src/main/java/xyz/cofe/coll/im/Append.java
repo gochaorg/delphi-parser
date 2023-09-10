@@ -12,4 +12,11 @@ public interface Append<SELF,A> {
      * @return список с добавленным элементом
      */
     SELF append(A a);
+
+    /**
+     * Добавить значения в конец
+     * @param values добавляемые элементы
+     * @return список с добавленными элементами
+     */
+    SELF append(PositionalRead<A> values);
 }

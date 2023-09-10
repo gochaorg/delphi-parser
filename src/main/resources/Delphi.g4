@@ -208,6 +208,8 @@ typeId                       : namespacedQualifiedIdent
 //****************************
 genericTypeIdent             : qualifiedIdent (genericDefinition)?     //CHANGED we don't need <Type> data, it produced empty nodes
                              ;
+
+// todo ???
 genericDefinition            : simpleGenericDefinition
                              | constrainedGenericDefinition
                              ;

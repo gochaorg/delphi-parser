@@ -200,4 +200,27 @@ implements
         }
         return res.reverse();
     }
+
+    @Override
+    public SELF append(PositionalRead<A> values) {
+        if( values==null )throw new IllegalArgumentException("values==null");
+        // todo не эффективная реализация
+        Object[] res = new Object[]{ this };
+        values.forEach(a -> {
+            var r = (SELF)res[0];
+            res[0] = r.append(a);
+        });
+        return (SELF) res[0];
+    }
+
+    @Override
+    public SELF prepend(PositionalRead<A> values) {
+        if( values==null )throw new IllegalArgumentException("values==null");
+        Object[] res = new Object[]{ this };
+        values.forEach(a -> {
+            var r = (SELF)res[0];
+            res[0] = r.prepend(a);
+        });
+        return (SELF) res[0];
+    }
 }

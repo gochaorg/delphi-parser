@@ -113,4 +113,20 @@ public class ImListArray<A> implements ImList<A,ImListArray<A>> {
         sb.append(" ]");
         return sb.toString();
     }
+
+    @Override
+    public ImListArray<A> append(PositionalRead<A> values) {
+        if( values==null )throw new IllegalArgumentException("values==null");
+        var lst = new ArrayList<A>(this.list);
+        values.forEach(lst::add);
+        return new ImListArray<>(lst);
+    }
+
+    @Override
+    public ImListArray<A> prepend(PositionalRead<A> values) {
+        if( values==null )throw new IllegalArgumentException("values==null");
+        var lst = new ArrayList<A>(this.list);
+        lst.addAll(0, values.toList());
+        return new ImListArray<>(lst);
+    }
 }

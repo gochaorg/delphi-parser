@@ -9,13 +9,58 @@ import xyz.cofe.delphi.parser.DelphiParser;
 import java.io.StringReader;
 import java.util.stream.Collectors;
 
-public sealed interface PascalFile {
-    public static record Program() implements PascalFile {}
-    public static record Library() implements PascalFile {}
-    public static record Unit(ImList<String,?> name) implements PascalFile {}
-    public static record Package() implements PascalFile {}
+import static xyz.cofe.delphi.impl.Indent.indent;
 
-    public static PascalFile parse( String source ) throws AstParseError {
+public sealed interface PascalFile {
+    record Program() implements PascalFile {}
+    record Library() implements PascalFile {}
+
+    record Unit(
+        ImList<String,?> name,
+        UnitInterface api
+    ) implements PascalFile {
+        @Override
+        public String toString() {
+            return "unit "+name+"\n"+
+                "interface:\n"+
+                indent("  ",api.toString());
+        }
+    }
+
+    record UnitInterface(
+        ImList<Namespace,?> uses,
+        ImList<InterfaceDecl,?> declarations
+    ) {
+        static UnitInterface of(DelphiParser.UnitInterfaceContext unt){
+            var uses = ImListLinked.of(
+                unt.usesClause().namespaceNameList().namespaceName().stream()
+                    .map(Namespace::of)
+                    .collect(Collectors.toList())
+            );
+
+            return new UnitInterface(
+                uses,
+                InterfaceDecl.of(unt.interfaceDecl())
+            );
+        }
+
+        @Override
+        public String toString(){
+            var sb = new StringBuilder();
+
+            sb.append("uses:\n");
+            uses.forEach(n -> sb.append("  ").append(n).append("\n"));
+
+            sb.append("declarations:\n");
+            declarations.forEach(d -> sb.append(indent("  ",d.toString())).append("\n") );
+
+            return sb.toString();
+        }
+    }
+
+    record Package() implements PascalFile {}
+
+    static PascalFile parse( String source ) throws AstParseError {
         if( source==null )throw new IllegalArgumentException("source==null");
 
         var charStream = CharStreams.fromString(source);
@@ -32,8 +77,11 @@ public sealed interface PascalFile {
 
         var unt = file.unit();
         if( unt!=null && !unt.isEmpty() ) {
-            var id = ImListLinked.of(unt.unitHead().namespaceName().ident().stream().map(RuleContext::getText).collect(Collectors.toList()));
-            return new Unit(id);
+            var id = ImListLinked.of(
+                unt.unitHead().namespaceName().ident().stream()
+                    .map(RuleContext::getText)
+                    .collect(Collectors.toList()));
+            return new Unit(id,UnitInterface.of(unt.unitInterface()));
         }
 
         var pkg = file.packageE();
