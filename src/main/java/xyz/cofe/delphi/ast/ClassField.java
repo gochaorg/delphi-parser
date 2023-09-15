@@ -7,7 +7,7 @@ import xyz.cofe.delphi.parser.DelphiParser;
 
 import java.util.Optional;
 
-public record ClassField(String name, TypeDecl type)
+public record ClassField(String name, TypeDecl type,SourcePosition position)
 implements ClassItem
 {
     static ImList<ClassField,?> of(DelphiParser.ClassFieldContext ctx){
@@ -25,7 +25,7 @@ implements ClassItem
             var type_f = type.get();
             result = ImListLinked.of(ctx.identList().ident())
                 .map(RuleContext::getText)
-                .map(i -> new ClassField(i,type_f));
+                .map(i -> new ClassField(i,type_f,SourcePosition.of(ctx)));
         }
         return result;
     }

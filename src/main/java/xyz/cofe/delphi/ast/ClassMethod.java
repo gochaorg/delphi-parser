@@ -21,7 +21,8 @@ public sealed interface ClassMethod extends InterfaceItem, ClassItem {
         String name,
         ImList<Generic.Param,?> genericParams,
         ImList<Argument,?> arguments,
-        ImList<MethodDirective,?> directives
+        ImList<MethodDirective,?> directives,
+        SourcePosition position
     ) implements ClassMethod {}
 
     /**
@@ -35,7 +36,8 @@ public sealed interface ClassMethod extends InterfaceItem, ClassItem {
         String name,
         ImList<Generic.Param,?> genericParams,
         ImList<Argument,?> arguments,
-        ImList<MethodDirective,?> directives
+        ImList<MethodDirective,?> directives,
+        SourcePosition position
     ) implements ClassMethod {}
 
     /**
@@ -49,7 +51,8 @@ public sealed interface ClassMethod extends InterfaceItem, ClassItem {
         String name,
         ImList<Generic.Param,?> genericParams,
         ImList<Argument,?> arguments,
-        ImList<MethodDirective,?> directives
+        ImList<MethodDirective,?> directives,
+        SourcePosition position
     ) implements ClassMethod {}
 
     /**
@@ -65,7 +68,8 @@ public sealed interface ClassMethod extends InterfaceItem, ClassItem {
         ImList<Generic.Param,?> genericParams,
         ImList<Argument,?> arguments,
         TypeDecl result,
-        ImList<MethodDirective,?> directives
+        ImList<MethodDirective,?> directives,
+        SourcePosition position
     ) implements ClassMethod {}
 
     /**
@@ -79,7 +83,8 @@ public sealed interface ClassMethod extends InterfaceItem, ClassItem {
         String name,
         ImList<Generic.Param,?> genericParams,
         ImList<Argument,?> arguments,
-        TypeDecl result
+        TypeDecl result,
+        SourcePosition position
     ) implements ClassMethod {}
 
     sealed interface MethodDirective {
@@ -202,19 +207,19 @@ public sealed interface ClassMethod extends InterfaceItem, ClassItem {
             && ctx.OPERATOR().getText().toLowerCase().startsWith("opera")
             && result.isPresent()
         ){
-            return new Operator(name,generic_params,params,result.get());
+            return new Operator(name,generic_params,params,result.get(),SourcePosition.of(ctx));
         }
 
         if( methKey.startsWith("pro") ){
-            return new Procedure(name,generic_params,params,meth_dir);
+            return new Procedure(name,generic_params,params,meth_dir,SourcePosition.of(ctx));
         }
 
         if( methKey.startsWith("cons") ){
-            return new Constructor(name,generic_params,params,meth_dir);
+            return new Constructor(name,generic_params,params,meth_dir,SourcePosition.of(ctx));
         }
 
         if( methKey.startsWith("des") ){
-            return new Destructor(name,generic_params,params,meth_dir);
+            return new Destructor(name,generic_params,params,meth_dir,SourcePosition.of(ctx));
         }
 
         if( ctx.FUNCTION()!=null
@@ -222,7 +227,7 @@ public sealed interface ClassMethod extends InterfaceItem, ClassItem {
         && ctx.FUNCTION().getText().length()>0
         && result!=null
         && result.isPresent() ){
-            return new Function(name,generic_params,params,result.get(),meth_dir);
+            return new Function(name,generic_params,params,result.get(),meth_dir,SourcePosition.of(ctx));
         }
 
         throw AstParseError.notImplemented(ctx);

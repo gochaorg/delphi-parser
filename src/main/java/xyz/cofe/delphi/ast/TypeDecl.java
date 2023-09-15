@@ -126,7 +126,8 @@ public sealed interface TypeDecl {
     record Clazz(
         Optional<ClassState> state,
         ImList<TypeIdent,?> parents,
-        ImList<ClassItem,?> body
+        ImList<ClassItem,?> body,
+        SourcePosition position
     ) implements Structured {
         public String toString(){
             var sb = new StringBuilder();
@@ -175,7 +176,7 @@ public sealed interface TypeDecl {
                     ImListLinked.of();
 
             // todo methods?
-            return new Clazz(state, parents, body);
+            return new Clazz(state, parents, body, SourcePosition.of(ctx));
         }
     }
     enum ClassState {
@@ -189,7 +190,8 @@ public sealed interface TypeDecl {
         ImList<TypeIdent,?> parents,
         InterfaceType itfType,
         Optional<String> guid,
-        ImList<InterfaceItem,?> body
+        ImList<InterfaceItem,?> body,
+        SourcePosition position
     ) implements Structured, TypeDecl {
         static Interface of( DelphiParser.InterfaceTypeDeclContext ctx ){
             ImList<TypeIdent,?> parents = ctx.classParent()!=null && !ctx.classParent().isEmpty() ?
@@ -211,7 +213,8 @@ public sealed interface TypeDecl {
                 parents,
                 itype,
                 guid,
-                ImListLinked.of(ctx.interfaceItem()).map(InterfaceItem::of)
+                ImListLinked.of(ctx.interfaceItem()).map(InterfaceItem::of),
+                SourcePosition.of(ctx)
             );
         }
 

@@ -6,7 +6,7 @@ import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.delphi.parser.DelphiLexer;
 import xyz.cofe.delphi.parser.DelphiParser;
 
-import java.io.StringReader;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static xyz.cofe.delphi.impl.Indent.indent;
@@ -17,7 +17,8 @@ public sealed interface PascalFile {
 
     record Unit(
         ImList<String,?> name,
-        UnitInterface api
+        UnitInterface api,
+        ImList<Comment,?> comments
     ) implements PascalFile {
         @Override
         public String toString() {
@@ -60,12 +61,15 @@ public sealed interface PascalFile {
 
     record Package() implements PascalFile {}
 
-    static PascalFile parse( String source ) throws AstParseError {
+    static PascalFile parse( String source, String sourceName ) throws AstParseError {
         if( source==null )throw new IllegalArgumentException("source==null");
+        if( sourceName==null ) throw new IllegalArgumentException("sourceName==null");
 
-        var charStream = CharStreams.fromString(source);
+        var charStream = CharStreams.fromString(source,sourceName);
         var lexer = new DelphiLexer(charStream);
+
         var tokenStream = new CommonTokenStream(lexer);
+
         var parser = new DelphiParser(tokenStream);
         var file = parser.file();
 
@@ -76,12 +80,24 @@ public sealed interface PascalFile {
         if( lib!=null && !lib.isEmpty() )return new Library();
 
         var unt = file.unit();
+
+        var comments = ImListLinked.of(
+            (tokenStream.getTokens()!=null ? tokenStream.getTokens() : List.<Token>of())
+                .stream()
+                .filter(t -> t.getChannel()==1)
+                .map(Comment::of)
+                .toList());
+
         if( unt!=null && !unt.isEmpty() ) {
             var id = ImListLinked.of(
                 unt.unitHead().namespaceName().ident().stream()
                     .map(RuleContext::getText)
                     .collect(Collectors.toList()));
-            return new Unit(id,UnitInterface.of(unt.unitInterface()));
+            return new Unit(
+                id,
+                UnitInterface.of(unt.unitInterface()),
+                comments
+            );
         }
 
         var pkg = file.packageE();

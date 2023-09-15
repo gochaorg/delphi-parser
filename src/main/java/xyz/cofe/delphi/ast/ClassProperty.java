@@ -14,7 +14,8 @@ public sealed interface ClassProperty extends InterfaceItem, ClassItem {
         Optional<TypeIdent> type,
         Optional<Expression> index,
         ImList<Specifier,?> specifiers,
-        boolean classFlag
+        boolean classFlag,
+        SourcePosition position
         ) implements ClassProperty {
         public Property withClassFlag(boolean value){
             return new Property(
@@ -23,7 +24,8 @@ public sealed interface ClassProperty extends InterfaceItem, ClassItem {
                 type,
                 index,
                 specifiers,
-                value
+                value,
+                position
             );
         }
 
@@ -74,7 +76,8 @@ public sealed interface ClassProperty extends InterfaceItem, ClassItem {
                 type,
                 exp,
                 spec,
-                classFlag
+                classFlag,
+                SourcePosition.of(ctx)
             );
         }
     }

@@ -898,10 +898,15 @@ Hexdigit                : Digit | 'a'..'f' | 'A'..'F'
                         ;
 Hexdigitseq             : Hexdigit (Hexdigit)*
                         ;
-COMMENT                 :  ( '//' ~('\n'|'\r')* '\r'? '\n'           
+COMMENT                 :
+                        (
+                            '//' ~('\n'|'\r')* '\r'? '\n'
                         |  '(*' .*? '*)'  
-                        |  '{' .*? '}')    -> skip
-                        ;                 
+                        |  '{' .*? '}'
+                        )
+                        // -> skip
+                        -> channel(HIDDEN)
+                        ;
 WS                      : (' '|'\t'|'\r'|'\n'|'\f')+ -> skip
                         ;
 UnicodeBOM              : '\uFEFF' -> skip 

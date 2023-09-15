@@ -11,7 +11,7 @@ public class PascalFileParse {
         var url = this.getClass().getResource("/samples/Map.pas");
         try( var strm = url.openStream() ) {
             var source = new String( strm.readAllBytes(), Charset.forName("windows-1251") );
-            var res = PascalFile.parse(source);
+            var res = PascalFile.parse(source, "Map.pas");
             System.out.println(res);
         } catch (IOException e) {
             throw new RuntimeException(e);
