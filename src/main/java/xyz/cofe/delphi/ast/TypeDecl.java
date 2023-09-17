@@ -9,6 +9,9 @@ import java.util.Optional;
 
 import static xyz.cofe.delphi.impl.Indent.indent;
 
+/**
+ * Объявление типа
+ */
 public sealed interface TypeDecl {
     static TypeDecl of(DelphiParser.TypeDeclContext ctx) {
         if( ctx.strucType()!=null
@@ -70,8 +73,14 @@ public sealed interface TypeDecl {
         throw AstParseError.notImplemented(ctx);
     }
 
+    /**
+     * Вариант
+     */
     record Variant() implements TypeDecl {}
 
+    /**
+     * Структурный тип
+     */
     sealed interface Structured extends TypeDecl {
         static Structured of( DelphiParser.StrucTypeContext ctx ){
             if( ctx.strucTypePart()!=null
@@ -102,6 +111,13 @@ public sealed interface TypeDecl {
     }
 
     ///////////////////////////////
+
+    /**
+     * Массив
+     * @param indexes тип индекса
+     * @param subType тип элемента массива
+     * @param packed флаг packed // TODO разобраться что за packed
+     */
     record Array(
         ImList<ArrayIndex,?> indexes,
         ArraySubType subType,
@@ -123,6 +139,13 @@ public sealed interface TypeDecl {
 
     // ................
 
+    /**
+     * Описание класса
+     * @param state абстрактный/запечатанный
+     * @param parents родительские классы/интерфейсы
+     * @param body содержание
+     * @param position позиция в исходном коде
+     */
     record Clazz(
         Optional<ClassState> state,
         ImList<TypeIdent,?> parents,
@@ -179,6 +202,10 @@ public sealed interface TypeDecl {
             return new Clazz(state, parents, body, SourcePosition.of(ctx));
         }
     }
+
+    /**
+     * Абстрактный или запечатанный класс
+     */
     enum ClassState {
         Sealed,
         Abstract
@@ -186,6 +213,14 @@ public sealed interface TypeDecl {
 
     // ...............
 
+    /**
+     * Описание интерфейса
+     * @param parents родительский интерфейс(ы)
+     * @param itfType обычный или IDispatch
+     * @param guid идентификатор
+     * @param body содержание интерфейса
+     * @param position позиция в исходном коде
+     */
     record Interface(
         ImList<TypeIdent,?> parents,
         InterfaceType itfType,
@@ -249,9 +284,21 @@ public sealed interface TypeDecl {
     }
 
     ////////////////////////////////
+
+    /**
+     * Некий простой тип
+     * @param name имя типа
+     */
     record Simple(String name) implements TypeDecl {}
 
     ////////////////////////////////
+
+    /**
+     * Идентификатор типа
+     * @param name имя типа
+     * @param genericParams параметры типа
+     * @param typeFlag некий флаг // TODO разобраться
+     */
     record TypeId(
         ImList<String,?> name,
         ImList<TypeDecl,?> genericParams,
@@ -259,6 +306,10 @@ public sealed interface TypeDecl {
     ) implements TypeDecl {}
 
     /////////////////////////////////
+
+    /**
+     * Текстовый тип
+     */
     sealed interface StringType extends TypeDecl {
         record StrIng(Optional<Expression> expression) implements StringType {}
         record AnsiString( Optional<String> codePageNum, boolean typeFlag ) implements StringType {}

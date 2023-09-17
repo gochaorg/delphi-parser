@@ -4,6 +4,9 @@ import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.delphi.parser.DelphiParser;
 
+/**
+ * Публичная часть
+ */
 public sealed interface InterfaceDecl
 permits
     TypeSection,

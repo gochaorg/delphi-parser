@@ -7,6 +7,10 @@ import xyz.cofe.delphi.parser.DelphiParser;
 
 import java.util.stream.Collectors;
 
+/**
+ * Определяет пространство имен
+ * @param name имя
+ */
 public record Namespace(ImList<String,?> name) {
     static Namespace of(DelphiParser.NamespaceNameContext nm) {
         return new Namespace(

@@ -4,6 +4,11 @@ import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.delphi.parser.DelphiParser;
 
+/**
+ * Объявление типа
+ * @param typeIdent идентификатор типа
+ * @param typeDecl описание типа
+ */
 public record TypeDeclaration(
     TypeIdent typeIdent,
     TypeDecl typeDecl

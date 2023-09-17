@@ -7,6 +7,12 @@ import xyz.cofe.delphi.parser.DelphiParser;
 
 import java.util.Optional;
 
+/**
+ * Поле класса/интерфейса
+ * @param name имя поля
+ * @param type тип
+ * @param position позиция в исходнике
+ */
 public record ClassField(String name, TypeDecl type,SourcePosition position)
 implements ClassItem
 {

@@ -2,6 +2,9 @@ package xyz.cofe.delphi.ast;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 
+/**
+ * Ошибка парсинга AST
+ */
 public class AstParseError extends Error {
     public AstParseError(String message) {
         super(message);

@@ -4,9 +4,17 @@ import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.delphi.parser.DelphiParser;
 
+/**
+ * Элемент класса
+ */
 public sealed interface ClassItem
     permits ClassField, ClassItem.ClassVarSection, ClassMethod, ClassProperty, ConstSection.Constants, TypeSection, Visibility
 {
+    /**
+     * Секция переменных
+     * @param classFlag некий флаг 'class' - хз зачкем, наверно static // TODO выяснить
+     * @param variables список переменных
+     */
     record ClassVarSection(boolean classFlag, VarSection.Variables variables)
     implements ClassItem {
     }

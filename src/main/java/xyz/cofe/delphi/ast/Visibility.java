@@ -2,6 +2,9 @@ package xyz.cofe.delphi.ast;
 
 import xyz.cofe.delphi.parser.DelphiParser;
 
+/**
+ * Уровень видимости
+ */
 public enum Visibility implements ClassItem {
     StrictProtected,
     Protected,

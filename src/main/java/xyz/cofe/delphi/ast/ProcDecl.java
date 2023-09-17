@@ -6,6 +6,12 @@ import xyz.cofe.delphi.parser.DelphiParser;
 
 import java.util.Optional;
 
+/**
+ * Процедура/функция объявленная в публичной секции
+ * @param name имя процедуры
+ * @param arguments аргументы
+ * @param result тип результата в случае функции
+ */
 public record ProcDecl(
     String name,
     ImList<Argument,?> arguments,

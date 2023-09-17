@@ -5,6 +5,10 @@ import xyz.cofe.delphi.parser.DelphiParser;
 
 import static xyz.cofe.delphi.impl.Indent.indent;
 
+/**
+ * Секция определения типов
+ * @param types типы
+ */
 public record TypeSection(
     ImList<TypeDeclaration,?> types
 ) implements InterfaceDecl, ClassItem

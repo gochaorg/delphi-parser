@@ -6,7 +6,15 @@ import xyz.cofe.delphi.parser.DelphiParser;
 
 import java.util.Optional;
 
+/**
+ * Секция констант
+ */
 public sealed interface ConstSection extends InterfaceDecl {
+    /**
+     * Перечень констант
+     * @param constants константы
+     * @param key тип констант // TODO выяснить что за Resource string
+     */
     record Constants(ImList<Const,?> constants, ConstKey key) implements ConstSection, ClassItem {
         static Constants of(DelphiParser.ConstSectionContext ctx){
             var key = ConstKey.Const;

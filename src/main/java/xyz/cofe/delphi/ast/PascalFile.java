@@ -11,6 +11,9 @@ import java.util.stream.Collectors;
 
 import static xyz.cofe.delphi.impl.Indent.indent;
 
+/**
+ * Некий pascal файл
+ */
 public sealed interface PascalFile {
     record Program() implements PascalFile {}
     record Library() implements PascalFile {}

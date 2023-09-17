@@ -8,6 +8,10 @@ import xyz.cofe.delphi.parser.DelphiParser;
 
 import java.util.stream.Collectors;
 
+/**
+ * Generic параметр
+ */
+// TODO требует переименования/рефакторинга
 public sealed interface Generic {
     record Param(String name, ImList<Bound,?> constraints) implements Generic {}
 

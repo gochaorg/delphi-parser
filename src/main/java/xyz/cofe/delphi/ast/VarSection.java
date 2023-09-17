@@ -7,9 +7,17 @@ import xyz.cofe.delphi.parser.DelphiParser;
 
 import java.util.Optional;
 
+/**
+ * Секция переменных
+ */
 public sealed interface VarSection
     extends InterfaceDecl
 {
+    /**
+     * Перечень переменных
+     * @param key некая особенность переменной в отношении потоков
+     * @param variables перемень переменных
+     */
     record Variables(VarKey key, ImList<VarDeclaration,?> variables) implements VarSection {
         static Variables of(DelphiParser.VarSectionContext ctx){
             var key = VarKey.Var;
@@ -31,6 +39,12 @@ public sealed interface VarSection
         ThreadVar
     }
 
+    /**
+     * Определение переменной
+     * @param name имя переменной
+     * @param type тип переменной
+     * @param valueSpec Спецификация переменной
+     */
     record VarDeclaration(
         String name,
         TypeDecl type,

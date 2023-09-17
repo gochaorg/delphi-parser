@@ -60,6 +60,11 @@ public sealed interface SourcePosition {
         }
     }
 
+    /**
+     * "Точка" в исходном коде, которая не связана с файлом
+     * @param lineNumber номер строки
+     * @param charNumber номер символа в строке
+     */
     record FileLessPoint(int lineNumber, int charNumber)
         implements SourcePosition, Point {
         @SuppressWarnings("RedundantIfStatement")
@@ -114,6 +119,12 @@ public sealed interface SourcePosition {
         }
     }
 
+    /**
+     * "Точка" в исходном коде
+     * @param fileName имя файла
+     * @param lineNumber номер строки
+     * @param charNumber номер символа в строке
+     */
     record FilePoint(String fileName, int lineNumber, int charNumber)
         implements SourcePosition, FileName, Point {
         @SuppressWarnings("RedundantIfStatement")
@@ -182,6 +193,11 @@ public sealed interface SourcePosition {
         }
     }
 
+    /**
+     * "Отрезок" в исходном коде
+     * @param start начало отрезка
+     * @param end конец отрезка включительно
+     */
     record FileLessRange(FileLessPoint start, FileLessPoint end)
         implements SourcePosition, Range<FileLessPoint> {
         @SuppressWarnings("RedundantIfStatement")
@@ -269,6 +285,11 @@ public sealed interface SourcePosition {
         }
     }
 
+    /**
+     * "Отрезок" в исходном коде
+     * @param start начало отрезка
+     * @param end конец отрезка включительно
+     */
     record FileRange(FilePoint start, FilePoint end)
         implements SourcePosition, Range<FilePoint>, FileName {
         @Override
