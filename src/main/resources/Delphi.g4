@@ -25,6 +25,7 @@ grammar Delphi;
 
 @lexer::namespace{DelphiGrammar}
 @parser::namespace{DelphiGrammar}
+options { caseInsensitive = true; }
 //****************************
 //section start
 //****************************
