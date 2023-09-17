@@ -6,6 +6,7 @@ import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.coll.im.ImListLinkedBase;
 import xyz.cofe.delphi.parser.DelphiParser;
 
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -13,7 +14,20 @@ import java.util.stream.Collectors;
  */
 // TODO требует переименования/рефакторинга
 public sealed interface Generic {
-    record Param(String name, ImList<Bound,?> constraints) implements Generic {}
+    record Param(String name, ImList<Bound,?> constraints) implements Generic {
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Param param = (Param) o;
+            return Objects.equals(name, param.name) && Objects.equals(constraints, param.constraints);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(name, constraints);
+        }
+    }
 
     sealed interface Bound {}
     record ItfBound(String name) implements Bound {}
@@ -24,7 +38,6 @@ public sealed interface Generic {
     static Param param(String name) {
         return new Param(name, ImListLinked.of());
     }
-
     static Generic.Param param(DelphiParser.ConstrainedGenericContext ctx){
         ImListLinked<Bound> bounds = ImListLinked.of(
         ctx.genericConstraint().stream()
@@ -48,7 +61,6 @@ public sealed interface Generic {
             bounds
         );
     }
-
     static ImListLinked<Generic.Param> of(DelphiParser.GenericDefinitionContext ctx){
         var genParams = ImListLinked.<Generic.Param>of();
         if (!ctx.simpleGenericDefinition().isEmpty()) {

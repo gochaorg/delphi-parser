@@ -12,7 +12,9 @@ import static xyz.cofe.delphi.impl.Indent.indent;
 /**
  * Объявление типа
  */
-public sealed interface TypeDecl {
+public sealed interface TypeDecl
+    permits TypeDecl.Array, TypeDecl.Interface, TypeDecl.MetaClass, TypeDecl.NewTypeId, TypeDecl.Simple, TypeDecl.StringType, TypeDecl.Structured, TypeDecl.TypeAlias, TypeDecl.Variant, TypeIdent
+{
     static TypeDecl of(DelphiParser.TypeDeclContext ctx) {
         if( ctx.strucType()!=null
         &&  !ctx.strucType().isEmpty()
@@ -55,11 +57,24 @@ public sealed interface TypeDecl {
                     .map(TypeDecl::of);
             }
 
-            return new TypeId(
-                name,
-                genericValues,
-                typeFlag
-            );
+            if( typeFlag ){
+                return new NewTypeId(
+                    name,
+                    genericValues
+                );
+            }else {
+                if( genericValues.size()==0 ){
+                    return new TypeIdent(
+                        name,
+                        ImListLinked.of()
+                    );
+                }
+
+                return new TypeAlias(
+                    name,
+                    genericValues
+                );
+            }
         }
 
         if( ctx.variantType()!=null && !ctx.variantType().isEmpty() ){
@@ -294,16 +309,49 @@ public sealed interface TypeDecl {
     ////////////////////////////////
 
     /**
-     * Идентификатор типа
+     * Идентификатор типа.
+     *
+     * <br/>
+     * Флаг typeFlag - объявляет новый тип, а не синоним типа.
+     *
+     * <a href="https://docwiki.embarcadero.com/RADStudio/Alexandria/en/Type_Compatibility_and_Identity_(Delphi)">
+     *     Подробности тут
+     * </a>
+     *
+     * <br/>
+     * <b>Type Identity</b>
+     * <br/>
+     *
+     * When one type identifier is declared using another type identifier,
+     * without qualification, they denote the same type. Thus, given the declarations:
+     *
+     * <pre>
+     * type
+     *   T1 = Integer;
+     *   T2 = T1;
+     *   T3 = Integer;
+     *   T4 = T2;
+     * </pre>
+     *
+     * T1, T2, T3, T4, and Integer all denote the same type.
+     * To create distinct types, repeat the word type in the declaration. For example:
+     *
+     * <pre>
+     *     type TMyInteger = type Integer;
+     * </pre>
+     *
      * @param name имя типа
      * @param genericParams параметры типа
-     * @param typeFlag некий флаг // TODO разобраться
      */
-    record TypeId(
+    record NewTypeId(
         ImList<String,?> name,
-        ImList<TypeDecl,?> genericParams,
-        boolean typeFlag
-    ) implements TypeDecl {}
+        ImList<TypeDecl,?> genericParams
+    ) implements TypeDecl {
+    }
+
+    record TypeAlias(ImList<String,?> name, ImList<TypeDecl,?> genericParams)
+    implements TypeDecl
+    {}
 
     /////////////////////////////////
 

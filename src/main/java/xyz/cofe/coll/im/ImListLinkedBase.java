@@ -163,17 +163,6 @@ implements
     }
 
     @Override
-    public SELF filter(Fn1<Boolean, A> pred) {
-        if( pred==null )throw new IllegalArgumentException("pred == null");
-        return foldLeft(empty(), (res,it) -> {
-            if(pred.apply(it)){
-                return res.prepend(it);
-            }
-            return res;
-        }).reverse();
-    }
-
-    @Override
     public <B> ImList<B, ?> map(Function<A, B> mapper) {
         if(mapper==null)throw new IllegalArgumentException("mapper==null");
         var res = selfConstructor((B) null, null );

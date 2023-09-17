@@ -1,5 +1,9 @@
 package xyz.cofe.coll.im;
 
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Function;
+
 /**
  * Фильтрация коллекции
  * @param <SELF> Собственный тип
@@ -11,7 +15,7 @@ public interface Filter<SELF extends Append<SELF,A>,A> extends FoldLeft<A>, Empt
      * @param pred условие оставления элемента в списке
      * @return отфильтрованный список
      */
-    default SELF filter(Fn1<Boolean,A> pred) {
+    default SELF filter(Function<A,Boolean> pred) {
         if( pred==null )throw new IllegalArgumentException("pred == null");
         return foldLeft(empty(), (res,it) -> {
             if(pred.apply(it)){

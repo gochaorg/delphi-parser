@@ -2,8 +2,10 @@ package xyz.cofe.coll.im;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * Позиционное чтение элементов коллекции
