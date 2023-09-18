@@ -5,6 +5,8 @@ import xyz.cofe.coll.im.ImListLinked;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.Objects;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -72,25 +74,55 @@ public class PascalFileParseTest {
         assertTrue( countFn.result().equals( TypeIdent.of("Integer") ) );
 
         var getFn = funs.find(c -> c.name().equalsIgnoreCase("get")).get();
+        assertTrue( getFn.name().equalsIgnoreCase("get") );
+        assertTrue( getFn.arguments().size()==1 );
+        assertTrue( getFn.arguments().get(0).get().name().equalsIgnoreCase("name") );
+        assertTrue( getFn.arguments().get(0).get().typeDecl().get().equals(
+            new TypeDecl.StringType.StrIng(Optional.empty())
+        ));
+        assertTrue( getFn.result().equals( new TypeDecl.Variant() ) );
+
         var existsFn = funs.find(c -> c.name().equalsIgnoreCase("exists")).get();
+        assertTrue( existsFn.result().equals( TypeIdent.of("boolean") ) );
+
         var keyFn = funs.find(c -> c.name().equalsIgnoreCase("key")).get();
         var putFn = funs.find(c -> c.name().equalsIgnoreCase("put")).get();
         var deleteFn = funs.find(c -> c.name().equalsIgnoreCase("delete")).get();
         var toStringFn = funs.find(c -> c.name().equalsIgnoreCase("toString")).get();
 
-//        var ctrs = iStringMap.body().fmap(itm ->
-//            itm instanceof ClassMethod.Constructor ctr
-//            ? ImListLinked.of(ctr) : ImListLinked.of()
-//        );
+        var tStringMap= types.fmap( a ->
+            a.typeIdent().equals( TypeIdent.of("TStringMap") ) &&
+                a.typeDecl() instanceof TypeDecl.Clazz itf
+                ? ImListLinked.of(itf) : ImListLinked.of()
+        ).head().get();
 
-//        var createCtr = ctrs.find(c -> c.name().equalsIgnoreCase("Create")).get();
-//        var copyCtr = ctrs.find(c -> c.name().equalsIgnoreCase("Copy")).get();
-//        var copyiCtr = ctrs.find(c -> c.name().equalsIgnoreCase("Copyi")).get();
-//
-//        var destrs = iStringMap.body().fmap(itm ->
-//            itm instanceof ClassMethod.Destructor ctr
-//                ? ImListLinked.of(ctr) : ImListLinked.of()
-//        );
-//        var destr = destrs.find(c -> c.name().equalsIgnoreCase("Destroy")).get();
+        var ctrs = tStringMap.body().fmap(itm ->
+            itm instanceof ClassMethod.Constructor ctr
+            ? ImListLinked.of(ctr) : ImListLinked.of()
+        );
+
+        var createCtr = ctrs.find(c -> c.name().equalsIgnoreCase("Create")).get();
+
+        var copyCtr = ctrs.find(c -> c.name().equalsIgnoreCase("Copy")).get();
+        assertTrue(copyCtr.arguments().size()==1);
+        assertTrue(copyCtr.arguments().get(0).get().typeDecl().get().equals(TypeIdent.of("TStringMap")));
+
+        var copyiCtr = ctrs.find(c -> c.name().equalsIgnoreCase("Copyi")).get();
+        assertTrue(copyiCtr.arguments().size()==1);
+        assertTrue(copyiCtr.arguments().get(0).get().typeDecl().get().equals(TypeIdent.of("IStringMap")));
+
+        var destrs = tStringMap.body().fmap(itm ->
+            itm instanceof ClassMethod.Destructor ctr
+                ? ImListLinked.of(ctr) : ImListLinked.of()
+        );
+        var destr = destrs.find(c -> c.name().equalsIgnoreCase("Destroy")).get();
+        assertTrue(destr.directives().containsAll(new ClassMethod.MethodDirective.Binding.Override()));
+
+        funs = tStringMap.body().fmap(itm ->
+            itm instanceof ClassMethod.Function fn
+                ? ImListLinked.of(fn) : ImListLinked.of()
+        );
+        countFn = funs.find(c -> c.name().equalsIgnoreCase("count")).get();
+        assertTrue(countFn.directives().containsAll(new ClassMethod.MethodDirective.Binding.Virtual()));
     }
 }

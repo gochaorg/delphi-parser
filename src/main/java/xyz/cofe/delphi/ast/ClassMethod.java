@@ -131,7 +131,7 @@ public sealed interface ClassMethod extends InterfaceItem, ClassItem {
                     );
                 if(txt.startsWith("static")) return new Binding.Static();
                 if(txt.startsWith("dynam")) return new Binding.Dynamic();
-                if(txt.startsWith("override")) return new Binding.Dynamic();
+                if(txt.startsWith("override")) return new Binding.Override();
                 if(txt.startsWith("virt")) return new Binding.Virtual();
                 throw AstParseError.unExpected();
             }

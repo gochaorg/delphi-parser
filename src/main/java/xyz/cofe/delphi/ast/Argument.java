@@ -48,7 +48,14 @@ public record Argument(
                 f_param.identListFlat().ident().stream().map(RuleContext::getText).toList();
 
             var arg_type = Optional.<TypeDecl>empty();
+            if( f_param.typeDecl()!=null && !f_param.typeDecl().isEmpty() ){
+                arg_type = Optional.of(TypeDecl.of(f_param.typeDecl()));
+            }
+
             var def_exp = Optional.<Expression>empty();
+            if( f_param.expression()!=null && !f_param.isEmpty() ){
+                def_exp = Optional.of(Expression.of(f_param.expression()));
+            }
 
             for( var id : id_list ){
                 var arg = new Argument(
