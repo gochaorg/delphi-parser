@@ -3,19 +3,25 @@ package xyz.cofe.delphi.ast;
 import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.delphi.parser.DelphiParser;
-
+import static xyz.cofe.delphi.ast.AstNode.upcast;
+import static xyz.cofe.delphi.impl.Indent.indent;
 import java.util.Optional;
 
 /**
  * Секция констант
  */
-public sealed interface ConstSection extends InterfaceDecl {
+public sealed interface ConstSection extends InterfaceDecl, AstNode {
     /**
      * Перечень констант
      * @param constants константы
      * @param key тип констант // TODO выяснить что за Resource string
      */
-    record Constants(ImList<Const,?> constants, ConstKey key) implements ConstSection, ClassItem {
+    record Constants(ImList<Const,?> constants, ConstKey key) implements ConstSection, ClassItem, AstNode {
+        @Override
+        public ImList<? extends AstNode, ?> nestedAstNodes() {
+            return upcast(constants).append(upcast(key));
+        }
+
         static Constants of(DelphiParser.ConstSectionContext ctx){
             var key = ConstKey.Const;
             if( ctx.constKey()!=null
@@ -36,12 +42,17 @@ public sealed interface ConstSection extends InterfaceDecl {
         }
     }
 
-    enum ConstKey {
+    enum ConstKey implements AstNode {
         Const,
         ResourceString
     }
 
-    record Const(String name, Optional<TypeDecl> type, ConstExpression expression ) {
+    record Const(String name, Optional<TypeDecl> type, ConstExpression expression ) implements AstNode {
+        @Override
+        public ImList<? extends AstNode, ?> nestedAstNodes() {
+            return upcast(type).append(expression);
+        }
+
         static Const of(DelphiParser.ConstDeclarationContext ctx){
             return new Const(
                 ctx.ident().getText(),
@@ -52,7 +63,7 @@ public sealed interface ConstSection extends InterfaceDecl {
             );
         }
     }
-    sealed interface ConstExpression {
+    sealed interface ConstExpression extends AstNode {
         static ConstExpression of( DelphiParser.ConstExpressionContext ctx ) {
             if( ctx.recordConstExpression()!=null && !ctx.recordConstExpression().isEmpty() ){
                 return new SeqNamed(
@@ -76,8 +87,18 @@ public sealed interface ConstSection extends InterfaceDecl {
         }
     }
 
-    record ConstExp( Expression expression ) implements ConstExpression {}
+    record ConstExp( Expression expression ) implements ConstExpression {
+        @Override
+        public ImList<? extends AstNode, ?> nestedAstNodes() {
+            return upcast(expression);
+        }
+    }
     record NamedExp( String name, ConstExpression expression ) implements ConstExpression {
+        @Override
+        public ImList<? extends AstNode, ?> nestedAstNodes() {
+            return upcast(expression);
+        }
+
         public static NamedExp of(DelphiParser.RecordConstExpressionContext ctx){
             return new NamedExp(
                 ctx.ident().getText(),
@@ -85,6 +106,16 @@ public sealed interface ConstSection extends InterfaceDecl {
             );
         }
     }
-    record Sequence( ImList<ConstExpression,?> seq ) implements ConstExpression {}
-    record SeqNamed( ImList<NamedExp,?> seq ) implements ConstExpression {}
+    record Sequence( ImList<ConstExpression,?> seq ) implements ConstExpression {
+        @Override
+        public ImList<? extends AstNode, ?> nestedAstNodes() {
+            return upcast(seq);
+        }
+    }
+    record SeqNamed( ImList<NamedExp,?> seq ) implements ConstExpression {
+        @Override
+        public ImList<? extends AstNode, ?> nestedAstNodes() {
+            return upcast(seq);
+        }
+    }
 }

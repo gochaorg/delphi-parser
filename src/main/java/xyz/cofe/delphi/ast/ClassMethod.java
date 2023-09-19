@@ -5,11 +5,13 @@ import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.delphi.parser.DelphiParser;
 
 import java.util.Optional;
+import static xyz.cofe.delphi.ast.AstNode.upcast;
+import static xyz.cofe.delphi.impl.Indent.indent;
 
 /**
  * Методы класса/интерфейса/...
  */
-public sealed interface ClassMethod extends InterfaceItem, ClassItem {
+public sealed interface ClassMethod extends InterfaceItem, ClassItem, AstNode {
     /**
      * Процедура
      * @param name имя
@@ -23,7 +25,12 @@ public sealed interface ClassMethod extends InterfaceItem, ClassItem {
         ImList<Argument,?> arguments,
         ImList<MethodDirective,?> directives,
         SourcePosition position
-    ) implements ClassMethod {}
+    ) implements ClassMethod, SrcPos {
+        @Override
+        public ImList<? extends AstNode, ?> nestedAstNodes() {
+            return upcast(genericParams).append(upcast(arguments)).append(upcast(directives));
+        }
+    }
 
     /**
      * Конструктор
@@ -38,7 +45,12 @@ public sealed interface ClassMethod extends InterfaceItem, ClassItem {
         ImList<Argument,?> arguments,
         ImList<MethodDirective,?> directives,
         SourcePosition position
-    ) implements ClassMethod {}
+    ) implements ClassMethod, SrcPos {
+        @Override
+        public ImList<? extends AstNode, ?> nestedAstNodes() {
+            return upcast(genericParams).append(upcast(arguments)).append(upcast(directives));
+        }
+    }
 
     /**
      * Деструктор
@@ -53,7 +65,12 @@ public sealed interface ClassMethod extends InterfaceItem, ClassItem {
         ImList<Argument,?> arguments,
         ImList<MethodDirective,?> directives,
         SourcePosition position
-    ) implements ClassMethod {}
+    ) implements ClassMethod, SrcPos {
+        @Override
+        public ImList<? extends AstNode, ?> nestedAstNodes() {
+            return upcast(genericParams).append(upcast(arguments)).append(upcast(directives));
+        }
+    }
 
     /**
      * Функция
@@ -70,7 +87,12 @@ public sealed interface ClassMethod extends InterfaceItem, ClassItem {
         TypeDecl result,
         ImList<MethodDirective,?> directives,
         SourcePosition position
-    ) implements ClassMethod {}
+    ) implements ClassMethod, SrcPos {
+        @Override
+        public ImList<? extends AstNode, ?> nestedAstNodes() {
+            return upcast(genericParams).append(upcast(arguments)).append(upcast(directives)).append(result);
+        }
+    }
 
     /**
      * Оператор
@@ -85,9 +107,14 @@ public sealed interface ClassMethod extends InterfaceItem, ClassItem {
         ImList<Argument,?> arguments,
         TypeDecl result,
         SourcePosition position
-    ) implements ClassMethod {}
+    ) implements ClassMethod, SrcPos {
+        @Override
+        public ImList<? extends AstNode, ?> nestedAstNodes() {
+            return upcast(genericParams).append(upcast(arguments)).append(result);
+        }
+    }
 
-    sealed interface MethodDirective {
+    sealed interface MethodDirective extends AstNode {
         record Reintroduce() implements MethodDirective {}
         record Overload() implements MethodDirective {}
 
@@ -118,7 +145,12 @@ public sealed interface ClassMethod extends InterfaceItem, ClassItem {
             record Near() implements CallConvention {}
         }
 
-        record DispID(Expression expression) implements MethodDirective {}
+        record DispID(Expression expression) implements MethodDirective {
+            @Override
+            public ImList<? extends AstNode, ?> nestedAstNodes() {
+                return ImListLinked.of(expression);
+            }
+        }
 
         static MethodDirective of(DelphiParser.MethodDirectiveContext ctx){
             if(ctx.reintroduceDirective()!=null && !ctx.reintroduceDirective().isEmpty())return new Reintroduce();

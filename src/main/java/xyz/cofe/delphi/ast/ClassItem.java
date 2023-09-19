@@ -8,6 +8,7 @@ import xyz.cofe.delphi.parser.DelphiParser;
  * Элемент класса
  */
 public sealed interface ClassItem
+    extends AstNode
     permits ClassField, ClassItem.ClassVarSection, ClassMethod, ClassProperty, ConstSection.Constants, TypeSection, Visibility
 {
     /**
@@ -17,6 +18,10 @@ public sealed interface ClassItem
      */
     record ClassVarSection(boolean classFlag, VarSection.Variables variables)
     implements ClassItem {
+        @Override
+        public ImList<? extends AstNode, ?> nestedAstNodes() {
+            return ImListLinked.of(variables);
+        }
     }
 
     static ImList<ClassItem,?> of(DelphiParser.ClassItemContext ctx){

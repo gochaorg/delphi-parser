@@ -3,7 +3,8 @@ package xyz.cofe.delphi.ast;
 import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.delphi.parser.DelphiParser;
-
+import static xyz.cofe.delphi.ast.AstNode.upcast;
+import static xyz.cofe.delphi.impl.Indent.indent;
 import java.util.Optional;
 
 /**
@@ -16,7 +17,7 @@ public record ProcDecl(
     String name,
     ImList<Argument,?> arguments,
     Optional<TypeDecl> result
-) implements InterfaceDecl {
+) implements InterfaceDecl, AstNode {
     static ProcDecl of(DelphiParser.ProcDeclHeadingContext prc) {
         var params = ImListLinked.<Argument>of();
         var formal_params =

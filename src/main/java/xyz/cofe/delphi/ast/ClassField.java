@@ -14,8 +14,13 @@ import java.util.Optional;
  * @param position позиция в исходнике
  */
 public record ClassField(String name, TypeDecl type,SourcePosition position)
-implements ClassItem
+implements ClassItem, AstNode, SrcPos
 {
+    @Override
+    public ImList<? extends AstNode, ?> nestedAstNodes() {
+        return ImListLinked.of(type);
+    }
+
     static ImList<ClassField,?> of(DelphiParser.ClassFieldContext ctx){
         ImList<ClassField,?> result = ImListLinked.of();
         Optional<TypeDecl> type = Optional.empty();

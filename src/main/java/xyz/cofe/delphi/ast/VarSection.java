@@ -4,21 +4,32 @@ import org.antlr.v4.runtime.RuleContext;
 import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.delphi.parser.DelphiParser;
-
+import static xyz.cofe.delphi.ast.AstNode.upcast;
+import static xyz.cofe.delphi.impl.Indent.indent;
 import java.util.Optional;
 
 /**
  * Секция переменных
  */
 public sealed interface VarSection
-    extends InterfaceDecl
+    extends InterfaceDecl, AstNode
 {
     /**
      * Перечень переменных
      * @param key некая особенность переменной в отношении потоков
      * @param variables перемень переменных
+     * @param position позиция в исзоднике
      */
-    record Variables(VarKey key, ImList<VarDeclaration,?> variables) implements VarSection {
+    record Variables(
+        VarKey key,
+        ImList<VarDeclaration,?> variables,
+        SourcePosition position
+    ) implements VarSection, AstNode, SrcPos {
+        @Override
+        public ImList<? extends AstNode, ?> nestedAstNodes() {
+            return upcast(key).append(upcast(variables));
+        }
+
         static Variables of(DelphiParser.VarSectionContext ctx){
             var key = VarKey.Var;
             if( ctx.varKey()!=null && ctx.varKey().getText()!=null ){
@@ -30,11 +41,11 @@ public sealed interface VarSection
             ImList<VarDeclaration,?> lst = ImListLinked.of(ctx.varDeclaration())
                 .fmap(VarDeclaration::of);
 
-            return new Variables( key, lst );
+            return new Variables( key, lst, SourcePosition.of(ctx) );
         }
     }
 
-    public static enum VarKey {
+    public static enum VarKey implements AstNode {
         Var,
         ThreadVar
     }
@@ -44,12 +55,19 @@ public sealed interface VarSection
      * @param name имя переменной
      * @param type тип переменной
      * @param valueSpec Спецификация переменной
+     * @param position Позиция в исходнике
      */
     record VarDeclaration(
         String name,
         TypeDecl type,
-        Optional<VarValueSpec> valueSpec
-    ) {
+        Optional<VarValueSpec> valueSpec,
+        SourcePosition position
+    ) implements AstNode, SrcPos {
+        @Override
+        public ImList<? extends AstNode, ?> nestedAstNodes() {
+            return upcast(type).append(upcast(valueSpec));
+        }
+
         static ImList<VarDeclaration,?> of(DelphiParser.VarDeclarationContext ctx){
             var type = TypeDecl.of(ctx.typeDecl());
             Optional<VarValueSpec> valueSpec = Optional.empty();
@@ -62,11 +80,11 @@ public sealed interface VarSection
 
             return ImListLinked.of(ctx.identListFlat().ident())
                 .map(RuleContext::getText)
-                .map(name -> new VarDeclaration(name,type,spec));
+                .map(name -> new VarDeclaration(name,type,spec,SourcePosition.of(ctx)));
         }
     }
 
-    sealed interface VarValueSpec {
+    sealed interface VarValueSpec extends AstNode {
         static VarValueSpec of(DelphiParser.VarValueSpecContext ctx){
             if(ctx.ABSOLUTE()!=null){
                 if(ctx.ident()!=null && ctx.ident().getText()!=null){
@@ -85,6 +103,16 @@ public sealed interface VarSection
     }
 
     record AbsoluteId(String name) implements VarValueSpec {}
-    record AbsoluteExp(ConstSection.ConstExpression expression) implements VarValueSpec {}
-    record Expr(ConstSection.ConstExpression expression) implements VarValueSpec {}
+    record AbsoluteExp(ConstSection.ConstExpression expression) implements VarValueSpec, AstNode {
+        @Override
+        public ImList<? extends AstNode, ?> nestedAstNodes() {
+            return upcast(expression);
+        }
+    }
+    record Expr(ConstSection.ConstExpression expression) implements VarValueSpec, AstNode {
+        @Override
+        public ImList<? extends AstNode, ?> nestedAstNodes() {
+            return upcast(expression);
+        }
+    }
 }

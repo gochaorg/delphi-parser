@@ -1,4 +1,7 @@
 package xyz.cofe.delphi.ast;
 
-public record ExportsSection() implements InterfaceDecl {
+import static xyz.cofe.delphi.ast.AstNode.upcast;
+import static xyz.cofe.delphi.impl.Indent.indent;
+
+public record ExportsSection() implements InterfaceDecl, AstNode {
 }

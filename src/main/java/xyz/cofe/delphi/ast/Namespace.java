@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
  * Определяет пространство имен
  * @param name имя
  */
-public record Namespace(ImList<String,?> name) {
+public record Namespace(ImList<String,?> name) implements AstNode {
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     @Override
     public boolean equals(Object o) {

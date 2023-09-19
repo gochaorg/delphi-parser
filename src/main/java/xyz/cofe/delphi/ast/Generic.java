@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
  */
 // TODO требует переименования/рефакторинга
 public sealed interface Generic {
-    record Param(String name, ImList<Bound,?> constraints) implements Generic {
+    record Param(String name, ImList<Bound,?> constraints) implements Generic, AstNode {
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;

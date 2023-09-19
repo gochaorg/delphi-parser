@@ -3,11 +3,14 @@ package xyz.cofe.delphi.ast;
 import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.delphi.parser.DelphiParser;
+import static xyz.cofe.delphi.ast.AstNode.upcast;
+import static xyz.cofe.delphi.impl.Indent.indent;
 
 /**
  * Публичная часть
  */
 public sealed interface InterfaceDecl
+extends AstNode
 permits
     TypeSection,
     MethodDecl,
@@ -21,7 +24,8 @@ permits
         if( !itf.typeSection().isEmpty() ){
             return
                 new TypeSection(
-                    TypeDeclaration.of(itf.typeSection().typeDeclaration())
+                    TypeDeclaration.of(itf.typeSection().typeDeclaration()),
+                    SourcePosition.of(itf.typeSection())
                 );
         }
 

@@ -1,20 +1,19 @@
 package xyz.cofe.delphi.ast;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import org.antlr.v4.runtime.*;
 import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.delphi.parser.DelphiLexer;
 import xyz.cofe.delphi.parser.DelphiParser;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
+import static xyz.cofe.delphi.ast.AstNode.upcast;
 import static xyz.cofe.delphi.impl.Indent.indent;
 
 /**
  * Некий pascal файл
  */
-public sealed interface PascalFile {
+public sealed interface PascalFile extends AstNode {
     record Program() implements PascalFile {}
     record Library() implements PascalFile {}
 
@@ -29,12 +28,24 @@ public sealed interface PascalFile {
                 "interface:\n"+
                 indent("  ",api.toString());
         }
+
+        @Override
+        public ImList<? extends AstNode, ?> nestedAstNodes() {
+            return ImListLinked.of(api);
+        }
+
     }
 
     record UnitInterface(
         ImList<Namespace,?> uses,
         ImList<InterfaceDecl,?> declarations
-    ) {
+    ) implements AstNode
+    {
+        @Override
+        public ImList<? extends AstNode, ?> nestedAstNodes() {
+            return upcast(uses).append(upcast(declarations));
+        }
+
         static UnitInterface of(DelphiParser.UnitInterfaceContext unt){
             var uses = ImListLinked.of(
                 unt.usesClause().namespaceNameList().namespaceName().stream()

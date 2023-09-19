@@ -7,12 +7,14 @@ import xyz.cofe.delphi.parser.DelphiParser;
 
 import java.util.Optional;
 
+import static xyz.cofe.delphi.ast.AstNode.upcast;
 import static xyz.cofe.delphi.impl.Indent.indent;
 
 /**
  * Объявление типа
  */
 public sealed interface TypeDecl
+    extends AstNode
     permits TypeDecl.Array, TypeDecl.Interface, TypeDecl.MetaClass, TypeDecl.NewTypeId, TypeDecl.Simple, TypeDecl.StringType, TypeDecl.Structured, TypeDecl.TypeAlias, TypeDecl.Variant, TypeIdent
 {
     static TypeDecl of(DelphiParser.TypeDeclContext ctx) {
@@ -137,15 +139,31 @@ public sealed interface TypeDecl
         ImList<ArrayIndex,?> indexes,
         ArraySubType subType,
         boolean packed
-    ) implements Structured, TypeDecl {}
+    ) implements Structured, TypeDecl {
+        @Override
+        public ImList<? extends AstNode, ?> nestedAstNodes() {
+            return upcast(indexes).append(subType);
+        }
+    }
 
-    sealed interface ArrayIndex {}
-    record ArrayIndexType(ImList<String,?> typeId) implements ArrayIndex {}
-    record ArrayIndexRange(Expression from, Expression to) implements ArrayIndex {}
+    sealed interface ArrayIndex extends AstNode {}
+    record ArrayIndexType(ImList<String,?> typeId) implements ArrayIndex {
+    }
+    record ArrayIndexRange(Expression from, Expression to) implements ArrayIndex {
+        @Override
+        public ImList<? extends AstNode, ?> nestedAstNodes() {
+            return ImListLinked.of(from, to);
+        }
+    }
 
-    sealed interface ArraySubType {
+    sealed interface ArraySubType extends AstNode {
         record Const() implements ArraySubType {}
-        record TypeRef( TypeDecl decl ) implements ArraySubType {}
+        record TypeRef( TypeDecl decl ) implements ArraySubType {
+            @Override
+            public ImList<? extends AstNode, ?> nestedAstNodes() {
+                return ImListLinked.of(decl);
+            }
+        }
     }
 
     // ................
@@ -166,7 +184,12 @@ public sealed interface TypeDecl
         ImList<TypeIdent,?> parents,
         ImList<ClassItem,?> body,
         SourcePosition position
-    ) implements Structured {
+    ) implements Structured, SrcPos {
+        @Override
+        public ImList<? extends AstNode, ?> nestedAstNodes() {
+            return upcast(parents).append(upcast(body));
+        }
+
         public String toString(){
             var sb = new StringBuilder();
             sb.append("Class\n");
@@ -242,8 +265,13 @@ public sealed interface TypeDecl
         Optional<String> guid,
         ImList<InterfaceItem,?> body,
         SourcePosition position
-    ) implements Structured, TypeDecl {
-        static Interface of( DelphiParser.InterfaceTypeDeclContext ctx ){
+    ) implements Structured, TypeDecl, SrcPos {
+        @Override
+        public ImList<? extends AstNode, ?> nestedAstNodes() {
+            return upcast(parents).append(upcast(body));
+        }
+
+        static Interface of(DelphiParser.InterfaceTypeDeclContext ctx ){
             ImList<TypeIdent,?> parents = ctx.classParent()!=null && !ctx.classParent().isEmpty() ?
                 ImListLinked.of(ctx.classParent().genericTypeIdent()).map(TypeIdent::of)
                 : ImListLinked.of();
@@ -347,11 +375,20 @@ public sealed interface TypeDecl
         ImList<String,?> name,
         ImList<TypeDecl,?> genericParams
     ) implements TypeDecl {
+        @Override
+        public ImList<? extends AstNode, ?> nestedAstNodes() {
+            return genericParams;
+        }
     }
 
     record TypeAlias(ImList<String,?> name, ImList<TypeDecl,?> genericParams)
     implements TypeDecl
-    {}
+    {
+        @Override
+        public ImList<? extends AstNode, ?> nestedAstNodes() {
+            return genericParams;
+        }
+    }
 
     /////////////////////////////////
 

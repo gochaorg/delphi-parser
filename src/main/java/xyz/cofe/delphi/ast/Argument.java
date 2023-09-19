@@ -20,7 +20,7 @@ public record Argument(
     String name,
     Optional<TypeDecl> typeDecl,
     Optional<Expression> defaultValue
-) {
+) implements AstNode {
     public static enum Constraint {
         Const,
         Var,

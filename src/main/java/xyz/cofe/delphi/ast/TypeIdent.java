@@ -10,8 +10,13 @@ import java.util.Objects;
 public record TypeIdent(
     ImList<String,?> name,
     ImList<Generic.Param,?> params
-) implements TypeDecl
+) implements TypeDecl, AstNode
 {
+    @Override
+    public ImList<? extends AstNode, ?> nestedAstNodes() {
+        return params;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
