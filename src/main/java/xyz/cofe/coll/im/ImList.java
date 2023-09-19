@@ -60,4 +60,8 @@ extends
         if( predicate==null ) throw new IllegalArgumentException("predicate==null");
         return filter(predicate).head();
     }
+
+    default SELF reverse(){
+        return foldLeft(empty(), Prepend::prepend);
+    }
 }
