@@ -20,7 +20,13 @@ public record Argument(
     String name,
     Optional<TypeDecl> typeDecl,
     Optional<Expression> defaultValue
-) implements AstNode {
+) implements AstNode, AstUpdate<Argument>
+{
+    @Override
+    public Argument astUpdate(AstUpdate.UpdateContext updateCtx) {
+        return this;
+    }
+
     public static enum Constraint {
         Const,
         Var,

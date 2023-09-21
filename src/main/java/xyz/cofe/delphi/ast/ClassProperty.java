@@ -11,6 +11,9 @@ import static xyz.cofe.delphi.impl.Indent.indent;
 
 
 public sealed interface ClassProperty extends InterfaceItem, ClassItem, AstNode {
+    @Override
+    ClassProperty astUpdate(AstUpdate.UpdateContext ctx);
+
     record Property(
         String name,
         ImList<Argument, ?> propertyArray,
@@ -18,9 +21,20 @@ public sealed interface ClassProperty extends InterfaceItem, ClassItem, AstNode 
         Optional<Expression> index,
         ImList<Specifier,?> specifiers,
         boolean classFlag,
-        SourcePosition position
-        ) implements ClassProperty, SrcPos
+        SourcePosition position,
+        ImList<Comment,?> comments
+        ) implements ClassProperty, SrcPos, Commented<ClassProperty>
     {
+        @Override
+        public Property astUpdate(AstUpdate.UpdateContext ctx) {
+            return this;
+        }
+
+        @Override
+        public ClassProperty withComments(ImList<Comment, ?> comments) {
+            return this;
+        }
+
         @Override
         public ImList<? extends AstNode, ?> nestedAstNodes() {
             return upcast(propertyArray).append(upcast(type)).append(upcast(index)).append(upcast(specifiers));
@@ -34,7 +48,8 @@ public sealed interface ClassProperty extends InterfaceItem, ClassItem, AstNode 
                 index,
                 specifiers,
                 value,
-                position
+                position,
+                ImListLinked.of()
             );
         }
 
@@ -86,12 +101,16 @@ public sealed interface ClassProperty extends InterfaceItem, ClassItem, AstNode 
                 exp,
                 spec,
                 classFlag,
-                SourcePosition.of(ctx)
+                SourcePosition.of(ctx),
+                ImListLinked.of()
             );
         }
     }
 
     sealed interface Specifier extends AstNode {
+        @Override
+        Specifier astUpdate(AstUpdate.UpdateContext ctx);
+
         static Specifier of(DelphiParser.ClassPropertyEndSpecifierContext ctx){
             if( ctx.STORED()!=null
                 && ctx.STORED().getText()!=null
@@ -229,6 +248,11 @@ public sealed interface ClassProperty extends InterfaceItem, ClassItem, AstNode 
         Optional<Expression> expression
     ) implements Specifier {
         @Override
+        public Read astUpdate(AstUpdate.UpdateContext ctx) {
+            return this;
+        }
+
+        @Override
         public ImList<? extends AstNode, ?> nestedAstNodes() {
             return upcast(expression);
         }
@@ -238,13 +262,32 @@ public sealed interface ClassProperty extends InterfaceItem, ClassItem, AstNode 
         Optional<Expression> expression
     ) implements Specifier {
         @Override
+        public Write astUpdate(AstUpdate.UpdateContext ctx) {
+            return this;
+        }
+        @Override
         public ImList<? extends AstNode, ?> nestedAstNodes() {
             return upcast(expression);
         }
     }
-    record ReadOnly() implements Specifier {}
-    record WriteOnly() implements Specifier {}
+    record ReadOnly() implements Specifier {
+        @Override
+        public ReadOnly astUpdate(AstUpdate.UpdateContext ctx) {
+            return this;
+        }
+    }
+    record WriteOnly() implements Specifier {
+        @Override
+        public WriteOnly astUpdate(AstUpdate.UpdateContext ctx) {
+            return this;
+        }
+    }
     record DispID(Expression expression) implements Specifier {
+        @Override
+        public DispID astUpdate(AstUpdate.UpdateContext ctx) {
+            return this;
+        }
+
         @Override
         public ImList<? extends AstNode, ?> nestedAstNodes() {
             return upcast(expression);
@@ -252,17 +295,42 @@ public sealed interface ClassProperty extends InterfaceItem, ClassItem, AstNode 
     }
     record Stored(Expression expression) implements Specifier {
         @Override
+        public Stored astUpdate(AstUpdate.UpdateContext ctx) {
+            return this;
+        }
+
+        @Override
         public ImList<? extends AstNode, ?> nestedAstNodes() {
             return upcast(expression);
         }
     }
     record DefaultExp(Expression expression) implements Specifier {
         @Override
+        public DefaultExp astUpdate(AstUpdate.UpdateContext ctx) {
+            return this;
+        }
+
+        @Override
         public ImList<? extends AstNode, ?> nestedAstNodes() {
             return upcast(expression);
         }
     }
-    record Default() implements Specifier {}
-    record NoDefault() implements Specifier {}
-    record Implements(ImList<String,?> typeId) implements Specifier {}
+    record Default() implements Specifier {
+        @Override
+        public Default astUpdate(AstUpdate.UpdateContext ctx) {
+            return this;
+        }
+    }
+    record NoDefault() implements Specifier {
+        @Override
+        public NoDefault astUpdate(AstUpdate.UpdateContext ctx) {
+            return this;
+        }
+    }
+    record Implements(ImList<String,?> typeId) implements Specifier {
+        @Override
+        public Implements astUpdate(AstUpdate.UpdateContext ctx) {
+            return this;
+        }
+    }
 }

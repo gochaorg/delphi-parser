@@ -78,7 +78,7 @@ public class PascalFileParseTest {
         assertTrue( getFn.arguments().size()==1 );
         assertTrue( getFn.arguments().get(0).get().name().equalsIgnoreCase("name") );
         assertTrue( getFn.arguments().get(0).get().typeDecl().get().equals(
-            new TypeDecl.StringType.StrIng(Optional.empty())
+            new TypeDecl.StringType.StrIng(Optional.empty(), SourcePosition.non(), ImListLinked.of())
         ));
         assertTrue( getFn.result().equals( new TypeDecl.Variant() ) );
 

@@ -31,4 +31,9 @@ public enum Visibility implements ClassItem {
             throw AstParseError.unExpected(ctx);
         }
     }
+
+    @Override
+    public Visibility astUpdate(AstUpdate.UpdateContext ctx) {
+        return this;
+    }
 }

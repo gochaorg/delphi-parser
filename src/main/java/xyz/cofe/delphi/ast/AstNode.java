@@ -9,6 +9,12 @@ import java.util.Optional;
 
 public interface AstNode
 {
+    interface UpdateContext {}
+
+    default Object astUpdate(AstUpdate.UpdateContext ctx) {
+        return this;
+    }
+
     @SuppressWarnings({"rawtypes", "unchecked"})
     public static ImList<AstNode,?> upcast(ImList<? extends AstNode,?> itms ) {
         if( itms==null ) throw new IllegalArgumentException("itms==null");

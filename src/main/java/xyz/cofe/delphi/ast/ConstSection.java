@@ -18,6 +18,11 @@ public sealed interface ConstSection extends InterfaceDecl, AstNode {
      */
     record Constants(ImList<Const,?> constants, ConstKey key) implements ConstSection, ClassItem, AstNode {
         @Override
+        public Constants astUpdate(AstUpdate.UpdateContext ctx) {
+            return this;
+        }
+
+        @Override
         public ImList<? extends AstNode, ?> nestedAstNodes() {
             return upcast(constants).append(upcast(key));
         }
@@ -49,6 +54,11 @@ public sealed interface ConstSection extends InterfaceDecl, AstNode {
 
     record Const(String name, Optional<TypeDecl> type, ConstExpression expression ) implements AstNode {
         @Override
+        public Const astUpdate(AstUpdate.UpdateContext ctx) {
+            return this;
+        }
+
+        @Override
         public ImList<? extends AstNode, ?> nestedAstNodes() {
             return upcast(type).append(expression);
         }
@@ -64,7 +74,12 @@ public sealed interface ConstSection extends InterfaceDecl, AstNode {
         }
     }
     sealed interface ConstExpression extends AstNode {
-        static ConstExpression of( DelphiParser.ConstExpressionContext ctx ) {
+        @Override
+        default ConstExpression astUpdate(AstUpdate.UpdateContext ctx) {
+            return this;
+        }
+
+        static ConstExpression of(DelphiParser.ConstExpressionContext ctx ) {
             if( ctx.recordConstExpression()!=null && !ctx.recordConstExpression().isEmpty() ){
                 return new SeqNamed(
                     ImListLinked.of(ctx.recordConstExpression())

@@ -18,6 +18,11 @@ public record ProcDecl(
     ImList<Argument,?> arguments,
     Optional<TypeDecl> result
 ) implements InterfaceDecl, AstNode {
+    @Override
+    public ProcDecl astUpdate(AstUpdate.UpdateContext ctx) {
+        return this;
+    }
+
     static ProcDecl of(DelphiParser.ProcDeclHeadingContext prc) {
         var params = ImListLinked.<Argument>of();
         var formal_params =

@@ -20,8 +20,14 @@ public sealed interface PascalFile extends AstNode {
     record Unit(
         ImList<String,?> name,
         UnitInterface api,
+        SourcePosition position,
         ImList<Comment,?> comments
-    ) implements PascalFile {
+    ) implements PascalFile, AstUpdate, Commented<Unit> {
+        @Override
+        public Unit withComments(ImList<Comment, ?> comments) {
+            return new Unit(name,api,position,comments);
+        }
+
         @Override
         public String toString() {
             return "unit "+name+"\n"+
@@ -34,6 +40,13 @@ public sealed interface PascalFile extends AstNode {
             return ImListLinked.of(api);
         }
 
+        @Override
+        public Unit astUpdate(AstUpdate.UpdateContext updateCtx) {
+            var api = this.api.astUpdate(updateCtx);
+            if( api==this.api )return this;
+
+            return new Unit(name, api, position, comments);
+        }
     }
 
     record UnitInterface(
@@ -41,6 +54,34 @@ public sealed interface PascalFile extends AstNode {
         ImList<InterfaceDecl,?> declarations
     ) implements AstNode
     {
+        @Override
+        public UnitInterface astUpdate(AstUpdate.UpdateContext ctx) {
+            var changedNs = new boolean[]{ false };
+            var ns = uses.foldRight(ImListLinked.<Namespace>of(), (acc,it) -> {
+                var it1 = it.astUpdate(ctx);
+                //noinspection ConstantConditions
+                if(it!=it1){
+                    changedNs[0] = true;
+                }
+                return acc.prepend(it1);
+            });
+
+            var changedDecl = new boolean[]{ false };
+            var decl = declarations.foldRight(ImListLinked.<InterfaceDecl>of(), (acc,it) -> {
+                var it1 = it.astUpdate(ctx);
+                if(it!=it1){
+                    changedDecl[0] = true;
+                }
+                return acc.prepend(it1);
+            });
+
+            if( changedDecl[0] && changedNs[0] )return new UnitInterface(ns, decl);
+            if( changedNs[0] )return new UnitInterface(ns, declarations);
+            if( changedDecl[0] )return new UnitInterface(uses, decl);
+
+            return this;
+        }
+
         @Override
         public ImList<? extends AstNode, ?> nestedAstNodes() {
             return upcast(uses).append(upcast(declarations));
@@ -76,6 +117,10 @@ public sealed interface PascalFile extends AstNode {
     record Package() implements PascalFile {}
 
     static PascalFile parse( String source, String sourceName ) throws AstParseError {
+        return parse(source,sourceName,false);
+    }
+
+    static PascalFile parse( String source, String sourceName, boolean injectComments ) throws AstParseError {
         if( source==null )throw new IllegalArgumentException("source==null");
         if( sourceName==null ) throw new IllegalArgumentException("sourceName==null");
 
@@ -107,11 +152,19 @@ public sealed interface PascalFile extends AstNode {
                 unt.unitHead().namespaceName().ident().stream()
                     .map(RuleContext::getText)
                     .collect(Collectors.toList()));
-            return new Unit(
+
+            var unit = new Unit(
                 id,
                 UnitInterface.of(unt.unitInterface()),
+                SourcePosition.of(unt),
                 comments
             );
+
+            if( injectComments ){
+                unit = new CommentInjector().inject(unit);
+            }
+
+            return unit;
         }
 
         var pkg = file.packageE();

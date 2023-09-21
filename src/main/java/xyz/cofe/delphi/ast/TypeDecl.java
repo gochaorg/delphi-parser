@@ -5,6 +5,7 @@ import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.delphi.parser.DelphiParser;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import static xyz.cofe.delphi.ast.AstNode.upcast;
@@ -17,6 +18,9 @@ public sealed interface TypeDecl
     extends AstNode
     permits TypeDecl.Array, TypeDecl.Interface, TypeDecl.MetaClass, TypeDecl.NewTypeId, TypeDecl.Simple, TypeDecl.StringType, TypeDecl.Structured, TypeDecl.TypeAlias, TypeDecl.Variant, TypeIdent
 {
+    @Override
+    TypeDecl astUpdate(AstUpdate.UpdateContext ctx);
+
     static TypeDecl of(DelphiParser.TypeDeclContext ctx) {
         if( ctx.strucType()!=null
         &&  !ctx.strucType().isEmpty()
@@ -62,7 +66,9 @@ public sealed interface TypeDecl
             if( typeFlag ){
                 return new NewTypeId(
                     name,
-                    genericValues
+                    genericValues,
+                    SourcePosition.of(ctx),
+                    ImListLinked.of()
                 );
             }else {
                 if( genericValues.size()==0 ){
@@ -74,7 +80,9 @@ public sealed interface TypeDecl
 
                 return new TypeAlias(
                     name,
-                    genericValues
+                    genericValues,
+                    SourcePosition.of(ctx),
+                    ImListLinked.of()
                 );
             }
         }
@@ -93,13 +101,21 @@ public sealed interface TypeDecl
     /**
      * Вариант
      */
-    record Variant() implements TypeDecl {}
+    record Variant() implements TypeDecl {
+        @Override
+        public Variant astUpdate(AstUpdate.UpdateContext ctx) {
+            return this;
+        }
+    }
 
     /**
      * Структурный тип
      */
     sealed interface Structured extends TypeDecl {
-        static Structured of( DelphiParser.StrucTypeContext ctx ){
+        @Override
+        Structured astUpdate(AstUpdate.UpdateContext ctx);
+
+        static Structured of(DelphiParser.StrucTypeContext ctx ){
             if( ctx.strucTypePart()!=null
             &&  !ctx.strucTypePart().isEmpty()
             ) return of(ctx.strucTypePart());
@@ -141,15 +157,32 @@ public sealed interface TypeDecl
         boolean packed
     ) implements Structured, TypeDecl {
         @Override
+        public Array astUpdate(AstUpdate.UpdateContext updateCtx) {
+            return this;
+        }
+
+        @Override
         public ImList<? extends AstNode, ?> nestedAstNodes() {
             return upcast(indexes).append(subType);
         }
     }
 
-    sealed interface ArrayIndex extends AstNode {}
+    sealed interface ArrayIndex extends AstNode {
+        @Override
+        ArrayIndex astUpdate(AstUpdate.UpdateContext ctx);
+    }
     record ArrayIndexType(ImList<String,?> typeId) implements ArrayIndex {
+        @Override
+        public ArrayIndexType astUpdate(AstUpdate.UpdateContext ctx) {
+            return this;
+        }
     }
     record ArrayIndexRange(Expression from, Expression to) implements ArrayIndex {
+        @Override
+        public ArrayIndexRange astUpdate(AstUpdate.UpdateContext ctx) {
+            return this;
+        }
+
         @Override
         public ImList<? extends AstNode, ?> nestedAstNodes() {
             return ImListLinked.of(from, to);
@@ -157,8 +190,22 @@ public sealed interface TypeDecl
     }
 
     sealed interface ArraySubType extends AstNode {
-        record Const() implements ArraySubType {}
+        @Override
+        ArraySubType astUpdate(AstUpdate.UpdateContext ctx);
+
+        record Const() implements ArraySubType {
+            @Override
+            public Const astUpdate(AstUpdate.UpdateContext ctx) {
+                return this;
+            }
+        }
+
         record TypeRef( TypeDecl decl ) implements ArraySubType {
+            @Override
+            public TypeRef astUpdate(AstUpdate.UpdateContext ctx) {
+                return this;
+            }
+
             @Override
             public ImList<? extends AstNode, ?> nestedAstNodes() {
                 return ImListLinked.of(decl);
@@ -168,7 +215,12 @@ public sealed interface TypeDecl
 
     // ................
 
-    record MetaClass(ImList<String,?> typeId) implements TypeDecl, Structured {}
+    record MetaClass(ImList<String,?> typeId) implements TypeDecl, Structured {
+        @Override
+        public MetaClass astUpdate(AstUpdate.UpdateContext ctx) {
+            return this;
+        }
+    }
 
     // ................
 
@@ -183,8 +235,30 @@ public sealed interface TypeDecl
         Optional<ClassState> state,
         ImList<TypeIdent,?> parents,
         ImList<ClassItem,?> body,
-        SourcePosition position
-    ) implements Structured, SrcPos {
+        SourcePosition position,
+        ImList<Comment,?> comments
+    ) implements Structured, SrcPos, Commented<Clazz> {
+        @Override
+        public Clazz astUpdate(AstUpdate.UpdateContext ctx) {
+            if( ctx==null ) throw new IllegalArgumentException("ctx==null");
+
+            var parents = ctx.update(this.parents);
+            //noinspection unchecked
+            var body = ctx.update(this.body);
+
+            var res = this;
+            if( ctx instanceof AstUpdate.CommentingContext cc ) res = cc.commenting(res);
+
+            if( parents.isEmpty() && body.isEmpty() && res.comments==this.comments )return this;
+
+            return new Clazz(state, parents.orElse(this.parents), body.orElse(this.body), position, res.comments);
+        }
+
+        @Override
+        public Clazz withComments(ImList<Comment, ?> comments) {
+            return new Clazz(state,parents,body,position,comments);
+        }
+
         @Override
         public ImList<? extends AstNode, ?> nestedAstNodes() {
             return upcast(parents).append(upcast(body));
@@ -237,7 +311,7 @@ public sealed interface TypeDecl
                     ImListLinked.of();
 
             // todo methods?
-            return new Clazz(state, parents, body, SourcePosition.of(ctx));
+            return new Clazz(state, parents, body, SourcePosition.of(ctx), ImListLinked.of());
         }
     }
 
@@ -264,8 +338,39 @@ public sealed interface TypeDecl
         InterfaceType itfType,
         Optional<String> guid,
         ImList<InterfaceItem,?> body,
-        SourcePosition position
-    ) implements Structured, TypeDecl, SrcPos {
+        SourcePosition position,
+        ImList<Comment,?> comments
+    ) implements Structured, TypeDecl, SrcPos, Commented<Interface> {
+        @Override
+        public Interface astUpdate(AstUpdate.UpdateContext ctx) {
+            var parents = ctx.update(this.parents);
+            var body = ctx.update(this.body);
+
+            var res = this;
+            if( ctx instanceof AstUpdate.CommentingContext cc ){
+                res = cc.commenting(res);
+            }
+
+            if( parents.isEmpty()
+            && body.isEmpty()
+            && res.comments==this.comments
+            ) return this;
+
+            return new Interface(
+                parents.orElse(this.parents),
+                itfType,
+                guid,
+                body.orElse(this.body),
+                position,
+                res.comments
+            );
+        }
+
+        @Override
+        public Interface withComments(ImList<Comment, ?> comments) {
+            return this;
+        }
+
         @Override
         public ImList<? extends AstNode, ?> nestedAstNodes() {
             return upcast(parents).append(upcast(body));
@@ -292,7 +397,8 @@ public sealed interface TypeDecl
                 itype,
                 guid,
                 ImListLinked.of(ctx.interfaceItem()).map(InterfaceItem::of),
-                SourcePosition.of(ctx)
+                SourcePosition.of(ctx),
+                ImListLinked.of()
             );
         }
 
@@ -332,7 +438,12 @@ public sealed interface TypeDecl
      * Некий простой тип
      * @param name имя типа
      */
-    record Simple(String name) implements TypeDecl {}
+    record Simple(String name) implements TypeDecl {
+        @Override
+        public TypeDecl astUpdate(AstUpdate.UpdateContext ctx) {
+            return this;
+        }
+    }
 
     ////////////////////////////////
 
@@ -373,17 +484,39 @@ public sealed interface TypeDecl
      */
     record NewTypeId(
         ImList<String,?> name,
-        ImList<TypeDecl,?> genericParams
-    ) implements TypeDecl {
+        ImList<TypeDecl,?> genericParams,
+        SourcePosition position,
+        ImList<Comment,?> comments
+    ) implements TypeDecl, SrcPos, Commented<NewTypeId> {
+        @Override
+        public NewTypeId astUpdate(AstUpdate.UpdateContext ctx) {
+            return this;
+        }
+
+        @Override
+        public NewTypeId withComments(ImList<Comment, ?> comments) {
+            return this;
+        }
+
         @Override
         public ImList<? extends AstNode, ?> nestedAstNodes() {
             return genericParams;
         }
     }
 
-    record TypeAlias(ImList<String,?> name, ImList<TypeDecl,?> genericParams)
-    implements TypeDecl
+    record TypeAlias( ImList<String,?> name, ImList<TypeDecl,?> genericParams, SourcePosition position, ImList<Comment,?> comments )
+    implements TypeDecl, SrcPos, Commented<TypeAlias>
     {
+        @Override
+        public TypeAlias astUpdate(AstUpdate.UpdateContext ctx) {
+            return this;
+        }
+
+        @Override
+        public TypeAlias withComments(ImList<Comment, ?> comments) {
+            return this;
+        }
+
         @Override
         public ImList<? extends AstNode, ?> nestedAstNodes() {
             return genericParams;
@@ -395,19 +528,54 @@ public sealed interface TypeDecl
     /**
      * Текстовый тип
      */
-    sealed interface StringType extends TypeDecl {
-        record StrIng(Optional<Expression> expression) implements StringType {}
-        record AnsiString( Optional<String> codePageNum, boolean typeFlag ) implements StringType {}
+    sealed interface StringType extends TypeDecl, SrcPos {
+        record StrIng( Optional<Expression> expression, SourcePosition position, ImList<Comment,?> comments ) implements StringType, Commented<StrIng> {
+            @Override
+            public StrIng astUpdate(AstUpdate.UpdateContext ctx) {
+                return this;
+            }
+
+            @Override
+            public StrIng withComments(ImList<Comment, ?> comments) {
+                return new StrIng(expression,position,comments);
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o) return true;
+                if (o == null || getClass() != o.getClass()) return false;
+                StrIng strIng = (StrIng) o;
+                return Objects.equals(expression, strIng.expression);
+            }
+
+            @Override
+            public int hashCode() {
+                return Objects.hash(expression);
+            }
+        }
+        record AnsiString( Optional<String> codePageNum, boolean typeFlag, SourcePosition position, ImList<Comment,?> comments ) implements StringType, Commented<AnsiString> {
+            @Override
+            public AnsiString astUpdate(AstUpdate.UpdateContext ctx) {
+                return this;
+            }
+
+            @Override
+            public AnsiString withComments(ImList<Comment, ?> comments) {
+                return new AnsiString(codePageNum,typeFlag,position,comments);
+            }
+        }
 
         static StringType of(DelphiParser.StringTypeContext ctx){
             if( ctx.STRING()!=null && ctx.STRING().getText()!=null ){
                 if( ctx.expression()!=null && !ctx.expression().isEmpty() ){
                     return new StrIng(
-                        Optional.of(Expression.of(ctx.expression()))
+                        Optional.of(Expression.of(ctx.expression())),
+                        SourcePosition.of(ctx),
+                        ImListLinked.of()
                     );
                 }
 
-                return new StrIng(Optional.empty());
+                return new StrIng(Optional.empty(), SourcePosition.of(ctx), ImListLinked.of());
             }
 
             if( ctx.ANSISTRING()!=null && ctx.ANSISTRING().getText()!=null ){
@@ -418,7 +586,7 @@ public sealed interface TypeDecl
                     ctx.codePageNumber().intNum().getText()!=null ?
                         Optional.of(ctx.codePageNumber().intNum().getText()) :
                         Optional.<String>empty();
-                return new AnsiString(codePage, typeFlag);
+                return new AnsiString(codePage, typeFlag, SourcePosition.of(ctx), ImListLinked.of());
             }
 
             throw AstParseError.unExpected(ctx);

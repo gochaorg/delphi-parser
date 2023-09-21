@@ -6,9 +6,12 @@ import static xyz.cofe.delphi.impl.Indent.indent;
 
 
 public sealed interface InterfaceItem
-extends AstNode
+extends AstNode, AstUpdate
 permits ClassProperty, ClassMethod
 {
+    @Override
+    InterfaceItem astUpdate(AstUpdate.UpdateContext ctx);
+
     static InterfaceItem of(DelphiParser.InterfaceItemContext ctx){
         if( ctx.classMethod()!=null && !ctx.classMethod().isEmpty() ){
             return ClassMethod.of(ctx.classMethod());

@@ -26,6 +26,11 @@ public sealed interface VarSection
         SourcePosition position
     ) implements VarSection, AstNode, SrcPos {
         @Override
+        public Variables astUpdate(AstUpdate.UpdateContext ctx) {
+            return this;
+        }
+
+        @Override
         public ImList<? extends AstNode, ?> nestedAstNodes() {
             return upcast(key).append(upcast(variables));
         }
@@ -64,6 +69,11 @@ public sealed interface VarSection
         SourcePosition position
     ) implements AstNode, SrcPos {
         @Override
+        public VarDeclaration astUpdate(AstUpdate.UpdateContext ctx) {
+            return this;
+        }
+
+        @Override
         public ImList<? extends AstNode, ?> nestedAstNodes() {
             return upcast(type).append(upcast(valueSpec));
         }
@@ -85,6 +95,9 @@ public sealed interface VarSection
     }
 
     sealed interface VarValueSpec extends AstNode {
+        @Override
+        VarValueSpec astUpdate(AstUpdate.UpdateContext ctx);
+
         static VarValueSpec of(DelphiParser.VarValueSpecContext ctx){
             if(ctx.ABSOLUTE()!=null){
                 if(ctx.ident()!=null && ctx.ident().getText()!=null){
@@ -102,14 +115,31 @@ public sealed interface VarSection
         }
     }
 
-    record AbsoluteId(String name) implements VarValueSpec {}
+    record AbsoluteId(String name) implements VarValueSpec {
+        @Override
+        public AbsoluteId astUpdate(AstUpdate.UpdateContext ctx) {
+            return this;
+        }
+    }
+
     record AbsoluteExp(ConstSection.ConstExpression expression) implements VarValueSpec, AstNode {
+        @Override
+        public AbsoluteExp astUpdate(AstUpdate.UpdateContext ctx) {
+            return this;
+        }
+
         @Override
         public ImList<? extends AstNode, ?> nestedAstNodes() {
             return upcast(expression);
         }
     }
+
     record Expr(ConstSection.ConstExpression expression) implements VarValueSpec, AstNode {
+        @Override
+        public Expr astUpdate(AstUpdate.UpdateContext ctx) {
+            return this;
+        }
+
         @Override
         public ImList<? extends AstNode, ?> nestedAstNodes() {
             return upcast(expression);

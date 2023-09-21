@@ -20,6 +20,9 @@ permits
     ExportsSection,
     VarSection
 {
+    @Override
+    InterfaceDecl astUpdate(AstUpdate.UpdateContext ctx);
+
     static InterfaceDecl of(DelphiParser.InterfaceDeclContext itf){
         if( !itf.typeSection().isEmpty() ){
             return

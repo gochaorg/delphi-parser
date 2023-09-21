@@ -13,9 +13,19 @@ import java.util.Optional;
  * @param type тип
  * @param position позиция в исходнике
  */
-public record ClassField(String name, TypeDecl type,SourcePosition position)
-implements ClassItem, AstNode, SrcPos
+public record ClassField(String name, TypeDecl type,SourcePosition position,ImList<Comment,?> comments)
+implements ClassItem, AstNode, SrcPos, Commented<ClassField>
 {
+    @Override
+    public ClassField astUpdate(AstUpdate.UpdateContext ctx) {
+        return this;
+    }
+
+    @Override
+    public ClassField withComments(ImList<Comment, ?> comments) {
+        return this;
+    }
+
     @Override
     public ImList<? extends AstNode, ?> nestedAstNodes() {
         return ImListLinked.of(type);
@@ -36,7 +46,7 @@ implements ClassItem, AstNode, SrcPos
             var type_f = type.get();
             result = ImListLinked.of(ctx.identList().ident())
                 .map(RuleContext::getText)
-                .map(i -> new ClassField(i,type_f,SourcePosition.of(ctx)));
+                .map(i -> new ClassField(i,type_f,SourcePosition.of(ctx),ImListLinked.of()));
         }
         return result;
     }

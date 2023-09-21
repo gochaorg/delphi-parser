@@ -13,6 +13,11 @@ import java.util.stream.Collectors;
  * @param name имя
  */
 public record Namespace(ImList<String,?> name) implements AstNode {
+    @Override
+    public Namespace astUpdate(AstUpdate.UpdateContext ctx) {
+        return this;
+    }
+
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     @Override
     public boolean equals(Object o) {

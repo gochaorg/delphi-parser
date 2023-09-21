@@ -16,6 +16,16 @@ public record TypeDeclaration(
     TypeDecl typeDecl
 ) implements AstNode {
     @Override
+    public TypeDeclaration astUpdate(AstUpdate.UpdateContext ctx) {
+        if( ctx==null ) throw new IllegalArgumentException("ctx==null");
+        var t1= typeIdent.astUpdate(ctx);
+        var t2 = typeDecl.astUpdate(ctx);
+        //noinspection ConstantConditions
+        if( t1==typeIdent && t2==typeDecl )return this;
+        return new TypeDeclaration(t1,t2);
+    }
+
+    @Override
     public ImList<? extends AstNode, ?> nestedAstNodes() {
         return ImListLinked.of(typeIdent, typeDecl);
     }

@@ -10,8 +10,13 @@ import java.util.Objects;
 public record TypeIdent(
     ImList<String,?> name,
     ImList<Generic.Param,?> params
-) implements TypeDecl, AstNode
+) implements TypeDecl, AstUpdate<TypeIdent>
 {
+    @Override
+    public TypeIdent astUpdate(AstUpdate.UpdateContext ctx) {
+        return this;
+    }
+
     @Override
     public ImList<? extends AstNode, ?> nestedAstNodes() {
         return params;

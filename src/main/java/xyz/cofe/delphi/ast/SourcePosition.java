@@ -10,6 +10,10 @@ import java.util.Optional;
  * Позиция в исходном файле
  */
 public sealed interface SourcePosition {
+    static SourcePosition non() {
+        return new FilePoint("!non!", -1, -1);
+    }
+
     Optional<SourcePosition> intersection(SourcePosition other);
 
     boolean before(SourcePosition sourcePosition);
@@ -25,12 +29,16 @@ public sealed interface SourcePosition {
 
         default boolean before(Point p) {
             if (p == null) return false;
-            return lineNumber() < p.lineNumber() || charNumber() < p.charNumber();
+            if (lineNumber() < p.lineNumber()) return true;
+            if( lineNumber() > p.lineNumber() )return false;
+            return charNumber() < p.charNumber();
         }
 
         default boolean after(Point p) {
             if (p == null) return false;
-            return lineNumber() > p.lineNumber() || charNumber() > p.charNumber();
+            if (lineNumber() > p.lineNumber()) return true;
+            if (lineNumber() < p.lineNumber()) return false;
+            return charNumber() > p.charNumber();
         }
     }
 
@@ -62,6 +70,7 @@ public sealed interface SourcePosition {
 
     /**
      * "Точка" в исходном коде, которая не связана с файлом
+     *
      * @param lineNumber номер строки
      * @param charNumber номер символа в строке
      */
@@ -77,6 +86,11 @@ public sealed interface SourcePosition {
             if (!Objects.equals(charNumber, p.charNumber)) return false;
 
             return true;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(lineNumber, charNumber);
         }
 
         public Optional<SourcePosition> intersection(SourcePosition other) {
@@ -101,10 +115,13 @@ public sealed interface SourcePosition {
         public boolean before(SourcePosition sourcePosition) {
             if (sourcePosition == null) return false;
 
-            if(sourcePosition instanceof Point p)
-                return lineNumber() < p.lineNumber() || charNumber() < p.charNumber();
+            if (sourcePosition instanceof Point p) {
+                if( lineNumber() < p.lineNumber() ) return true;
+                if( lineNumber() > p.lineNumber() ) return false;
+                return charNumber() < p.charNumber();
+            }
 
-            if(sourcePosition instanceof Range range) {
+            if (sourcePosition instanceof Range range) {
                 var a_left = range.start();
                 var a_right = range.end();
                 if (a_right.before(a_left)) {
@@ -121,7 +138,8 @@ public sealed interface SourcePosition {
 
     /**
      * "Точка" в исходном коде
-     * @param fileName имя файла
+     *
+     * @param fileName   имя файла
      * @param lineNumber номер строки
      * @param charNumber номер символа в строке
      */
@@ -138,6 +156,11 @@ public sealed interface SourcePosition {
             if (!Objects.equals(charNumber, p.charNumber)) return false;
 
             return true;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(lineNumber, charNumber, fileName);
         }
 
         @Override
@@ -172,13 +195,18 @@ public sealed interface SourcePosition {
 
         public boolean before(SourcePosition sourcePosition) {
             if (sourcePosition == null) return false;
-            if (sourcePosition instanceof FileName fileName && !Objects.equals(fileName.fileName(), fileName))
-                return false;
+            if (sourcePosition instanceof FileName fileName1) {
+                if (!Objects.equals(fileName1.fileName(), this.fileName))
+                    return false;
+            }
 
-            if(sourcePosition instanceof Point p)
-                return lineNumber() < p.lineNumber() || charNumber() < p.charNumber();
+            if (sourcePosition instanceof Point p) {
+                if (lineNumber() < p.lineNumber()) return true;
+                if (lineNumber() > p.lineNumber()) return false;
+                return charNumber() < p.charNumber();
+            }
 
-            if(sourcePosition instanceof Range range) {
+            if (sourcePosition instanceof Range range) {
                 var a_left = range.start();
                 var a_right = range.end();
                 if (a_right.before(a_left)) {
@@ -195,8 +223,9 @@ public sealed interface SourcePosition {
 
     /**
      * "Отрезок" в исходном коде
+     *
      * @param start начало отрезка
-     * @param end конец отрезка включительно
+     * @param end   конец отрезка включительно
      */
     record FileLessRange(FileLessPoint start, FileLessPoint end)
         implements SourcePosition, Range<FileLessPoint> {
@@ -210,6 +239,11 @@ public sealed interface SourcePosition {
             if (!Objects.equals(end, r.end)) return false;
 
             return true;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(start, end);
         }
 
         @Override
@@ -287,8 +321,9 @@ public sealed interface SourcePosition {
 
     /**
      * "Отрезок" в исходном коде
+     *
      * @param start начало отрезка
-     * @param end конец отрезка включительно
+     * @param end   конец отрезка включительно
      */
     record FileRange(FilePoint start, FilePoint end)
         implements SourcePosition, Range<FilePoint>, FileName {
@@ -307,6 +342,11 @@ public sealed interface SourcePosition {
             if (!Objects.equals(end, r.end)) return false;
 
             return true;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(start, end);
         }
 
         @Override

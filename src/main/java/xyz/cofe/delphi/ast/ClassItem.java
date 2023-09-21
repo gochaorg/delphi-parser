@@ -8,9 +8,12 @@ import xyz.cofe.delphi.parser.DelphiParser;
  * Элемент класса
  */
 public sealed interface ClassItem
-    extends AstNode
+    extends AstNode, AstUpdate
     permits ClassField, ClassItem.ClassVarSection, ClassMethod, ClassProperty, ConstSection.Constants, TypeSection, Visibility
 {
+    @Override
+    ClassItem astUpdate(AstUpdate.UpdateContext ctx);
+
     /**
      * Секция переменных
      * @param classFlag некий флаг 'class' - хз зачкем, наверно static // TODO выяснить
@@ -18,6 +21,11 @@ public sealed interface ClassItem
      */
     record ClassVarSection(boolean classFlag, VarSection.Variables variables)
     implements ClassItem {
+        @Override
+        public ClassVarSection astUpdate(AstUpdate.UpdateContext ctx) {
+            return this;
+        }
+
         @Override
         public ImList<? extends AstNode, ?> nestedAstNodes() {
             return ImListLinked.of(variables);
