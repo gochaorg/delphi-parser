@@ -6,6 +6,10 @@ package xyz.cofe.coll.im;
  * @param <A> элемент списка/коллекции
  */
 public interface Tail<SELF extends Append<SELF,A>,A> extends PositionalRead<A>, Emptable<SELF> {
+    /**
+     * Возвращение списка без первого элемента
+     * @return хвост списка - список без первого элемента
+     */
     default SELF tail() {
         return foldLeft(Tuple2.of(empty(),0), (acc,it) -> {
             var cur = acc._1();

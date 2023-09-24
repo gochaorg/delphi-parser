@@ -174,7 +174,7 @@ fileType                     : 'file' ('of' typeDecl)?
 pointerType                  : '^' typeDecl
                              | 'pointer'
                              ;
-stringType                   : 'string' ('[' expression ']')? 
+stringType                   : 'string' ('[' expression ']')?
                              | ('type')? ANSISTRING (codePageNumber)?
                              ;
 codePageNumber               : '(' intNum ')'

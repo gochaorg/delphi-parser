@@ -63,6 +63,10 @@ public interface PositionalRead<A>
         return (B)acc[0];
     }
 
+    /**
+     * Возвращает мутабельный список
+     * @return мутабельный список
+     */
     default List<A> toList(){
         var lst = new ArrayList<A>();
         forEach(lst::add);

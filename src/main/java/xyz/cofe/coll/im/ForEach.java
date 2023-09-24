@@ -7,5 +7,9 @@ import java.util.function.Consumer;
  * @param <A> элемент списка/коллекции
  */
 public interface ForEach<A> {
+    /**
+     * Обход списка
+     * @param consumer функция принимающая элемент
+     */
     void forEach(Consumer<A> consumer);
 }
