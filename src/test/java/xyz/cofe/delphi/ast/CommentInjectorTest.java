@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import xyz.cofe.coll.im.ImListLinked;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static xyz.cofe.delphi.ast.PascalFileParseTest.textResource;
+import static xyz.cofe.delphi.TextResource.textResource;
 import static xyz.cofe.delphi.impl.Indent.indent;
 
 public class CommentInjectorTest {

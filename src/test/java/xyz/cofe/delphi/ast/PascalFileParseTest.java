@@ -9,17 +9,9 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static xyz.cofe.delphi.TextResource.textResource;
 
 public class PascalFileParseTest {
-    public static String textResource(String name){
-        var url = PascalFileParseTest.class.getResource(name);
-        try( var strm = url.openStream() ) {
-            var source = new String( strm.readAllBytes(), Charset.forName("windows-1251") );
-            return source;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     @Test
     public void try_parse(){
