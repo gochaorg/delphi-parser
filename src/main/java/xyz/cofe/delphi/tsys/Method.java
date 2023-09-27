@@ -10,7 +10,9 @@ public record Method(
     ImList<Param,?> params,
     Optional<Type> returns,
     ImList<MethodDirective,?> directives,
-    Visibility visibility
+    Visibility visibility,
+    Optional<SourcePosition> declaration,
+    Optional<SourcePosition> implementation
 ) {
     public static record Param(
         String name,
