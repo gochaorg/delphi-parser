@@ -46,7 +46,7 @@ public interface Type {
     /**
      * Специальные типы для описания типов
      */
-    public sealed interface SpecialType {}
+    public sealed interface SpecialType extends Type {}
 
     /**
      * Тип используемый в интерфейсах/класса, указывает на сам класс
@@ -54,6 +54,14 @@ public interface Type {
     public static final class THIS implements SpecialType {
         public static final THIS instance = new THIS();
         private THIS(){}
+    }
+
+    /**
+     * Тип для указания в качестве знаяения по умолчанию для не инициализированного значения
+     */
+    public static final class NotAssigned implements SpecialType {
+        public static final NotAssigned instance = new NotAssigned();
+        private NotAssigned() {}
     }
 
     // TODO добавить Unresolved Type implements SpecialType

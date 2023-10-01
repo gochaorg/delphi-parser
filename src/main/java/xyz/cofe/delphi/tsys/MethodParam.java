@@ -1,0 +1,76 @@
+package xyz.cofe.delphi.tsys;
+
+import java.util.Optional;
+
+/**
+ * Параметр
+ */
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+public class MethodParam implements Freeze {
+    //region freeze
+    private volatile boolean frozen;
+
+    public boolean isFrozen() {
+        return frozen;
+    }
+
+    public void freeze(){
+        if( type instanceof Freeze f )f.freeze();
+        this.frozen = true;
+    }
+    //endregion
+
+    //region name : String - имя параметра
+    private String name = "?";
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        if( name==null ) throw new IllegalArgumentException("name==null");
+        if( frozen )throw new TypeSysError.Frozen();
+        this.name = name;
+    }
+    //endregion
+    //region type : Type - тип
+    private Type type = Type.NotAssigned.instance;
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        if( type==null ) throw new IllegalArgumentException("type==null");
+        if( frozen )throw new TypeSysError.Frozen();
+        this.type = type;
+    }
+    //endregion
+    //region expression : Optional<String> - значение по умолчанию
+    private Optional<String> expression = Optional.empty();
+
+    public Optional<String> getExpression() {
+        return expression;
+    }
+
+    @SuppressWarnings("OptionalAssignedToNull")
+    public void setExpression(Optional<String> expression) {
+        if( expression==null ) throw new IllegalArgumentException("expression==null");
+        if( frozen )throw new TypeSysError.Frozen();
+        this.expression = expression;
+    }
+    //endregion
+    //region direction : ParamDirection - направление
+    private ParamDirection direction = ParamDirection.Input;
+
+    public ParamDirection getDirection() {
+        return direction;
+    }
+
+    public void setDirection(ParamDirection direction) {
+        if( direction==null ) throw new IllegalArgumentException("direction==null");
+        if( frozen )throw new TypeSysError.Frozen();
+        this.direction = direction;
+    }
+    //endregion
+}

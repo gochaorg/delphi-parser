@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.delphi.ast.*;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static xyz.cofe.delphi.TextResource.textResource;
 
 public class InterfaceTypeCompileTest {
@@ -33,6 +34,8 @@ public class InterfaceTypeCompileTest {
         );
 
         var countFn = funs.find(c -> c.name().equalsIgnoreCase("count")).get();
+        assertTrue( countFn.result().equals( TypeIdent.of("Integer") ) );
+        
         var getFn = funs.find(c -> c.name().equalsIgnoreCase("get")).get();
         var existsFn = funs.find(c -> c.name().equalsIgnoreCase("exists")).get();
         var keyFn = funs.find(c -> c.name().equalsIgnoreCase("key")).get();
