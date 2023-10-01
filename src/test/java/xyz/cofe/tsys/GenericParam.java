@@ -1,6 +1,5 @@
 package xyz.cofe.tsys;
 
-import com.google.common.collect.ImmutableSet;
 import xyz.cofe.coll.im.ImList;
 
 /**

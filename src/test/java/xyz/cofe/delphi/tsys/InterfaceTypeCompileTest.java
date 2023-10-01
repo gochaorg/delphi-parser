@@ -42,5 +42,8 @@ public class InterfaceTypeCompileTest {
         var putFn = funs.find(c -> c.name().equalsIgnoreCase("put")).get();
         var deleteFn = funs.find(c -> c.name().equalsIgnoreCase("delete")).get();
         var toStringFn = funs.find(c -> c.name().equalsIgnoreCase("toString")).get();
+
+        var ts = new TypeScope();
+        ts.add(sampleUnit);
     }
 }

@@ -2,12 +2,13 @@ package xyz.cofe.delphi.tsys;
 
 import xyz.cofe.delphi.tsys.impl.SimpleTypeImpl;
 
+import java.util.Map;
 import java.util.Optional;
 
 /**
  * Простые типы, ну типа простые
  */
-public sealed interface SimpleType permits BoolType, CharType, EnumType, FloatNumberType, IntegerNumberType, RangeType, StringType, Variant {
+public sealed interface SimpleType extends Type permits BoolType, CharType, EnumType, FloatNumberType, IntegerNumberType, RangeType, StringType, Variant {
     /**
      * Поиск типа по его имени среди предопределенных
      * @param name имя типа
@@ -21,4 +22,10 @@ public sealed interface SimpleType permits BoolType, CharType, EnumType, FloatNu
 
         return Optional.empty();
     }
+
+    /**
+     * Возвращает простые типы и их наименование
+     * @return карта типов
+     */
+    public static Map<TypeName,SimpleType> typeMap(){ return SimpleTypeImpl.typeMap; }
 }

@@ -33,7 +33,7 @@ public sealed interface IntegerNumberType extends NamesOfType, SimpleType {
 
     public static final class ShortIntType implements IntegerNumberType {
         private ShortIntType() {}
-        private static final TypeName[] names = new TypeName[]{ new TypeName("ShortInt"), new TypeName("Int8") };
+        private static final TypeName[] names = new TypeName[]{ TypeName.of("ShortInt"), TypeName.of("Int8") };
         @Override
         public TypeName[] names() {
             return names;
@@ -42,7 +42,7 @@ public sealed interface IntegerNumberType extends NamesOfType, SimpleType {
 
     public static final class SmallIntType implements IntegerNumberType {
         private SmallIntType() {}
-        private static final TypeName[] names = new TypeName[]{ new TypeName("SmallInt"), new TypeName("Int16") };
+        private static final TypeName[] names = new TypeName[]{ TypeName.of("SmallInt"), TypeName.of("Int16") };
         @Override
         public TypeName[] names() {
             return names;
@@ -59,7 +59,7 @@ public sealed interface IntegerNumberType extends NamesOfType, SimpleType {
      */
     public static final class FixedIntType implements IntegerNumberType {
         private FixedIntType() {}
-        private static final TypeName[] names = new TypeName[]{ new TypeName("FixedInt"), new TypeName("Int32") };
+        private static final TypeName[] names = new TypeName[]{ TypeName.of("FixedInt"), TypeName.of("Int32") };
         @Override
         public TypeName[] names() {
             return names;
@@ -68,7 +68,7 @@ public sealed interface IntegerNumberType extends NamesOfType, SimpleType {
 
     public final static class IntegerType implements IntegerNumberType {
         private IntegerType() {}
-        private static final TypeName[] names = new TypeName[]{ new TypeName("Integer"), new TypeName("Int32") };
+        private static final TypeName[] names = new TypeName[]{ TypeName.of("Integer"), TypeName.of("Int32") };
         @Override
         public TypeName[] names() {
             return names;
@@ -77,7 +77,7 @@ public sealed interface IntegerNumberType extends NamesOfType, SimpleType {
 
     public final static class Int64Type implements IntegerNumberType {
         private Int64Type() {}
-        private static final TypeName[] names = new TypeName[]{ new TypeName("Int64") };
+        private static final TypeName[] names = new TypeName[]{ TypeName.of("Int64") };
         @Override
         public TypeName[] names() {
             return names;
@@ -86,7 +86,7 @@ public sealed interface IntegerNumberType extends NamesOfType, SimpleType {
 
     public final static class ByteType implements IntegerNumberType {
         private ByteType() {}
-        private static final TypeName[] names = new TypeName[]{ new TypeName("Byte"), new TypeName("UInt8") };
+        private static final TypeName[] names = new TypeName[]{ TypeName.of("Byte"), TypeName.of("UInt8") };
         @Override
         public TypeName[] names() {
             return names;
@@ -95,7 +95,7 @@ public sealed interface IntegerNumberType extends NamesOfType, SimpleType {
 
     public final static class WordType implements IntegerNumberType {
         private WordType() {}
-        private static final TypeName[] names = new TypeName[]{ new TypeName("Word"), new TypeName("UInt16") };
+        private static final TypeName[] names = new TypeName[]{ TypeName.of("Word"), TypeName.of("UInt16") };
         @Override
         public TypeName[] names() {
             return names;
@@ -104,7 +104,7 @@ public sealed interface IntegerNumberType extends NamesOfType, SimpleType {
 
     public final static class FixedUintType implements IntegerNumberType {
         private FixedUintType() {}
-        private static final TypeName[] names = new TypeName[]{ new TypeName("FixedUint"), new TypeName("UInt32") };
+        private static final TypeName[] names = new TypeName[]{ TypeName.of("FixedUint"), TypeName.of("UInt32") };
         @Override
         public TypeName[] names() {
             return names;
@@ -113,7 +113,7 @@ public sealed interface IntegerNumberType extends NamesOfType, SimpleType {
 
     public final static class CardinalType implements IntegerNumberType {
         private CardinalType() {}
-        private static final TypeName[] names = new TypeName[]{ new TypeName("Cardinal"), new TypeName("UInt32") };
+        private static final TypeName[] names = new TypeName[]{ TypeName.of("Cardinal"), TypeName.of("UInt32") };
         @Override
         public TypeName[] names() {
             return names;
@@ -122,7 +122,7 @@ public sealed interface IntegerNumberType extends NamesOfType, SimpleType {
 
     public final static class UInt64Type implements IntegerNumberType {
         private UInt64Type() {}
-        private static final TypeName[] names = new TypeName[]{ new TypeName("UInt64") };
+        private static final TypeName[] names = new TypeName[]{ TypeName.of("UInt64") };
         @Override
         public TypeName[] names() {
             return names;

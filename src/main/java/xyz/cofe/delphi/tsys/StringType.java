@@ -16,7 +16,7 @@ public sealed interface StringType extends SimpleType {
     public static final class ShortStringUnsized implements StringType, ShortString, NamedType, NamedStringType {
         private ShortStringUnsized() {}
 
-        private static TypeName name = new TypeName("ShortString");
+        private static TypeName name = TypeName.of("ShortString");
 
         @Override
         public TypeName name() {
@@ -40,7 +40,7 @@ public sealed interface StringType extends SimpleType {
     public static final class AnsiStringWOCodePage implements StringType, AnsiString, NamedType, NamedStringType {
         private AnsiStringWOCodePage() {}
 
-        private static TypeName name = new TypeName("AnsiString");
+        private static TypeName name = TypeName.of("AnsiString");
 
         @Override
         public TypeName name() {
@@ -64,7 +64,7 @@ public sealed interface StringType extends SimpleType {
     public static final class UnicodeStringUnsized implements StringType, UnicodeString, NamedType, NamedStringType {
         private UnicodeStringUnsized() {}
 
-        private static TypeName name = new TypeName("UnicodeString");
+        private static TypeName name = TypeName.of("UnicodeString");
 
         @Override
         public TypeName name() {
@@ -88,7 +88,7 @@ public sealed interface StringType extends SimpleType {
     public static final class WideStringUnsized implements StringType, WideString, NamedType, NamedStringType {
         private WideStringUnsized() {}
 
-        private static TypeName name = new TypeName("WideString");
+        private static TypeName name = TypeName.of("WideString");
 
         @Override
         public TypeName name() {
@@ -119,7 +119,7 @@ public sealed interface StringType extends SimpleType {
     public static final class StringUnsized implements StringType, STRING, NamedType, NamedStringType {
         private StringUnsized() {}
 
-        private static TypeName name = new TypeName("String");
+        private static TypeName name = TypeName.of("String");
 
         @Override
         public TypeName name() {
@@ -137,7 +137,7 @@ public sealed interface StringType extends SimpleType {
         private PChar() {
         }
 
-        private static TypeName name = new TypeName("PChar");
+        private static TypeName name = TypeName.of("PChar");
 
         @Override
         public TypeName name() {
@@ -150,7 +150,7 @@ public sealed interface StringType extends SimpleType {
         private PWideChar() {
         }
 
-        private static TypeName name = new TypeName("PWideChar");
+        private static TypeName name = TypeName.of("PWideChar");
 
         @Override
         public TypeName name() {

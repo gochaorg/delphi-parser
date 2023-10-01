@@ -10,11 +10,13 @@ import static xyz.cofe.delphi.impl.Indent.indent;
  * Объявление типа
  * @param typeIdent идентификатор типа
  * @param typeDecl описание типа
+ * @param position позиция в исходнике
  */
 public record TypeDeclaration(
     TypeIdent typeIdent,
-    TypeDecl typeDecl
-) implements AstNode {
+    TypeDecl typeDecl,
+    SourcePosition position
+) implements AstNode, SrcPos {
     @Override
     public TypeDeclaration astUpdate(AstUpdate.UpdateContext ctx) {
         if( ctx==null ) throw new IllegalArgumentException("ctx==null");
@@ -22,7 +24,7 @@ public record TypeDeclaration(
         var t2 = typeDecl.astUpdate(ctx);
         //noinspection ConstantConditions
         if( t1==typeIdent && t2==typeDecl )return this;
-        return new TypeDeclaration(t1,t2);
+        return new TypeDeclaration(t1,t2,position);
     }
 
     @Override
@@ -37,7 +39,8 @@ public record TypeDeclaration(
     static TypeDeclaration of(DelphiParser.TypeDeclarationContext dec) {
         return new TypeDeclaration(
             TypeIdent.of(dec),
-            TypeDecl.of(dec.typeDecl())
+            TypeDecl.of(dec.typeDecl()),
+            SourcePosition.of(dec)
         );
     }
 }

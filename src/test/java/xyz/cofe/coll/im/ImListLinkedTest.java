@@ -22,6 +22,30 @@ public class ImListLinkedTest {
     }
 
     @Test
+    public void append_test2(){
+        var lst = ImListLinked.of(1);
+        lst = lst.append(2);
+        lst = lst.append(3);
+        assertTrue(lst.size() == 3);
+        assertTrue(lst.get(0).map(v -> v==1).orElse(false));
+        assertTrue(lst.get(1).map(v -> v==2).orElse(false));
+        assertTrue(lst.get(2).map(v -> v==3).orElse(false));
+    }
+
+    @Test
+    public void append_test3(){
+        var lst = ImListLinked.of(1);
+        lst = lst.append(2);
+        lst = lst.append(3);
+        lst = lst.append(4);
+        assertTrue(lst.size() == 4);
+        assertTrue(lst.get(0).map(v -> v==1).orElse(false));
+        assertTrue(lst.get(1).map(v -> v==2).orElse(false));
+        assertTrue(lst.get(2).map(v -> v==3).orElse(false));
+        assertTrue(lst.get(3).map(v -> v==4).orElse(false));
+    }
+
+    @Test
     public void prepend_test(){
         var lst = ImListLinked.of(1);
         lst = lst.prepend(2);

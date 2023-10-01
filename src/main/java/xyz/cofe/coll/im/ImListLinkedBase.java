@@ -5,7 +5,7 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class ImListLinkedBase<A,SELF extends ImListLinkedBase<A,SELF>>
+public abstract class ImListLinkedBase<A,SELF extends ImListLinkedBase<A,SELF>>
 implements
     Prepend<SELF,A>,
     Countable,
@@ -50,9 +50,10 @@ implements
      * @return список
      */
     @SuppressWarnings("unchecked")
-    protected <A> ImListLinkedBase<A,?> selfConstructor(A value, ImListLinkedBase<A,?> next){
-        return new ImListLinkedBase<>(value,next);
-    }
+    protected abstract  <A> ImListLinkedBase<A,?> selfConstructor(A value, ImListLinkedBase<A,?> next);
+//    {
+//        return new ImListLinkedBase<>(value,next);
+//    }
 
     @SuppressWarnings("unchecked")
     @Override
@@ -131,9 +132,12 @@ implements
         return lst;
     }
 
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     @Override
     public SELF append(A a) {
-        return prepend(a).reverse();
+        if( size()==0 )return one(a);
+        if( size()==1 )return one(a).prepend(get(0).get());
+        return foldRight(one(a), ImListLinkedBase::prepend);
     }
 
     @SuppressWarnings("unchecked")

@@ -154,8 +154,9 @@ public sealed interface TypeDecl
     record Array(
         ImList<ArrayIndex,?> indexes,
         ArraySubType subType,
-        boolean packed
-    ) implements Structured, TypeDecl {
+        boolean packed,
+        SourcePosition position
+    ) implements Structured, TypeDecl, SrcPos {
         @Override
         public Array astUpdate(AstUpdate.UpdateContext updateCtx) {
             return this;
