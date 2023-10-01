@@ -6,7 +6,7 @@ import xyz.cofe.coll.im.ImListLinked;
 /**
  * Булево тип
  */
-public sealed interface BoolType extends NamesOfType, SimpleType {
+public sealed interface BoolType extends NamedType, SimpleType {
     public static final Bool boolType = new Bool();
     public static final ByteBool byteBoolType = new ByteBool();
     public static final WordBool wordBoolType = new WordBool();
@@ -21,34 +21,39 @@ public sealed interface BoolType extends NamesOfType, SimpleType {
 
     public static final class Bool implements BoolType {
         private Bool() {}
-        private static String[] names = new String[]{ "Boolean" };
+
+        private static TypeName name = new TypeName("Boolean");
+
         @Override
-        public String[] names() {
-            return names;
+        public TypeName name() {
+            return name;
         }
     }
     public static final class ByteBool implements BoolType {
         private ByteBool() {}
-        private static String[] names = new String[]{ "ByteBool" };
+        private static TypeName name = new TypeName("ByteBool");
+
         @Override
-        public String[] names() {
-            return names;
+        public TypeName name() {
+            return name;
         }
     }
     public static final class WordBool implements BoolType {
         private WordBool() {}
-        private static String[] names = new String[]{ "WordBool" };
+        private static TypeName name = new TypeName("WordBool");
+
         @Override
-        public String[] names() {
-            return names;
+        public TypeName name() {
+            return name;
         }
     }
     public static final class LongBool implements BoolType {
         private LongBool() {}
-        private static String[] names = new String[]{ "LongBool" };
+        private static TypeName name = new TypeName("LongBool");
+
         @Override
-        public String[] names() {
-            return names;
+        public TypeName name() {
+            return name;
         }
     }
 }

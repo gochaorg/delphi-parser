@@ -13,10 +13,10 @@ public sealed interface SimpleType permits BoolType, CharType, EnumType, FloatNu
      * @param name имя типа
      * @return тип
      */
-    public static Optional<SimpleType> findByName(String name) {
+    public static Optional<SimpleType> findByName(TypeName name) {
         if (name == null) throw new IllegalArgumentException("name==null");
 
-        var st = SimpleTypeImpl.typeMap.get(name.toLowerCase());
+        var st = SimpleTypeImpl.typeMap.get(name);
         if( st!=null )return Optional.of(st);
 
         return Optional.empty();

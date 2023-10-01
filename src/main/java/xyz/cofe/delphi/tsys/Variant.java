@@ -7,8 +7,9 @@ public final class Variant implements SimpleType, NamedType {
     public static final Variant variant = new Variant();
     private Variant() {}
 
+    private static final TypeName name = new TypeName("Variant");
     @Override
-    public String name() {
-        return "Variant";
+    public TypeName name() {
+        return name;
     }
 }

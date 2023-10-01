@@ -244,14 +244,20 @@ public sealed interface TypeDecl
 
             var parents = ctx.update(this.parents);
             //noinspection unchecked
-            var body = ctx.update(this.body);
+            Optional<ImList<ClassItem,?>> body = ctx.update(this.body);
 
             var res = this;
             if( ctx instanceof AstUpdate.CommentingContext cc ) res = cc.commenting(res);
 
             if( parents.isEmpty() && body.isEmpty() && res.comments==this.comments )return this;
 
-            return new Clazz(state, parents.orElse(this.parents), body.orElse(this.body), position, res.comments);
+            ImList<ClassItem,?> b2 = body.orElse(this.body);
+
+            return new Clazz(
+                state, parents.orElse(this.parents),
+                b2,
+                position,
+                res.comments);
         }
 
         @Override
@@ -344,7 +350,7 @@ public sealed interface TypeDecl
         @Override
         public Interface astUpdate(AstUpdate.UpdateContext ctx) {
             var parents = ctx.update(this.parents);
-            var body = ctx.update(this.body);
+            Optional<ImList<InterfaceItem,?>> body = ctx.update(this.body);
 
             var res = this;
             if( ctx instanceof AstUpdate.CommentingContext cc ){

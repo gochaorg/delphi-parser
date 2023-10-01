@@ -33,17 +33,17 @@ public class SimpleTypeImpl {
         simpleNamedTypeList = types;
     }
 
-    public static final Map<String, SimpleType> typeMap;
+    public static final Map<TypeName, SimpleType> typeMap;
 
     static {
-        var map = new HashMap<String, SimpleType>();
+        var map = new HashMap<TypeName, SimpleType>();
         simpleNamedTypeList.forEach(st -> {
             if (st instanceof NamesOfType names) {
                 for (var name : names.names()) {
-                    map.computeIfAbsent(name.toLowerCase(), n -> st);
+                    map.computeIfAbsent(name, n -> st);
                 }
             } else if (st instanceof NamedType name) {
-                map.computeIfAbsent(name.name().toLowerCase(), n -> st);
+                map.computeIfAbsent(name.name(), n -> st);
             }
         });
         typeMap = Collections.unmodifiableMap(map);

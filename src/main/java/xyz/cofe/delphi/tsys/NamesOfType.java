@@ -1,10 +1,10 @@
 package xyz.cofe.delphi.tsys;
 
 public interface NamesOfType extends NamedType {
-    String[] names();
+    TypeName[] names();
 
     @Override
-    default String name() {
+    default TypeName name() {
         var n = names();
         if( n.length==0 )throw new RuntimeException("no names!! bug!!");
         return n[0];

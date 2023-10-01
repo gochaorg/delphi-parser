@@ -16,9 +16,11 @@ public sealed interface StringType extends SimpleType {
     public static final class ShortStringUnsized implements StringType, ShortString, NamedType, NamedStringType {
         private ShortStringUnsized() {}
 
+        private static TypeName name = new TypeName("ShortString");
+
         @Override
-        public String name() {
-            return "ShortString";
+        public TypeName name() {
+            return name;
         }
     }
     public static final class ShortStringSized implements StringType, ShortString {
@@ -38,9 +40,11 @@ public sealed interface StringType extends SimpleType {
     public static final class AnsiStringWOCodePage implements StringType, AnsiString, NamedType, NamedStringType {
         private AnsiStringWOCodePage() {}
 
+        private static TypeName name = new TypeName("AnsiString");
+
         @Override
-        public String name() {
-            return "AnsiString";
+        public TypeName name() {
+            return name;
         }
     }
     public static final class AnsiStringWithCodePage implements StringType, AnsiString {
@@ -60,9 +64,11 @@ public sealed interface StringType extends SimpleType {
     public static final class UnicodeStringUnsized implements StringType, UnicodeString, NamedType, NamedStringType {
         private UnicodeStringUnsized() {}
 
+        private static TypeName name = new TypeName("UnicodeString");
+
         @Override
-        public String name() {
-            return "UnicodeString";
+        public TypeName name() {
+            return name;
         }
     }
     public static final class UnicodeStringSized implements StringType, UnicodeString {
@@ -82,9 +88,11 @@ public sealed interface StringType extends SimpleType {
     public static final class WideStringUnsized implements StringType, WideString, NamedType, NamedStringType {
         private WideStringUnsized() {}
 
+        private static TypeName name = new TypeName("WideString");
+
         @Override
-        public String name() {
-            return "WideString";
+        public TypeName name() {
+            return name;
         }
     }
     public static final class WideStringSized implements StringType, WideString {
@@ -111,9 +119,11 @@ public sealed interface StringType extends SimpleType {
     public static final class StringUnsized implements StringType, STRING, NamedType, NamedStringType {
         private StringUnsized() {}
 
+        private static TypeName name = new TypeName("String");
+
         @Override
-        public String name() {
-            return "String";
+        public TypeName name() {
+            return name;
         }
     }
 
@@ -127,9 +137,11 @@ public sealed interface StringType extends SimpleType {
         private PChar() {
         }
 
+        private static TypeName name = new TypeName("PChar");
+
         @Override
-        public String name() {
-            return "PChar";
+        public TypeName name() {
+            return name;
         }
     }
     public static final PChar pchar = new PChar();
@@ -138,9 +150,11 @@ public sealed interface StringType extends SimpleType {
         private PWideChar() {
         }
 
+        private static TypeName name = new TypeName("PWideChar");
+
         @Override
-        public String name() {
-            return "PWideChar";
+        public TypeName name() {
+            return name;
         }
     }
     public static final PWideChar pwidechar = new PWideChar();

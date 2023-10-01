@@ -7,10 +7,16 @@ import java.util.Arrays;
  */
 public class TypeName {
     private final String[] name;
+    private final int hashCode;
 
     public TypeName(String ... name){
         if( name==null ) throw new IllegalArgumentException("name==null");
         this.name = Arrays.copyOf(name,name.length);
+
+        var lcName = Arrays.copyOf(name,name.length);
+        for( var i=0;i<lcName.length;i++ )lcName[i] = lcName[i].toLowerCase();
+
+        this.hashCode = Arrays.hashCode(lcName);
     }
 
     @Override
@@ -24,12 +30,18 @@ public class TypeName {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         TypeName typeName = (TypeName) o;
-        return Arrays.equals(name, typeName.name);
+        if(name.length!=typeName.name.length)return false;
+        for( var i=0; i<name.length;i++ ){
+            if(!name[i].equalsIgnoreCase(typeName.name[i]))return false;
+        }
+
+        return true;
     }
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(name);
+        return hashCode;
     }
 }

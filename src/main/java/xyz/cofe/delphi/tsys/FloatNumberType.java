@@ -6,7 +6,7 @@ import xyz.cofe.coll.im.ImListLinked;
 /**
  * Числа с плавающей десятичной точкой
  */
-public sealed interface FloatNumberType extends NamesOfType, SimpleType {
+public sealed interface FloatNumberType extends NamedType, SimpleType {
     public static final Real48 real48Type = new Real48();
     public static final Single singleType = new Single();
     public static final Double doubleType = new Double();
@@ -27,58 +27,37 @@ public sealed interface FloatNumberType extends NamesOfType, SimpleType {
 
     public static final class Real48 implements FloatNumberType {
         private Real48(){}
-        private static String[] names = new String[]{ "Real48" };
-        @Override
-        public String[] names() {
-            return names;
-        }
+        private static TypeName name = new TypeName("Real48");
+        @Override public TypeName name() { return name; }
     }
     public static final class Single implements FloatNumberType {
         private Single() {}
-        private static String[] names = new String[]{ "Single" };
-        @Override
-        public String[] names() {
-            return names;
-        }
+        private static TypeName name = new TypeName("Single");
+        @Override public TypeName name() { return name; }
     }
     public static final class Double implements FloatNumberType {
         private Double() {}
-        private static String[] names = new String[]{ "Double" };
-        @Override
-        public String[] names() {
-            return names;
-        }
+        private static TypeName name = new TypeName("Double");
+        @Override public TypeName name() { return name; }
     }
     public static final class Real implements FloatNumberType {
         private Real() {}
-        private static String[] names = new String[]{ "Real" };
-        @Override
-        public String[] names() {
-            return names;
-        }
+        private static TypeName name = new TypeName("Real");
+        @Override public TypeName name() { return name; }
     }
     public static final class Extended implements FloatNumberType {
         private Extended() {}
-        private static String[] names = new String[]{ "Extended" };
-        @Override
-        public String[] names() {
-            return names;
-        }
+        private static TypeName name = new TypeName("Extended");
+        @Override public TypeName name() { return name; }
     }
     public static final class Comp implements FloatNumberType {
         private Comp() {}
-        private static String[] names = new String[]{ "Comp" };
-        @Override
-        public String[] names() {
-            return names;
-        }
+        private static TypeName name = new TypeName("Comp");
+        @Override public TypeName name() { return name; }
     }
     public static final class Currency implements FloatNumberType {
         private Currency() {}
-        private static String[] names = new String[]{ "Currency" };
-        @Override
-        public String[] names() {
-            return names;
-        }
+        private static TypeName name = new TypeName("Currency");
+        @Override public TypeName name() { return name; }
     }
 }
