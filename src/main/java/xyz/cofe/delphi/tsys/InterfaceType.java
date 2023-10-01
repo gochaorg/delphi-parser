@@ -2,6 +2,7 @@ package xyz.cofe.delphi.tsys;
 
 import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
+import xyz.cofe.delphi.ast.Comment;
 import xyz.cofe.delphi.ast.SourcePosition;
 
 import java.util.Optional;
@@ -16,10 +17,11 @@ public class InterfaceType implements Freeze {
     public InterfaceType(InterfaceType sample){
         if( sample==null ) throw new IllegalArgumentException("sample==null");
         this.parents = sample.parents;
-        this.methods = sample.methods;
+        this.body = sample.body;
         this.guid = sample.guid;
         this.declaration = sample.declaration;
         this.implementation = sample.implementation;
+        this.comments = sample.comments;
         this.frozen = false;
     }
     //endregion
@@ -51,17 +53,17 @@ public class InterfaceType implements Freeze {
         this.parents = parents;
     }
     //endregion
-    //region methods : ImList<Method, ?>
-    private ImList<Method, ?> methods = ImListLinked.of();
+    //region body : ImList<InterfaceItem, ?>
+    private ImList<InterfaceItem, ?> body = ImListLinked.of();
 
-    public ImList<Method, ?> getMethods() {
-        return methods;
+    public ImList<InterfaceItem, ?> getBody() {
+        return body;
     }
 
-    public void setMethods(ImList<Method, ?> methods) {
-        if( methods==null ) throw new IllegalArgumentException("methods==null");
+    public void setBody(ImList<InterfaceItem, ?> body) {
+        if( body==null ) throw new IllegalArgumentException("body==null");
         if( frozen )throw new TypeSysError.Frozen();
-        this.methods = methods;
+        this.body = body;
     }
     //endregion
     //region guid : Optional<String>
@@ -104,6 +106,19 @@ public class InterfaceType implements Freeze {
         if( implementation==null ) throw new IllegalArgumentException("implementation==null");
         if( frozen )throw new TypeSysError.Frozen();
         this.implementation = implementation;
+    }
+    //endregion
+    //region comments : ImList<Comment,?> - Комментарии
+    private ImList<Comment,?> comments = ImListLinked.of();
+
+    public ImList<Comment, ?> getComments() {
+        return comments;
+    }
+
+    public void setComments(ImList<Comment, ?> comments) {
+        if( comments==null ) throw new IllegalArgumentException("comments==null");
+        if( frozen )throw new TypeSysError.Frozen();
+        this.comments = comments;
     }
     //endregion
 

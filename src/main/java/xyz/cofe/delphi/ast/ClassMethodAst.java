@@ -11,6 +11,12 @@ import static xyz.cofe.delphi.ast.AstNode.upcast;
  * Методы класса/интерфейса/...
  */
 public sealed interface ClassMethodAst extends InterfaceItemAst, ClassItemAst, SrcPos, Commented<ClassMethodAst> {
+    /**
+     * аргументы метода
+     * @return аргументы
+     */
+    ImList<Argument,?> arguments();
+
     @Override
     ClassMethodAst astUpdate(AstUpdate.UpdateContext ctx);
 

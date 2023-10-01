@@ -1,5 +1,6 @@
 package xyz.cofe.coll.im;
 
+import java.util.Iterator;
 import java.util.function.Consumer;
 
 /**

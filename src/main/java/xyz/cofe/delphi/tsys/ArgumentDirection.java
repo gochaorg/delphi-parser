@@ -3,7 +3,7 @@ package xyz.cofe.delphi.tsys;
 /**
  * Направление параметра
  */
-public enum ParamDirection {
+public enum ArgumentDirection {
     /**
      * Для входных параметров
      */

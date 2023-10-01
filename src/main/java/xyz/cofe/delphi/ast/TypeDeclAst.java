@@ -16,7 +16,18 @@ import static xyz.cofe.delphi.impl.Indent.indent;
  */
 public sealed interface TypeDeclAst
     extends AstNode
-    permits TypeDeclAst.Array, TypeDeclAst.Interface, TypeDeclAst.MetaClass, TypeDeclAst.NewTypeId, TypeDeclAst.Simple, TypeDeclAst.StringType, TypeDeclAst.Structured, TypeDeclAst.TypeAlias, TypeDeclAst.Variant, TypeIdentAst
+    permits
+        TypeDeclAst.Array,
+        TypeDeclAst.Clazz,
+        TypeDeclAst.Interface,
+        TypeDeclAst.MetaClass,
+        TypeDeclAst.NewTypeId,
+        TypeDeclAst.Simple,
+        TypeDeclAst.StringType,
+        TypeDeclAst.Structured,
+        TypeDeclAst.TypeAlias,
+        TypeDeclAst.Variant,
+        TypeIdentAst
 {
     @Override
     TypeDeclAst astUpdate(AstUpdate.UpdateContext ctx);
@@ -238,7 +249,7 @@ public sealed interface TypeDeclAst
         ImList<ClassItemAst,?> body,
         SourcePosition position,
         ImList<Comment,?> comments
-    ) implements Structured, SrcPos, Commented<Clazz> {
+    ) implements Structured, SrcPos, Commented<Clazz>, TypeDeclAst {
         @Override
         public Clazz astUpdate(AstUpdate.UpdateContext ctx) {
             if( ctx==null ) throw new IllegalArgumentException("ctx==null");

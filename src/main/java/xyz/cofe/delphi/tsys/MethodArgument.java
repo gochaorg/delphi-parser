@@ -6,7 +6,7 @@ import java.util.Optional;
  * Параметр
  */
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-public class MethodParam implements Freeze {
+public class MethodArgument implements Freeze {
     //region freeze
     private volatile boolean frozen;
 
@@ -61,13 +61,13 @@ public class MethodParam implements Freeze {
     }
     //endregion
     //region direction : ParamDirection - направление
-    private ParamDirection direction = ParamDirection.Input;
+    private ArgumentDirection direction = ArgumentDirection.Input;
 
-    public ParamDirection getDirection() {
+    public ArgumentDirection getDirection() {
         return direction;
     }
 
-    public void setDirection(ParamDirection direction) {
+    public void setDirection(ArgumentDirection direction) {
         if( direction==null ) throw new IllegalArgumentException("direction==null");
         if( frozen )throw new TypeSysError.Frozen();
         this.direction = direction;

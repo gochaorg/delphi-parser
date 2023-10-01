@@ -1,5 +1,8 @@
 package xyz.cofe.delphi.tsys;
 
+import xyz.cofe.delphi.ast.PascalFileAst;
+import xyz.cofe.delphi.ast.TypeDeclAst;
+
 /**
  * <a href="https://docwiki.embarcadero.com/RADStudio/Alexandria/en/About_Data_Types_(Delphi)">Некий тип данных</a>
  *
@@ -57,12 +60,24 @@ public interface Type {
     }
 
     /**
-     * Тип для указания в качестве знаяения по умолчанию для не инициализированного значения
+     * Тип для указания в качестве значения по умолчанию для не инициализированного значения
      */
     public static final class NotAssigned implements SpecialType {
         public static final NotAssigned instance = new NotAssigned();
         private NotAssigned() {}
     }
+
+    /**
+     * Тип еще не определен, это только ссылка на тип
+     */
+    public static sealed interface TypeRef extends Type {}
+
+    /**
+     * Ссылка на тип из unit файла, требует resolve через uses секцию
+     * @param unit файл
+     * @param type тип
+     */
+    public static record UnitTypeRef(PascalFileAst.Unit unit, TypeDeclAst type) implements TypeRef {}
 
     // TODO добавить Unresolved Type implements SpecialType
 }

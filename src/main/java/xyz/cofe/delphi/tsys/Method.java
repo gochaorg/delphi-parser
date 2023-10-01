@@ -2,6 +2,7 @@ package xyz.cofe.delphi.tsys;
 
 import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
+import xyz.cofe.delphi.ast.Comment;
 import xyz.cofe.delphi.ast.SourcePosition;
 
 import java.util.Optional;
@@ -10,7 +11,7 @@ import java.util.Optional;
  * Метод интерфейса/класса
  */
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-public class Method implements Freeze {
+public final class Method implements Freeze, InterfaceItem {
     //region freeze
     private volatile boolean frozen;
 
@@ -19,7 +20,7 @@ public class Method implements Freeze {
     }
 
     public void freeze(){
-        params.forEach(MethodParam::freeze);
+        arguments.forEach(MethodArgument::freeze);
         returns.ifPresent(p -> {
             if (p instanceof Freeze f) f.freeze();
         } );
@@ -41,16 +42,16 @@ public class Method implements Freeze {
     }
     //endregion
     //region params : ImList<MethodParam,?> - параметры метода
-    private ImList<MethodParam,?> params = ImListLinked.of();
+    private ImList<MethodArgument,?> arguments = ImListLinked.of();
 
-    public ImList<MethodParam, ?> getParams() {
-        return params;
+    public ImList<MethodArgument, ?> getArguments() {
+        return arguments;
     }
 
-    public void setParams(ImList<MethodParam, ?> params) {
-        if( params==null ) throw new IllegalArgumentException("params==null");
+    public void setArguments(ImList<MethodArgument, ?> arguments) {
+        if( arguments==null ) throw new IllegalArgumentException("arguments==null");
         if( frozen )throw new TypeSysError.Frozen();
-        this.params = params;
+        this.arguments = arguments;
     }
     //endregion
     //region returns : Optional<Type> - тип результата
@@ -93,7 +94,19 @@ public class Method implements Freeze {
         this.visibility = visibility;
     }
     //endregion
+    //region comments : ImList<Comment,?> - Комментарии
+    private ImList<Comment,?> comments = ImListLinked.of();
 
+    public ImList<Comment, ?> getComments() {
+        return comments;
+    }
+
+    public void setComments(ImList<Comment, ?> comments) {
+        if( comments==null ) throw new IllegalArgumentException("comments==null");
+        if( frozen )throw new TypeSysError.Frozen();
+        this.comments = comments;
+    }
+    //endregion
     //region declaration : Optional<SourcePosition>
     private Optional<SourcePosition> declaration = Optional.empty();
 
