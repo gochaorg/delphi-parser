@@ -10,22 +10,22 @@ import static xyz.cofe.delphi.impl.Indent.indent;
  * Секция определения типов
  * @param types типы
  */
-public record TypeSection(
-    ImList<TypeDeclaration,?> types,
+public record TypeSectionAst(
+    ImList<TypeDeclarationAst,?> types,
     SourcePosition position
-) implements InterfaceDecl, ClassItem, SrcPos
+) implements InterfaceDecl, ClassItemAst, SrcPos
 {
     @Override
-    public TypeSection astUpdate(AstUpdate.UpdateContext ctx) {
+    public TypeSectionAst astUpdate(AstUpdate.UpdateContext ctx) {
         if( ctx==null ) throw new IllegalArgumentException("ctx==null");
         var changed = new boolean[]{ false };
-        var types1 = types.foldRight(ImListLinked.<TypeDeclaration>of(), (acc,it) -> {
+        var types1 = types.foldRight(ImListLinked.<TypeDeclarationAst>of(), (acc, it) -> {
             var it1 = it.astUpdate(ctx);
             if( it1!=it )changed[0] = true;
             return acc.prepend(it1);
         });
 
-        if( changed[0] )return new TypeSection(types1,position);
+        if( changed[0] )return new TypeSectionAst(types1,position);
         return this;
     }
 
@@ -43,9 +43,9 @@ public record TypeSection(
         return sb.toString();
     }
 
-    public static TypeSection of(DelphiParser.TypeSectionContext ctx){
-        return new TypeSection(
-            TypeDeclaration.of(ctx.typeDeclaration()),
+    public static TypeSectionAst of(DelphiParser.TypeSectionContext ctx){
+        return new TypeSectionAst(
+            TypeDeclarationAst.of(ctx.typeDeclaration()),
             SourcePosition.of(ctx)
         );
     }

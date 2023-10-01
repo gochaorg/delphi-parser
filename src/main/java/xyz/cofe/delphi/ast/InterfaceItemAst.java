@@ -2,19 +2,18 @@ package xyz.cofe.delphi.ast;
 
 import xyz.cofe.delphi.parser.DelphiParser;
 import static xyz.cofe.delphi.ast.AstNode.upcast;
-import static xyz.cofe.delphi.impl.Indent.indent;
 
 
-public sealed interface InterfaceItem
+public sealed interface InterfaceItemAst
 extends AstNode, AstUpdate
-permits ClassProperty, ClassMethod
+permits ClassPropertyAst, ClassMethodAst
 {
     @Override
-    InterfaceItem astUpdate(AstUpdate.UpdateContext ctx);
+    InterfaceItemAst astUpdate(AstUpdate.UpdateContext ctx);
 
-    static InterfaceItem of(DelphiParser.InterfaceItemContext ctx){
+    static InterfaceItemAst of(DelphiParser.InterfaceItemContext ctx){
         if( ctx.classMethod()!=null && !ctx.classMethod().isEmpty() ){
-            return ClassMethod.of(ctx.classMethod());
+            return ClassMethodAst.of(ctx.classMethod());
         }
 
         if( ctx.classProperty()!=null && !ctx.classProperty().isEmpty() ){
@@ -22,7 +21,7 @@ permits ClassProperty, ClassMethod
                 && ctx.CLASS().getText()!=null
                 && ctx.CLASS().getText().length()>0;
 
-            var prop = ClassProperty.Property.of(ctx.classProperty());
+            var prop = ClassPropertyAst.Property.of(ctx.classProperty());
             if( classFlag ){
                 prop = prop.withClassFlag(true);
             }

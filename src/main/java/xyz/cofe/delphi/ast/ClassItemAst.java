@@ -7,20 +7,20 @@ import xyz.cofe.delphi.parser.DelphiParser;
 /**
  * Элемент класса
  */
-public sealed interface ClassItem
+public sealed interface ClassItemAst
     extends AstNode, AstUpdate
-    permits ClassField, ClassItem.ClassVarSection, ClassMethod, ClassProperty, ConstSection.Constants, TypeSection, Visibility
+    permits ClassFieldAst, ClassItemAst.ClassVarSection, ClassMethodAst, ClassPropertyAst, ConstSectionAst.Constants, TypeSectionAst, VisibilityAst
 {
     @Override
-    ClassItem astUpdate(AstUpdate.UpdateContext ctx);
+    ClassItemAst astUpdate(AstUpdate.UpdateContext ctx);
 
     /**
      * Секция переменных
      * @param classFlag некий флаг 'class' - хз зачкем, наверно static // TODO выяснить
      * @param variables список переменных
      */
-    record ClassVarSection(boolean classFlag, VarSection.Variables variables)
-    implements ClassItem {
+    record ClassVarSection(boolean classFlag, VarSectionAst.Variables variables)
+    implements ClassItemAst {
         @Override
         public ClassVarSection astUpdate(AstUpdate.UpdateContext ctx) {
             return this;
@@ -32,31 +32,31 @@ public sealed interface ClassItem
         }
     }
 
-    static ImList<ClassItem,?> of(DelphiParser.ClassItemContext ctx){
+    static ImList<ClassItemAst,?> of(DelphiParser.ClassItemContext ctx){
         if( ctx.visibility()!=null && !ctx.visibility().isEmpty() )
-            return ImListLinked.of(Visibility.of(ctx.visibility()));
+            return ImListLinked.of(VisibilityAst.of(ctx.visibility()));
 
         if(ctx.classMethod()!=null && !ctx.classMethod().isEmpty())
-            return ImListLinked.of(ClassMethod.of(ctx.classMethod()));
+            return ImListLinked.of(ClassMethodAst.of(ctx.classMethod()));
 
         if(ctx.classField()!=null && !ctx.classField().isEmpty())
-            return ClassField.of(ctx.classField()).map(i -> (ClassItem) i);
+            return ClassFieldAst.of(ctx.classField()).map(i -> (ClassItemAst) i);
 
         if(ctx.classProperty()!=null && !ctx.classProperty().isEmpty())
-            return ImListLinked.of(ClassProperty.Property.of(ctx.classProperty()));
+            return ImListLinked.of(ClassPropertyAst.Property.of(ctx.classProperty()));
 
         if(ctx.constSection()!=null && !ctx.constSection().isEmpty())
-            return ImListLinked.of(ConstSection.Constants.of(ctx.constSection()));
+            return ImListLinked.of(ConstSectionAst.Constants.of(ctx.constSection()));
 
         if(ctx.typeSection()!=null && !ctx.typeSection().isEmpty()){
-            return ImListLinked.of(TypeSection.of(ctx.typeSection()));
+            return ImListLinked.of(TypeSectionAst.of(ctx.typeSection()));
         }
 
         if(ctx.varSection()!=null && !ctx.varSection().isEmpty()){
             var classFlag = ctx.CLASS() != null;
 
             return ImListLinked.of(
-                new ClassVarSection(classFlag, VarSection.Variables.of(ctx.varSection()))
+                new ClassVarSection(classFlag, VarSectionAst.Variables.of(ctx.varSection()))
             );
         }
 

@@ -5,13 +5,13 @@ import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.delphi.parser.DelphiParser;
 import static xyz.cofe.delphi.ast.AstNode.upcast;
-import static xyz.cofe.delphi.impl.Indent.indent;
+
 import java.util.Optional;
 
 /**
  * Секция переменных
  */
-public sealed interface VarSection
+public sealed interface VarSectionAst
     extends InterfaceDecl, AstNode
 {
     /**
@@ -24,7 +24,7 @@ public sealed interface VarSection
         VarKey key,
         ImList<VarDeclaration,?> variables,
         SourcePosition position
-    ) implements VarSection, AstNode, SrcPos {
+    ) implements VarSectionAst, AstNode, SrcPos {
         @Override
         public Variables astUpdate(AstUpdate.UpdateContext ctx) {
             return this;
@@ -64,7 +64,7 @@ public sealed interface VarSection
      */
     record VarDeclaration(
         String name,
-        TypeDecl type,
+        TypeDeclAst type,
         Optional<VarValueSpec> valueSpec,
         SourcePosition position
     ) implements AstNode, SrcPos {
@@ -79,7 +79,7 @@ public sealed interface VarSection
         }
 
         static ImList<VarDeclaration,?> of(DelphiParser.VarDeclarationContext ctx){
-            var type = TypeDecl.of(ctx.typeDecl());
+            var type = TypeDeclAst.of(ctx.typeDecl());
             Optional<VarValueSpec> valueSpec = Optional.empty();
             if(ctx.varValueSpec()!=null && !ctx.varValueSpec().isEmpty()){
                 valueSpec = Optional.of(
@@ -104,12 +104,12 @@ public sealed interface VarSection
                     return new AbsoluteId(ctx.ident().getText());
                 }
                 if(ctx.constExpression()!=null && !ctx.constExpression().isEmpty()){
-                    return new AbsoluteExp(ConstSection.ConstExpression.of(ctx.constExpression()));
+                    return new AbsoluteExp(ConstSectionAst.ConstExpression.of(ctx.constExpression()));
                 }
                 throw AstParseError.unExpected(ctx);
             }
             if(ctx.constExpression()!=null && !ctx.constExpression().isEmpty()){
-                return new Expr(ConstSection.ConstExpression.of(ctx.constExpression()));
+                return new Expr(ConstSectionAst.ConstExpression.of(ctx.constExpression()));
             }
             throw AstParseError.unExpected(ctx);
         }
@@ -122,7 +122,7 @@ public sealed interface VarSection
         }
     }
 
-    record AbsoluteExp(ConstSection.ConstExpression expression) implements VarValueSpec, AstNode {
+    record AbsoluteExp(ConstSectionAst.ConstExpression expression) implements VarValueSpec, AstNode {
         @Override
         public AbsoluteExp astUpdate(AstUpdate.UpdateContext ctx) {
             return this;
@@ -134,7 +134,7 @@ public sealed interface VarSection
         }
     }
 
-    record Expr(ConstSection.ConstExpression expression) implements VarValueSpec, AstNode {
+    record Expr(ConstSectionAst.ConstExpression expression) implements VarValueSpec, AstNode {
         @Override
         public Expr astUpdate(AstUpdate.UpdateContext ctx) {
             return this;

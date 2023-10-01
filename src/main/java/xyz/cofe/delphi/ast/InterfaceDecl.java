@@ -4,7 +4,6 @@ import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.delphi.parser.DelphiParser;
 import static xyz.cofe.delphi.ast.AstNode.upcast;
-import static xyz.cofe.delphi.impl.Indent.indent;
 
 /**
  * Публичная часть
@@ -12,13 +11,13 @@ import static xyz.cofe.delphi.impl.Indent.indent;
 public sealed interface InterfaceDecl
 extends AstNode
 permits
-    TypeSection,
-    MethodDecl,
-    ProcDecl,
-    ExportedProcHeading,
-    ConstSection,
-    ExportsSection,
-    VarSection
+    TypeSectionAst,
+    MethodDeclAst,
+    ProcDeclAst,
+    ExportedProcHeadingAst,
+    ConstSectionAst,
+    ExportsSectionAst,
+    VarSectionAst
 {
     @Override
     InterfaceDecl astUpdate(AstUpdate.UpdateContext ctx);
@@ -26,8 +25,8 @@ permits
     static InterfaceDecl of(DelphiParser.InterfaceDeclContext itf){
         if( !itf.typeSection().isEmpty() ){
             return
-                new TypeSection(
-                    TypeDeclaration.of(itf.typeSection().typeDeclaration()),
+                new TypeSectionAst(
+                    TypeDeclarationAst.of(itf.typeSection().typeDeclaration()),
                     SourcePosition.of(itf.typeSection())
                 );
         }

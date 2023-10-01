@@ -12,9 +12,9 @@ import java.util.stream.Collectors;
  * Определяет пространство имен
  * @param name имя
  */
-public record Namespace(ImList<String,?> name) implements AstNode {
+public record NamespaceAst(ImList<String,?> name) implements AstNode {
     @Override
-    public Namespace astUpdate(AstUpdate.UpdateContext ctx) {
+    public NamespaceAst astUpdate(AstUpdate.UpdateContext ctx) {
         return this;
     }
 
@@ -24,7 +24,7 @@ public record Namespace(ImList<String,?> name) implements AstNode {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Namespace namespace = (Namespace) o;
+        NamespaceAst namespace = (NamespaceAst) o;
         if( namespace.name.size()!= name.size() )return false;
         for( var i=0;i<name.size(); i++ ){
             if( !Objects.equals(name.get(i).get(), namespace.name.get(i).get()) )
@@ -39,16 +39,16 @@ public record Namespace(ImList<String,?> name) implements AstNode {
         return Objects.hash(name);
     }
 
-    static Namespace of(DelphiParser.NamespaceNameContext nm) {
-        return new Namespace(
+    static NamespaceAst of(DelphiParser.NamespaceNameContext nm) {
+        return new NamespaceAst(
             ImListLinked.of(
                 nm.ident().stream().map(RuleContext::getText).collect(Collectors.toList())
             )
         );
     }
 
-    static Namespace of(String ... name){
-        return new Namespace(
+    static NamespaceAst of(String ... name){
+        return new NamespaceAst(
             ImListLinked.of(name)
         );
     }

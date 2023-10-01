@@ -4,19 +4,19 @@ import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.delphi.parser.DelphiParser;
 import static xyz.cofe.delphi.ast.AstNode.upcast;
-import static xyz.cofe.delphi.impl.Indent.indent;
+
 import java.util.Optional;
 
 /**
  * Секция констант
  */
-public sealed interface ConstSection extends InterfaceDecl, AstNode {
+public sealed interface ConstSectionAst extends InterfaceDecl, AstNode {
     /**
      * Перечень констант
      * @param constants константы
      * @param key тип констант // TODO выяснить что за Resource string
      */
-    record Constants(ImList<Const,?> constants, ConstKey key) implements ConstSection, ClassItem, AstNode {
+    record Constants(ImList<Const,?> constants, ConstKey key) implements ConstSectionAst, ClassItemAst, AstNode {
         @Override
         public Constants astUpdate(AstUpdate.UpdateContext ctx) {
             return this;
@@ -52,7 +52,7 @@ public sealed interface ConstSection extends InterfaceDecl, AstNode {
         ResourceString
     }
 
-    record Const(String name, Optional<TypeDecl> type, ConstExpression expression ) implements AstNode {
+    record Const(String name, Optional<TypeDeclAst> type, ConstExpression expression ) implements AstNode {
         @Override
         public Const astUpdate(AstUpdate.UpdateContext ctx) {
             return this;
@@ -67,7 +67,7 @@ public sealed interface ConstSection extends InterfaceDecl, AstNode {
             return new Const(
                 ctx.ident().getText(),
                 ctx.typeDecl()!=null && !ctx.typeDecl().isEmpty() ?
-                    Optional.of(TypeDecl.of(ctx.typeDecl())) :
+                    Optional.of(TypeDeclAst.of(ctx.typeDecl())) :
                     Optional.empty(),
                 ConstExpression.of(ctx.constExpression())
             );
@@ -95,14 +95,14 @@ public sealed interface ConstSection extends InterfaceDecl, AstNode {
             }
 
             if( ctx.expression()!=null && !ctx.expression().isEmpty() ){
-                return new ConstExp(Expression.of(ctx.expression()));
+                return new ConstExp(ExpressionAst.of(ctx.expression()));
             }
 
             throw AstParseError.unExpected(ctx);
         }
     }
 
-    record ConstExp( Expression expression ) implements ConstExpression {
+    record ConstExp( ExpressionAst expression ) implements ConstExpression {
         @Override
         public ImList<? extends AstNode, ?> nestedAstNodes() {
             return upcast(expression);

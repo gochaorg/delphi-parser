@@ -1,7 +1,7 @@
 package xyz.cofe.delphi.docgen;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import xyz.cofe.delphi.ast.PascalFile;
+import xyz.cofe.delphi.ast.PascalFileAst;
 
 import java.io.PrintWriter;
 
@@ -16,7 +16,7 @@ public class DocGen {
         this.om.findAndRegisterModules();
     }
 
-    public void write(PascalFile.Unit unit){
+    public void write(PascalFileAst.Unit unit){
         if( unit==null ) throw new IllegalArgumentException("unit==null");
 
     }

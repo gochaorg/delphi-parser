@@ -4,7 +4,6 @@ import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.delphi.ast.SourcePosition;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -12,6 +11,19 @@ import java.util.Optional;
  */
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class InterfaceType implements Freeze {
+    //region Конструкторы
+    public InterfaceType(){}
+    public InterfaceType(InterfaceType sample){
+        if( sample==null ) throw new IllegalArgumentException("sample==null");
+        this.parents = sample.parents;
+        this.methods = sample.methods;
+        this.guid = sample.guid;
+        this.declaration = sample.declaration;
+        this.implementation = sample.implementation;
+        this.frozen = false;
+    }
+    //endregion
+
     //region Freeze
     private volatile boolean frozen;
 
@@ -94,4 +106,32 @@ public class InterfaceType implements Freeze {
         this.implementation = implementation;
     }
     //endregion
+
+    public static class Named extends InterfaceType implements NamedType {
+        //region NamedInterfaceType
+        public Named(){
+        }
+        public Named(InterfaceType sample){
+            super(sample);
+        }
+        //endregion
+        //region name : TypeName
+        private TypeName name = TypeName.of();
+
+        public TypeName getName() {
+            return name;
+        }
+
+        public void setName(TypeName name) {
+            if( name==null ) throw new IllegalArgumentException("name==null");
+            if( isFrozen() )throw new TypeSysError.Frozen();
+            this.name = name;
+        }
+
+        @Override
+        public TypeName name() {
+            return name;
+        }
+        //endregion
+    }
 }

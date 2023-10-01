@@ -7,23 +7,22 @@ import xyz.cofe.delphi.parser.DelphiParser;
 
 import java.util.Optional;
 import static xyz.cofe.delphi.ast.AstNode.upcast;
-import static xyz.cofe.delphi.impl.Indent.indent;
 
 
-public sealed interface ClassProperty extends InterfaceItem, ClassItem, AstNode {
+public sealed interface ClassPropertyAst extends InterfaceItemAst, ClassItemAst, AstNode {
     @Override
-    ClassProperty astUpdate(AstUpdate.UpdateContext ctx);
+    ClassPropertyAst astUpdate(AstUpdate.UpdateContext ctx);
 
     record Property(
         String name,
         ImList<Argument, ?> propertyArray,
-        Optional<TypeIdent> type,
-        Optional<Expression> index,
+        Optional<TypeIdentAst> type,
+        Optional<ExpressionAst> index,
         ImList<Specifier,?> specifiers,
         boolean classFlag,
         SourcePosition position,
         ImList<Comment,?> comments
-        ) implements ClassProperty, SrcPos, Commented<ClassProperty>
+        ) implements ClassPropertyAst, SrcPos, Commented<ClassPropertyAst>
     {
         @Override
         public Property astUpdate(AstUpdate.UpdateContext ctx) {
@@ -31,7 +30,7 @@ public sealed interface ClassProperty extends InterfaceItem, ClassItem, AstNode 
         }
 
         @Override
-        public ClassProperty withComments(ImList<Comment, ?> comments) {
+        public ClassPropertyAst withComments(ImList<Comment, ?> comments) {
             return this;
         }
 
@@ -53,7 +52,7 @@ public sealed interface ClassProperty extends InterfaceItem, ClassItem, AstNode 
             );
         }
 
-        static ClassProperty.Property of( DelphiParser.ClassPropertyContext ctx ){
+        static ClassPropertyAst.Property of(DelphiParser.ClassPropertyContext ctx ){
             boolean classFlag =
                 ctx.CLASS()!=null
                 && ctx.CLASS().getText()!=null
@@ -70,22 +69,22 @@ public sealed interface ClassProperty extends InterfaceItem, ClassItem, AstNode 
                 propArr = Argument.of(ctx.classPropertyArray().formalParameterList());
             }
 
-            Optional<TypeIdent> type = Optional.empty();
+            Optional<TypeIdentAst> type = Optional.empty();
             if( ctx.genericTypeIdent()!=null
             && !ctx.genericTypeIdent().isEmpty()
             ) {
                 type = Optional.of(
-                    TypeIdent.of(ctx.genericTypeIdent())
+                    TypeIdentAst.of(ctx.genericTypeIdent())
                 );
             }
 
-            Optional<Expression> exp = Optional.empty();
+            Optional<ExpressionAst> exp = Optional.empty();
             if( ctx.classPropertyIndex()!=null
                 && !ctx.classPropertyIndex().isEmpty()
                 && ctx.classPropertyIndex().expression()!=null
                 && !ctx.classPropertyIndex().expression().isEmpty()
             ){
-                exp = Optional.of(Expression.of(ctx.classPropertyIndex().expression()));
+                exp = Optional.of(ExpressionAst.of(ctx.classPropertyIndex().expression()));
             }
 
             ImList<Specifier,?> spec = ImListLinked.of();
@@ -94,7 +93,7 @@ public sealed interface ClassProperty extends InterfaceItem, ClassItem, AstNode 
                     .map(Specifier::of);
             }
 
-            return new ClassProperty.Property(
+            return new ClassPropertyAst.Property(
                 name,
                 propArr,
                 type,
@@ -118,7 +117,7 @@ public sealed interface ClassProperty extends InterfaceItem, ClassItem, AstNode 
                 && ctx.expression()!=null
                 && !ctx.expression().isEmpty()
             ) {
-                return new Stored(Expression.of(ctx.expression()));
+                return new Stored(ExpressionAst.of(ctx.expression()));
             }
 
             if( ctx.DEFAULT()!=null
@@ -126,7 +125,7 @@ public sealed interface ClassProperty extends InterfaceItem, ClassItem, AstNode 
                 && ctx.DEFAULT().getText().length()>0
             ) {
                 if( ctx.expression()!=null && !ctx.expression().isEmpty() ){
-                    return new DefaultExp(Expression.of(ctx.expression()));
+                    return new DefaultExp(ExpressionAst.of(ctx.expression()));
                 }
 
                 return new Default();
@@ -153,7 +152,7 @@ public sealed interface ClassProperty extends InterfaceItem, ClassItem, AstNode 
                 && ctx.STORED().getText().length()>0
                 && ctx.expression()!=null
             ){
-                return new Stored(Expression.of(ctx.expression()));
+                return new Stored(ExpressionAst.of(ctx.expression()));
             }
 
             if( ctx.DEFAULT()!=null
@@ -161,7 +160,7 @@ public sealed interface ClassProperty extends InterfaceItem, ClassItem, AstNode 
                 && ctx.DEFAULT().getText().length()>0
             ){
                 if( ctx.expression()!=null && !ctx.expression().isEmpty() ){
-                    return new DefaultExp(Expression.of(ctx.expression()));
+                    return new DefaultExp(ExpressionAst.of(ctx.expression()));
                 }
 
                 return new Default();
@@ -213,9 +212,9 @@ public sealed interface ClassProperty extends InterfaceItem, ClassItem, AstNode 
                 ctx.qualifiedIdent().ident().stream().map(RuleContext::getText).toList()
             );
 
-            Optional<Expression> exp =
+            Optional<ExpressionAst> exp =
                 ctx.expression()!=null && !ctx.expression().isEmpty() ?
-                Optional.of(Expression.of(ctx.expression())) :
+                Optional.of(ExpressionAst.of(ctx.expression())) :
                 Optional.empty();
 
             if( ctx.READ()!=null && ctx.READ().getText().toLowerCase().startsWith("read") ){
@@ -237,7 +236,7 @@ public sealed interface ClassProperty extends InterfaceItem, ClassItem, AstNode 
                 ctx.dispIDDirective().expression()!=null &&
                 ctx.getText().toLowerCase().startsWith("dispid")
             ) {
-                return new DispID(Expression.of(ctx.dispIDDirective().expression()));
+                return new DispID(ExpressionAst.of(ctx.dispIDDirective().expression()));
             }
 
             throw AstParseError.notImplemented();
@@ -245,7 +244,7 @@ public sealed interface ClassProperty extends InterfaceItem, ClassItem, AstNode 
     }
     record Read(
         ImList<String,?> name,
-        Optional<Expression> expression
+        Optional<ExpressionAst> expression
     ) implements Specifier {
         @Override
         public Read astUpdate(AstUpdate.UpdateContext ctx) {
@@ -259,7 +258,7 @@ public sealed interface ClassProperty extends InterfaceItem, ClassItem, AstNode 
     }
     record Write(
         ImList<String,?> name,
-        Optional<Expression> expression
+        Optional<ExpressionAst> expression
     ) implements Specifier {
         @Override
         public Write astUpdate(AstUpdate.UpdateContext ctx) {
@@ -282,7 +281,7 @@ public sealed interface ClassProperty extends InterfaceItem, ClassItem, AstNode 
             return this;
         }
     }
-    record DispID(Expression expression) implements Specifier {
+    record DispID(ExpressionAst expression) implements Specifier {
         @Override
         public DispID astUpdate(AstUpdate.UpdateContext ctx) {
             return this;
@@ -293,7 +292,7 @@ public sealed interface ClassProperty extends InterfaceItem, ClassItem, AstNode 
             return upcast(expression);
         }
     }
-    record Stored(Expression expression) implements Specifier {
+    record Stored(ExpressionAst expression) implements Specifier {
         @Override
         public Stored astUpdate(AstUpdate.UpdateContext ctx) {
             return this;
@@ -304,7 +303,7 @@ public sealed interface ClassProperty extends InterfaceItem, ClassItem, AstNode 
             return upcast(expression);
         }
     }
-    record DefaultExp(Expression expression) implements Specifier {
+    record DefaultExp(ExpressionAst expression) implements Specifier {
         @Override
         public DefaultExp astUpdate(AstUpdate.UpdateContext ctx) {
             return this;

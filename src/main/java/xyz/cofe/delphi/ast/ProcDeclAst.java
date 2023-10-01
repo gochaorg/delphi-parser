@@ -4,7 +4,7 @@ import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.delphi.parser.DelphiParser;
 import static xyz.cofe.delphi.ast.AstNode.upcast;
-import static xyz.cofe.delphi.impl.Indent.indent;
+
 import java.util.Optional;
 
 /**
@@ -13,25 +13,25 @@ import java.util.Optional;
  * @param arguments аргументы
  * @param result тип результата в случае функции
  */
-public record ProcDecl(
+public record ProcDeclAst(
     String name,
     ImList<Argument,?> arguments,
-    Optional<TypeDecl> result
+    Optional<TypeDeclAst> result
 ) implements InterfaceDecl, AstNode {
     @Override
-    public ProcDecl astUpdate(AstUpdate.UpdateContext ctx) {
+    public ProcDeclAst astUpdate(AstUpdate.UpdateContext ctx) {
         return this;
     }
 
-    static ProcDecl of(DelphiParser.ProcDeclHeadingContext prc) {
+    static ProcDeclAst of(DelphiParser.ProcDeclHeadingContext prc) {
         var params = ImListLinked.<Argument>of();
         var formal_params =
             Argument.of(prc.formalParameterSection().formalParameterList());
 
         var fun_name = prc.ident().getText();
-        var fun_res = Optional.<TypeDecl>empty();
+        var fun_res = Optional.<TypeDeclAst>empty();
 
-        return new ProcDecl(
+        return new ProcDeclAst(
             fun_name,
             ImListLinked.of(params.reverse()),
             fun_res

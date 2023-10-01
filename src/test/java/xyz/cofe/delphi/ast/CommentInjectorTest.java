@@ -5,29 +5,28 @@ import xyz.cofe.coll.im.ImListLinked;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static xyz.cofe.delphi.TextResource.textResource;
-import static xyz.cofe.delphi.impl.Indent.indent;
 
 public class CommentInjectorTest {
 
     @Test
     public void inject(){
-        var pascal_file = PascalFile.parse(
+        var pascal_file = PascalFileAst.parse(
             textResource("/samples/Map.pas"),
             "Map.pas");
 
-        assertTrue(pascal_file instanceof PascalFile.Unit);
-        var unit = (PascalFile.Unit)pascal_file;
+        assertTrue(pascal_file instanceof PascalFileAst.Unit);
+        var unit = (PascalFileAst.Unit)pascal_file;
 
         var injector = new CommentInjector();
         var commented = injector.inject(unit);
 
         var types = commented.api().declarations()
-            .find(dec -> dec instanceof TypeSection)
-            .map(d -> (TypeSection)d).get().types();
+            .find(dec -> dec instanceof TypeSectionAst)
+            .map(d -> (TypeSectionAst)d).get().types();
 
         var iStringMap = types.fmap( a ->
-            a.typeIdent().equals( TypeIdent.of("IStringMap") ) &&
-                a.typeDecl() instanceof TypeDecl.Interface itf
+            a.typeIdent().equals( TypeIdentAst.of("IStringMap") ) &&
+                a.typeDecl() instanceof TypeDeclAst.Interface itf
                 ? ImListLinked.of(itf) : ImListLinked.of()
         ).head().get();
 

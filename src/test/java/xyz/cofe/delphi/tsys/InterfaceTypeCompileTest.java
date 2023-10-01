@@ -8,33 +8,33 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static xyz.cofe.delphi.TextResource.textResource;
 
 public class InterfaceTypeCompileTest {
-    private static PascalFile sampleFile = PascalFile.parse(
+    private static PascalFileAst sampleFile = PascalFileAst.parse(
         textResource("/samples/Map.pas"),
         "Map.pas"
     );
 
-    private static PascalFile.Unit sampleUnit =
-        (PascalFile.Unit)sampleFile;
+    private static PascalFileAst.Unit sampleUnit =
+        (PascalFileAst.Unit)sampleFile;
 
     @Test
     public void try1(){
         var types = sampleUnit.api().declarations()
-            .find(dec -> dec instanceof TypeSection)
-            .map(d -> (TypeSection)d).get().types();
+            .find(dec -> dec instanceof TypeSectionAst)
+            .map(d -> (TypeSectionAst)d).get().types();
 
         var iStringMap = types.fmap( a ->
-            a.typeIdent().equals( TypeIdent.of("IStringMap") ) &&
-                a.typeDecl() instanceof TypeDecl.Interface itf
+            a.typeIdent().equals( TypeIdentAst.of("IStringMap") ) &&
+                a.typeDecl() instanceof TypeDeclAst.Interface itf
                 ? ImListLinked.of(itf) : ImListLinked.of()
         ).head().get();
 
         var funs = iStringMap.body().fmap(itm ->
-            itm instanceof ClassMethod.Function fn
+            itm instanceof ClassMethodAst.Function fn
                 ? ImListLinked.of(fn) : ImListLinked.of()
         );
 
         var countFn = funs.find(c -> c.name().equalsIgnoreCase("count")).get();
-        assertTrue( countFn.result().equals( TypeIdent.of("Integer") ) );
+        assertTrue( countFn.result().equals( TypeIdentAst.of("Integer") ) );
         
         var getFn = funs.find(c -> c.name().equalsIgnoreCase("get")).get();
         var existsFn = funs.find(c -> c.name().equalsIgnoreCase("exists")).get();

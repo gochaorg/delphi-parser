@@ -13,16 +13,16 @@ import static xyz.cofe.delphi.impl.Indent.indent;
 /**
  * Некий pascal файл
  */
-public sealed interface PascalFile extends AstNode {
-    record Program() implements PascalFile {}
-    record Library() implements PascalFile {}
+public sealed interface PascalFileAst extends AstNode {
+    record Program() implements PascalFileAst {}
+    record Library() implements PascalFileAst {}
 
     record Unit(
         ImList<String,?> name,
         UnitInterface api,
         SourcePosition position,
         ImList<Comment,?> comments
-    ) implements PascalFile, AstUpdate, Commented<Unit> {
+    ) implements PascalFileAst, AstUpdate, Commented<Unit> {
         @Override
         public Unit withComments(ImList<Comment, ?> comments) {
             return new Unit(name,api,position,comments);
@@ -50,14 +50,14 @@ public sealed interface PascalFile extends AstNode {
     }
 
     record UnitInterface(
-        ImList<Namespace,?> uses,
+        ImList<NamespaceAst,?> uses,
         ImList<InterfaceDecl,?> declarations
     ) implements AstNode
     {
         @Override
         public UnitInterface astUpdate(AstUpdate.UpdateContext ctx) {
             var changedNs = new boolean[]{ false };
-            var ns = uses.foldRight(ImListLinked.<Namespace>of(), (acc,it) -> {
+            var ns = uses.foldRight(ImListLinked.<NamespaceAst>of(), (acc, it) -> {
                 var it1 = it.astUpdate(ctx);
                 //noinspection ConstantConditions
                 if(it!=it1){
@@ -90,7 +90,7 @@ public sealed interface PascalFile extends AstNode {
         static UnitInterface of(DelphiParser.UnitInterfaceContext unt){
             var uses = ImListLinked.of(
                 unt.usesClause().namespaceNameList().namespaceName().stream()
-                    .map(Namespace::of)
+                    .map(NamespaceAst::of)
                     .collect(Collectors.toList())
             );
 
@@ -114,13 +114,13 @@ public sealed interface PascalFile extends AstNode {
         }
     }
 
-    record Package() implements PascalFile {}
+    record Package() implements PascalFileAst {}
 
-    static PascalFile parse( String source, String sourceName ) throws AstParseError {
+    static PascalFileAst parse(String source, String sourceName ) throws AstParseError {
         return parse(source,sourceName,false);
     }
 
-    static PascalFile parse( String source, String sourceName, boolean injectComments ) throws AstParseError {
+    static PascalFileAst parse(String source, String sourceName, boolean injectComments ) throws AstParseError {
         if( source==null )throw new IllegalArgumentException("source==null");
         if( sourceName==null ) throw new IllegalArgumentException("sourceName==null");
 

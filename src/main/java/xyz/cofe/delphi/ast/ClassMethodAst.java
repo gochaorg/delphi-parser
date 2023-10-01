@@ -6,14 +6,13 @@ import xyz.cofe.delphi.parser.DelphiParser;
 
 import java.util.Optional;
 import static xyz.cofe.delphi.ast.AstNode.upcast;
-import static xyz.cofe.delphi.impl.Indent.indent;
 
 /**
  * Методы класса/интерфейса/...
  */
-public sealed interface ClassMethod extends InterfaceItem, ClassItem, SrcPos, Commented<ClassMethod> {
+public sealed interface ClassMethodAst extends InterfaceItemAst, ClassItemAst, SrcPos, Commented<ClassMethodAst> {
     @Override
-    ClassMethod astUpdate(AstUpdate.UpdateContext ctx);
+    ClassMethodAst astUpdate(AstUpdate.UpdateContext ctx);
 
     /**
      * Процедура
@@ -24,12 +23,12 @@ public sealed interface ClassMethod extends InterfaceItem, ClassItem, SrcPos, Co
      */
     record Procedure(
         String name,
-        ImList<Generic.Param,?> genericParams,
+        ImList<GenericAst.Param,?> genericParams,
         ImList<Argument,?> arguments,
         ImList<MethodDirective,?> directives,
         SourcePosition position,
         ImList<Comment,?> comments
-    ) implements ClassMethod, SrcPos {
+    ) implements ClassMethodAst, SrcPos {
         @Override
         public Procedure astUpdate(AstUpdate.UpdateContext ctx) {
             var genericParams = ctx.update(this.genericParams); // AstUpdate.astUpdates(this.genericParams, ctx);
@@ -76,12 +75,12 @@ public sealed interface ClassMethod extends InterfaceItem, ClassItem, SrcPos, Co
      */
     record Constructor(
         String name,
-        ImList<Generic.Param,?> genericParams,
+        ImList<GenericAst.Param,?> genericParams,
         ImList<Argument,?> arguments,
         ImList<MethodDirective,?> directives,
         SourcePosition position,
         ImList<Comment,?> comments
-    ) implements ClassMethod, SrcPos {
+    ) implements ClassMethodAst, SrcPos {
         @Override
         public Constructor withComments(ImList<Comment, ?> comments) {
             return new Constructor(name,genericParams,arguments,directives,position,comments);
@@ -126,12 +125,12 @@ public sealed interface ClassMethod extends InterfaceItem, ClassItem, SrcPos, Co
      */
     record Destructor(
         String name,
-        ImList<Generic.Param,?> genericParams,
+        ImList<GenericAst.Param,?> genericParams,
         ImList<Argument,?> arguments,
         ImList<MethodDirective,?> directives,
         SourcePosition position,
         ImList<Comment,?> comments
-    ) implements ClassMethod, SrcPos {
+    ) implements ClassMethodAst, SrcPos {
         public Destructor astUpdate(AstUpdate.UpdateContext ctx) {
             var genericParams = ctx.update(this.genericParams);
             var arguments = ctx.update(this.arguments);
@@ -177,13 +176,13 @@ public sealed interface ClassMethod extends InterfaceItem, ClassItem, SrcPos, Co
      */
     record Function(
         String name,
-        ImList<Generic.Param,?> genericParams,
+        ImList<GenericAst.Param,?> genericParams,
         ImList<Argument,?> arguments,
-        TypeDecl result,
+        TypeDeclAst result,
         ImList<MethodDirective,?> directives,
         SourcePosition position,
         ImList<Comment,?> comments
-    ) implements ClassMethod, SrcPos {
+    ) implements ClassMethodAst, SrcPos {
         @Override
         public Function astUpdate(AstUpdate.UpdateContext ctx) {
             var genericParams = ctx.update(this.genericParams); // AstUpdate.astUpdates(this.genericParams, ctx);
@@ -238,12 +237,12 @@ public sealed interface ClassMethod extends InterfaceItem, ClassItem, SrcPos, Co
      */
     record Operator(
         String name,
-        ImList<Generic.Param,?> genericParams,
+        ImList<GenericAst.Param,?> genericParams,
         ImList<Argument,?> arguments,
-        TypeDecl result,
+        TypeDeclAst result,
         SourcePosition position,
         ImList<Comment,?> comments
-    ) implements ClassMethod, SrcPos {
+    ) implements ClassMethodAst, SrcPos {
         public Operator astUpdate(AstUpdate.UpdateContext ctx) {
             var genericParams = ctx.update(this.genericParams);
             var arguments = ctx.update(this.arguments);
@@ -293,7 +292,7 @@ public sealed interface ClassMethod extends InterfaceItem, ClassItem, SrcPos, Co
         record Overload() implements MethodDirective {}
 
         sealed interface Binding extends MethodDirective {
-            record Message(Expression expression) implements Binding {}
+            record Message(ExpressionAst expression) implements Binding {}
             record Static() implements Binding {}
             record Dynamic() implements Binding {}
             record Override() implements Binding {}
@@ -319,7 +318,7 @@ public sealed interface ClassMethod extends InterfaceItem, ClassItem, SrcPos, Co
             record Near() implements CallConvention {}
         }
 
-        record DispID(Expression expression) implements MethodDirective {
+        record DispID(ExpressionAst expression) implements MethodDirective {
             @Override
             public ImList<? extends AstNode, ?> nestedAstNodes() {
                 return ImListLinked.of(expression);
@@ -341,7 +340,7 @@ public sealed interface ClassMethod extends InterfaceItem, ClassItem, SrcPos, Co
                 var txt = ctx.bindingDirective().getText().toLowerCase();
                 if(txt.startsWith("message"))
                     return new Binding.Message(
-                        Expression.of(ctx.bindingDirective().expression())
+                        ExpressionAst.of(ctx.bindingDirective().expression())
                     );
                 if(txt.startsWith("static")) return new Binding.Static();
                 if(txt.startsWith("dynam")) return new Binding.Dynamic();
@@ -379,19 +378,19 @@ public sealed interface ClassMethod extends InterfaceItem, ClassItem, SrcPos, Co
                 throw AstParseError.unExpected();
             }
             if(ctx.dispIDDirective()!=null && !ctx.dispIDDirective().isEmpty()){
-                return new DispID(Expression.of(ctx.dispIDDirective().expression()));
+                return new DispID(ExpressionAst.of(ctx.dispIDDirective().expression()));
             }
             throw AstParseError.unExpected();
         }
     }
 
-    static ClassMethod of(DelphiParser.ClassMethodContext ctx){
+    static ClassMethodAst of(DelphiParser.ClassMethodContext ctx){
         if( ctx.ident().isEmpty() )throw AstParseError.unExpected();
         var name = ctx.ident().getText();
 
-        ImListLinked<Generic.Param> generic_params =
+        ImListLinked<GenericAst.Param> generic_params =
             ctx.genericDefinition()!=null && !ctx.genericDefinition().isEmpty()
-            ? Generic.of(ctx.genericDefinition())
+            ? GenericAst.of(ctx.genericDefinition())
             : ImListLinked.of();
 
         ImList<Argument,?> params =
@@ -404,9 +403,9 @@ public sealed interface ClassMethod extends InterfaceItem, ClassItem, SrcPos, Co
             ImListLinked.of(ctx.methodDirective()).map(MethodDirective::of) :
             ImListLinked.of();
 
-        Optional<TypeDecl> result =
+        Optional<TypeDeclAst> result =
             (ctx.typeDecl()!=null && !ctx.typeDecl().isEmpty()) ?
-                Optional.of( TypeDecl.of(ctx.typeDecl()) ) :
+                Optional.of( TypeDeclAst.of(ctx.typeDecl()) ) :
                 Optional.empty();
 
         var methKey =

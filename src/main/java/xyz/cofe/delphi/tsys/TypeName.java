@@ -1,21 +1,16 @@
 package xyz.cofe.delphi.tsys;
 
-import javafx.util.Pair;
 import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.coll.im.ImListLinkedBase;
-import xyz.cofe.delphi.ast.PascalFile;
-import xyz.cofe.delphi.ast.TypeDecl;
 
 import java.util.Arrays;
-import java.util.Optional;
 
 /**
  * Имя типа
  */
 public class TypeName extends ImListLinkedBase<String,TypeName> {
-    //private final String[] name;
-    //private final int hashCode;
+    public static final TypeName DEFAULT = TypeName.of();
 
     private TypeName(){
       super(null,null);
@@ -61,6 +56,7 @@ public class TypeName extends ImListLinkedBase<String,TypeName> {
         });
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected <A> ImListLinkedBase<A, ?> selfConstructor(A value, ImListLinkedBase<A, ?> next) {
         return new ImListLinked(value,next);
@@ -68,8 +64,23 @@ public class TypeName extends ImListLinkedBase<String,TypeName> {
 
     public static TypeName of(String ... name){
         if( name==null ) throw new IllegalArgumentException("name==null");
+        if( name.length==0 )return DEFAULT;
+        if( name.length==1 )return new TypeName(name[0],null);
         var tn = new TypeName();
         for( var n : name ){
+            tn = tn.append(n);
+        }
+        return tn;
+    }
+
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
+    public static TypeName of(ImList<String,?> name){
+        if( name==null ) throw new IllegalArgumentException("name==null");
+        if( name.size()==0 )return DEFAULT;
+        if( name.size()==1 )return new TypeName(name.get(0).get(),null);
+        var tn = new TypeName();
+        for( var i=0; i< name.size(); i++ ){
+            var n = name.get(i).get();
             tn = tn.append(n);
         }
         return tn;

@@ -7,13 +7,13 @@ import xyz.cofe.delphi.parser.DelphiParser;
 
 import java.util.Objects;
 
-public record TypeIdent(
+public record TypeIdentAst(
     ImList<String,?> name,
-    ImList<Generic.Param,?> params
-) implements TypeDecl, AstUpdate<TypeIdent>
+    ImList<GenericAst.Param,?> params
+) implements TypeDeclAst, AstUpdate<TypeIdentAst>
 {
     @Override
-    public TypeIdent astUpdate(AstUpdate.UpdateContext ctx) {
+    public TypeIdentAst astUpdate(AstUpdate.UpdateContext ctx) {
         return this;
     }
 
@@ -26,7 +26,7 @@ public record TypeIdent(
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        TypeIdent typeIdent = (TypeIdent) o;
+        TypeIdentAst typeIdent = (TypeIdentAst) o;
 
         // name compare
         if( name.size() != typeIdent.name.size() )return false;
@@ -56,24 +56,24 @@ public record TypeIdent(
         return Objects.hash(name, params);
     }
 
-    public static TypeIdent of(String ... name){
+    public static TypeIdentAst of(String ... name){
         if( name==null ) throw new IllegalArgumentException("name==null");
-        return new TypeIdent(
+        return new TypeIdentAst(
             ImListLinked.of(name), ImListLinked.of()
         );
     }
 
-    public TypeIdent withParams( ImList<Generic.Param,?> params ){
+    public TypeIdentAst withParams(ImList<GenericAst.Param,?> params ){
         if( params==null ) throw new IllegalArgumentException("params==null");
-        return new TypeIdent(name, params);
+        return new TypeIdentAst(name, params);
     }
 
-    public static TypeIdent of(DelphiParser.GenericTypeIdentContext ctx){
+    public static TypeIdentAst of(DelphiParser.GenericTypeIdentContext ctx){
         var name = ImListLinked.of(
             ctx.qualifiedIdent().ident().stream()
             .map(RuleContext::getText).toList());
 
-        var genParams = ImListLinked.<Generic.Param>of();
+        var genParams = ImListLinked.<GenericAst.Param>of();
         if( ctx.genericDefinition()!=null
         && !ctx.genericDefinition().isEmpty()
         ){
@@ -81,22 +81,22 @@ public record TypeIdent(
                 ctx.genericDefinition();
 
             if( genDef!=null ) {
-                genParams = Generic.of(genDef);
+                genParams = GenericAst.of(genDef);
             }
         }
 
-        return new TypeIdent(
+        return new TypeIdentAst(
             name,
             genParams
         );
     }
 
-    public static TypeIdent of(DelphiParser.TypeDeclarationContext dec) {
+    public static TypeIdentAst of(DelphiParser.TypeDeclarationContext dec) {
         var name = ImListLinked.of(
             dec.genericTypeIdent().qualifiedIdent().ident().stream()
                 .map(RuleContext::getText).toList());
 
-        var genParams = ImListLinked.<Generic.Param>of();
+        var genParams = ImListLinked.<GenericAst.Param>of();
         if( dec.genericTypeIdent()!=null
         &&  !dec.genericTypeIdent().isEmpty()
         ){
@@ -104,11 +104,11 @@ public record TypeIdent(
                 dec.genericTypeIdent().genericDefinition();
 
             if( genDef!=null ) {
-                genParams = Generic.of(genDef);
+                genParams = GenericAst.of(genDef);
             }
         }
 
-        return new TypeIdent(
+        return new TypeIdentAst(
             name,
             genParams
         );

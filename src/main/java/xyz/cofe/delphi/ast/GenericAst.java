@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
  * Generic параметр
  */
 // TODO требует переименования/рефакторинга
-public sealed interface Generic {
-    record Param(String name, ImList<Bound,?> constraints) implements Generic, AstNode, AstUpdate<Param> {
+public sealed interface GenericAst {
+    record Param(String name, ImList<Bound,?> constraints) implements GenericAst, AstNode, AstUpdate<Param> {
         @Override
         public Param astUpdate(AstUpdate.UpdateContext ctx) {
             return this;
@@ -43,7 +43,7 @@ public sealed interface Generic {
     static Param param(String name) {
         return new Param(name, ImListLinked.of());
     }
-    static Generic.Param param(DelphiParser.ConstrainedGenericContext ctx){
+    static GenericAst.Param param(DelphiParser.ConstrainedGenericContext ctx){
         ImListLinked<Bound> bounds = ImListLinked.of(
         ctx.genericConstraint().stream()
             .map( c -> {
@@ -66,14 +66,14 @@ public sealed interface Generic {
             bounds
         );
     }
-    static ImListLinked<Generic.Param> of(DelphiParser.GenericDefinitionContext ctx){
-        var genParams = ImListLinked.<Generic.Param>of();
+    static ImListLinked<GenericAst.Param> of(DelphiParser.GenericDefinitionContext ctx){
+        var genParams = ImListLinked.<GenericAst.Param>of();
         if (!ctx.simpleGenericDefinition().isEmpty()) {
             genParams = ImListLinked.of(
                 ctx.simpleGenericDefinition().ident().stream()
                     .map(RuleContext::getText).toList()
             ).foldLeft(genParams, (acc, it) -> acc.append(
-                Generic.param(it)
+                GenericAst.param(it)
             ));
         }
 
@@ -81,7 +81,7 @@ public sealed interface Generic {
             genParams = ImListLinked.of(
                 ctx.constrainedGenericDefinition().constrainedGeneric()
                     .stream()
-                    .map(Generic::param)
+                    .map(GenericAst::param)
                     .collect(Collectors.toList())
             ).foldLeft(genParams, ImListLinkedBase::append);
         }

@@ -33,6 +33,18 @@ public class TypeScope {
     }
 
     /**
+     * Получение типа по его имени
+     * @param typeName имя типа
+     * @return тип
+     */
+    public Optional<Type> get(TypeName typeName){
+        if( typeName==null ) throw new IllegalArgumentException("typeName==null");
+        var type = typeByName.get(typeName);
+        if( type!=null )return Optional.of(type);
+        return Optional.empty();
+    }
+
+    /**
      * Добавляем тип в область видимости
      *
      * @param type тип
@@ -70,30 +82,54 @@ public class TypeScope {
      * Импортирует типы определенные в Unit файле
      * @param unit файл
      */
-    public void add(PascalFile.Unit unit) {
+    public void add(PascalFileAst.Unit unit) {
         if (unit == null) throw new IllegalArgumentException("unit==null");
-        var typeSec = unit.api().declarations().filter( d -> d instanceof TypeSection ).map( d -> (TypeSection)d );
+        var typeSec = unit.api().declarations().filter( d -> d instanceof TypeSectionAst).map(d -> (TypeSectionAst)d );
         typeSec.forEach(typeSection -> {
             typeSection.types().forEach( tdecl -> {
                 var ident = tdecl.typeIdent();
                 var decl = tdecl.typeDecl();
-                if( decl instanceof TypeDecl.Array a ) {}
-                if( decl instanceof TypeDecl.Interface a ) {
+                if( decl instanceof TypeDeclAst.Array a ) {}
+                if( decl instanceof TypeDeclAst.Interface a ) {
                     add(unit, ident, a);
                 }
-                if( decl instanceof TypeDecl.MetaClass a ) {}
-                if( decl instanceof TypeDecl.Simple a ) {}
-                if( decl instanceof TypeDecl.StringType a ) {}
-                if( decl instanceof TypeDecl.Structured a ) {}
-                if( decl instanceof TypeDecl.TypeAlias a ) {}
-                if( decl instanceof TypeDecl.Variant a ) {}
-                if( decl instanceof TypeIdent a ) {}
+                if( decl instanceof TypeDeclAst.MetaClass a ) {}
+                if( decl instanceof TypeDeclAst.Simple a ) {}
+                if( decl instanceof TypeDeclAst.StringType a ) {}
+                if( decl instanceof TypeDeclAst.Structured a ) {}
+                if( decl instanceof TypeDeclAst.TypeAlias a ) {}
+                if( decl instanceof TypeDeclAst.Variant a ) {}
+                if( decl instanceof TypeIdentAst a ) {}
             });
         });
     }
 
-    protected void add(PascalFile.Unit unit, TypeIdent ident, TypeDecl.Interface itf) {
+    protected void add(PascalFileAst.Unit unit, TypeIdentAst ident, TypeDeclAst.Interface astItf) {
+        if( unit==null ) throw new IllegalArgumentException("unit==null");
+        if( ident==null ) throw new IllegalArgumentException("ident==null");
+        if( astItf==null ) throw new IllegalArgumentException("astItf==null");
 
-        System.out.println();
+        var unitName = TypeName.of(unit.name());
+        var itfName = TypeName.of(ident.name());
+        var typeName = unitName.append(itfName);
+
+        var itf = new InterfaceType.Named();
+        itf.setName(typeName);
+
+//        astItf.body().map(itfItm -> {
+//            if( itfItm instanceof ClassMethod cm){
+//                if(cm instanceof ClassMethod.Procedure p){
+//                }else if(cm instanceof ClassMethod.Constructor c) {
+//                }else if(cm instanceof ClassMethod.Destructor c) {
+//                }else if(cm instanceof ClassMethod.Function c) {
+//                }else if(cm instanceof ClassMethod.Operator c) {
+//                }
+//            }else if( itfItm instanceof ClassProperty cp){
+//                if(cp instanceof ClassProperty.Property p){
+//                }
+//            }
+//        });
     }
+
+//    protected
 }

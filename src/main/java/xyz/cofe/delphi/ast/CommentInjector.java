@@ -4,7 +4,6 @@ import xyz.cofe.coll.im.*;
 
 import java.util.*;
 import java.util.function.BiConsumer;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 public class CommentInjector {
@@ -18,7 +17,7 @@ public class CommentInjector {
         }
     };
 
-    private Map<Commented,List<Comment>> injectionsOf(PascalFile.Unit unit){
+    private Map<Commented,List<Comment>> injectionsOf(PascalFileAst.Unit unit){
         var result = new HashMap<Commented,List<Comment>>();
 
         var breakPointsMap = new TreeMap<SourcePosition,Commented>(sourcePositionComparator);
@@ -61,7 +60,7 @@ public class CommentInjector {
         return result;
     }
 
-    public PascalFile.Unit inject(PascalFile.Unit unit){
+    public PascalFileAst.Unit inject(PascalFileAst.Unit unit){
         if( unit==null ) throw new IllegalArgumentException("unit==null");
 
         var injections = injectionsOf(unit);

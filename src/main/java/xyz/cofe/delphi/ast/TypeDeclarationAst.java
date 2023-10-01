@@ -4,7 +4,6 @@ import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.delphi.parser.DelphiParser;
 import static xyz.cofe.delphi.ast.AstNode.upcast;
-import static xyz.cofe.delphi.impl.Indent.indent;
 
 /**
  * Объявление типа
@@ -12,19 +11,19 @@ import static xyz.cofe.delphi.impl.Indent.indent;
  * @param typeDecl описание типа
  * @param position позиция в исходнике
  */
-public record TypeDeclaration(
-    TypeIdent typeIdent,
-    TypeDecl typeDecl,
+public record TypeDeclarationAst(
+    TypeIdentAst typeIdent,
+    TypeDeclAst typeDecl,
     SourcePosition position
 ) implements AstNode, SrcPos {
     @Override
-    public TypeDeclaration astUpdate(AstUpdate.UpdateContext ctx) {
+    public TypeDeclarationAst astUpdate(AstUpdate.UpdateContext ctx) {
         if( ctx==null ) throw new IllegalArgumentException("ctx==null");
         var t1= typeIdent.astUpdate(ctx);
         var t2 = typeDecl.astUpdate(ctx);
         //noinspection ConstantConditions
         if( t1==typeIdent && t2==typeDecl )return this;
-        return new TypeDeclaration(t1,t2,position);
+        return new TypeDeclarationAst(t1,t2,position);
     }
 
     @Override
@@ -32,14 +31,14 @@ public record TypeDeclaration(
         return ImListLinked.of(typeIdent, typeDecl);
     }
 
-    static ImList<TypeDeclaration,?> of(Iterable<DelphiParser.TypeDeclarationContext> decs){
-        return ImListLinked.of(decs).map(TypeDeclaration::of);
+    static ImList<TypeDeclarationAst,?> of(Iterable<DelphiParser.TypeDeclarationContext> decs){
+        return ImListLinked.of(decs).map(TypeDeclarationAst::of);
     }
 
-    static TypeDeclaration of(DelphiParser.TypeDeclarationContext dec) {
-        return new TypeDeclaration(
-            TypeIdent.of(dec),
-            TypeDecl.of(dec.typeDecl()),
+    static TypeDeclarationAst of(DelphiParser.TypeDeclarationContext dec) {
+        return new TypeDeclarationAst(
+            TypeIdentAst.of(dec),
+            TypeDeclAst.of(dec.typeDecl()),
             SourcePosition.of(dec)
         );
     }

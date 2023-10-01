@@ -13,16 +13,16 @@ import java.util.Optional;
  * @param type тип
  * @param position позиция в исходнике
  */
-public record ClassField(String name, TypeDecl type,SourcePosition position,ImList<Comment,?> comments)
-implements ClassItem, AstNode, SrcPos, Commented<ClassField>
+public record ClassFieldAst(String name, TypeDeclAst type, SourcePosition position, ImList<Comment,?> comments)
+implements ClassItemAst, AstNode, SrcPos, Commented<ClassFieldAst>
 {
     @Override
-    public ClassField astUpdate(AstUpdate.UpdateContext ctx) {
+    public ClassFieldAst astUpdate(AstUpdate.UpdateContext ctx) {
         return this;
     }
 
     @Override
-    public ClassField withComments(ImList<Comment, ?> comments) {
+    public ClassFieldAst withComments(ImList<Comment, ?> comments) {
         return this;
     }
 
@@ -31,12 +31,12 @@ implements ClassItem, AstNode, SrcPos, Commented<ClassField>
         return ImListLinked.of(type);
     }
 
-    static ImList<ClassField,?> of(DelphiParser.ClassFieldContext ctx){
-        ImList<ClassField,?> result = ImListLinked.of();
-        Optional<TypeDecl> type = Optional.empty();
+    static ImList<ClassFieldAst,?> of(DelphiParser.ClassFieldContext ctx){
+        ImList<ClassFieldAst,?> result = ImListLinked.of();
+        Optional<TypeDeclAst> type = Optional.empty();
 
         if(ctx.typeDecl()!=null && !ctx.typeDecl().isEmpty()){
-            type = Optional.of( TypeDecl.of(ctx.typeDecl()) );
+            type = Optional.of( TypeDeclAst.of(ctx.typeDecl()) );
         }
 
         if( ctx.identList()!=null
@@ -46,7 +46,7 @@ implements ClassItem, AstNode, SrcPos, Commented<ClassField>
             var type_f = type.get();
             result = ImListLinked.of(ctx.identList().ident())
                 .map(RuleContext::getText)
-                .map(i -> new ClassField(i,type_f,SourcePosition.of(ctx),ImListLinked.of()));
+                .map(i -> new ClassFieldAst(i,type_f,SourcePosition.of(ctx),ImListLinked.of()));
         }
         return result;
     }
