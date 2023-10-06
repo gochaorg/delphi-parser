@@ -77,7 +77,18 @@ public interface Type {
      * @param unit файл
      * @param type тип
      */
-    public static record UnitTypeRef(PascalFileAst.Unit unit, TypeDeclAst type) implements TypeRef {}
+    public static record UnitTypeRef(PascalFileAst.Unit unit, TypeDeclAst type) implements TypeRef {
+        @Override
+        public String toString(){
+            var sb = new StringBuilder();
+            sb.append("UnitTypeRef {");
+            sb.append("unit=").append(unit.name())
+                .append(" type=")
+                .append(type)
+                .append("}");
+            return sb.toString();
+        }
+    }
 
     // TODO добавить Unresolved Type implements SpecialType
 }

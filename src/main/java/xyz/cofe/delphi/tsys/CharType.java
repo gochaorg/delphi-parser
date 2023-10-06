@@ -29,26 +29,51 @@ public sealed interface CharType extends NamedType, SimpleType {
         public TypeName name() {
             return name;
         }
+
+        @Override
+        public String toString() {
+            return name().toString();
+        }
     }
     public static final class AnsiChar implements CharType {
         private AnsiChar() {}
         private static TypeName name = TypeName.of("AnsiChar");
         @Override
         public TypeName name() { return name; }
+
+        @Override
+        public String toString() {
+            return name().toString();
+        }
     }
     public static final class WideChar implements CharType {
         private WideChar() {}
         private static TypeName name = TypeName.of("WideChar");
         @Override public TypeName name() { return name; }
+
+        @Override
+        public String toString() {
+            return name().toString();
+        }
     }
     public static final class UCS2Char implements CharType {
         private UCS2Char() {}
         private static TypeName name = TypeName.of("UCS2Char");
         @Override public TypeName name() { return name; }
+
+        @Override
+        public String toString() {
+            return name().toString();
+        }
     }
     public static final class UCS4Char implements CharType {
         private UCS4Char() {}
         private static TypeName name = TypeName.of("UCS4Char");
         @Override public TypeName name() { return name; }
+
+        @Override
+        public String toString() {
+            return name().toString();
+        }
     }
 }

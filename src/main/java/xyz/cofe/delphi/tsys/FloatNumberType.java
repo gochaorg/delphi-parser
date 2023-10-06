@@ -29,35 +29,70 @@ public sealed interface FloatNumberType extends NamedType, SimpleType {
         private Real48(){}
         private static TypeName name = TypeName.of("Real48");
         @Override public TypeName name() { return name; }
+
+        @Override
+        public String toString() {
+            return name().toString();
+        }
     }
     public static final class Single implements FloatNumberType {
         private Single() {}
         private static TypeName name = TypeName.of("Single");
         @Override public TypeName name() { return name; }
+
+        @Override
+        public String toString() {
+            return name().toString();
+        }
     }
     public static final class Double implements FloatNumberType {
         private Double() {}
         private static TypeName name = TypeName.of("Double");
         @Override public TypeName name() { return name; }
+
+        @Override
+        public String toString() {
+            return name().toString();
+        }
     }
     public static final class Real implements FloatNumberType {
         private Real() {}
         private static TypeName name = TypeName.of("Real");
         @Override public TypeName name() { return name; }
+
+        @Override
+        public String toString() {
+            return name().toString();
+        }
     }
     public static final class Extended implements FloatNumberType {
         private Extended() {}
         private static TypeName name = TypeName.of("Extended");
         @Override public TypeName name() { return name; }
+
+        @Override
+        public String toString() {
+            return name().toString();
+        }
     }
     public static final class Comp implements FloatNumberType {
         private Comp() {}
         private static TypeName name = TypeName.of("Comp");
         @Override public TypeName name() { return name; }
+
+        @Override
+        public String toString() {
+            return name().toString();
+        }
     }
     public static final class Currency implements FloatNumberType {
         private Currency() {}
         private static TypeName name = TypeName.of("Currency");
         @Override public TypeName name() { return name; }
+
+        @Override
+        public String toString() {
+            return name().toString();
+        }
     }
 }

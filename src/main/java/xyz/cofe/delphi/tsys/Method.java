@@ -7,6 +7,8 @@ import xyz.cofe.delphi.ast.SourcePosition;
 
 import java.util.Optional;
 
+import static xyz.cofe.delphi.impl.Indent.indent;
+
 /**
  * Метод интерфейса/класса
  */
@@ -20,7 +22,7 @@ public final class Method implements Freeze, InterfaceItem {
     }
 
     public void freeze(){
-        arguments.forEach(MethodArgument::freeze);
+        arguments.forEach(Argument::freeze);
         returns.ifPresent(p -> {
             if (p instanceof Freeze f) f.freeze();
         } );
@@ -41,14 +43,14 @@ public final class Method implements Freeze, InterfaceItem {
         this.name = name;
     }
     //endregion
-    //region params : ImList<MethodParam,?> - параметры метода
-    private ImList<MethodArgument,?> arguments = ImListLinked.of();
+    //region arguments : ImList<MethodParam,?> - параметры метода
+    private ImList<Argument,?> arguments = ImListLinked.of();
 
-    public ImList<MethodArgument, ?> getArguments() {
+    public ImList<Argument, ?> getArguments() {
         return arguments;
     }
 
-    public void setArguments(ImList<MethodArgument, ?> arguments) {
+    public void setArguments(ImList<Argument, ?> arguments) {
         if( arguments==null ) throw new IllegalArgumentException("arguments==null");
         if( frozen )throw new TypeSysError.Frozen();
         this.arguments = arguments;
@@ -135,4 +137,31 @@ public final class Method implements Freeze, InterfaceItem {
         this.implementation = implementation;
     }
     //endregion
+
+    @Override
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        sb.append(returns.isPresent() ? "function" : "method").append(" ").append(name).append("\n");
+        if( arguments.size()>0 ){
+            sb.append("  arguments:\n");
+            arguments.forEach(a -> sb.append(indent("    ",a.toString())).append("\n"));
+        }
+        returns.ifPresent( retType -> {
+            sb.append("  returns:\n");
+            sb.append(indent("    ",retType.toString())).append("\n");
+        });
+        if( directives.size()>0 ){
+            sb.append("  directives:\n");
+            directives.forEach( d -> {
+                sb.append(indent("    ",d.toString())).append("\n");
+            });
+        }
+        if( comments.size()>0 ){
+            sb.append("  comments:\n");
+            comments.forEach(c -> {
+                sb.append(indent("    ", c.text())).append("\n");
+            });
+        }
+        return sb.toString();
+    }
 }

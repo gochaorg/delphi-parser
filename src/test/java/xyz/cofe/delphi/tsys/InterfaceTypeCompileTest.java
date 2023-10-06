@@ -1,6 +1,7 @@
 package xyz.cofe.delphi.tsys;
 
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.delphi.ast.*;
 
@@ -20,7 +21,13 @@ public class InterfaceTypeCompileTest {
     public void try1(){
         var ts = new TypeScope();
         ts.add(sampleUnit);
-        var itf = ts.get(TypeName.of("Map","IStringMap"));
-        System.out.println(itf);
+
+        var itfOpt = ts.get(TypeName.of("Map","IStringMap"));
+
+        assertTrue(itfOpt.isPresent());
+        assertTrue(itfOpt.get() instanceof InterfaceType);
+        var itf = (InterfaceType)itfOpt.get();
+
+        itf.getBody().forEach( itm -> System.out.println(itm) );
     }
 }

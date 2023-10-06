@@ -22,6 +22,11 @@ public sealed interface StringType extends SimpleType {
         public TypeName name() {
             return name;
         }
+
+        @Override
+        public String toString() {
+            return name().toString();
+        }
     }
     public static final class ShortStringSized implements StringType, ShortString {
         public final long maxLength;
@@ -45,6 +50,11 @@ public sealed interface StringType extends SimpleType {
         @Override
         public TypeName name() {
             return name;
+        }
+
+        @Override
+        public String toString() {
+            return name().toString();
         }
     }
     public static final class AnsiStringWithCodePage implements StringType, AnsiString {
@@ -70,6 +80,11 @@ public sealed interface StringType extends SimpleType {
         public TypeName name() {
             return name;
         }
+
+        @Override
+        public String toString() {
+            return name().toString();
+        }
     }
     public static final class UnicodeStringSized implements StringType, UnicodeString {
         public final Long maxLength;
@@ -93,6 +108,11 @@ public sealed interface StringType extends SimpleType {
         @Override
         public TypeName name() {
             return name;
+        }
+
+        @Override
+        public String toString() {
+            return name().toString();
         }
     }
     public static final class WideStringSized implements StringType, WideString {
@@ -125,6 +145,11 @@ public sealed interface StringType extends SimpleType {
         public TypeName name() {
             return name;
         }
+
+        @Override
+        public String toString() {
+            return name().toString();
+        }
     }
 
     public static final StringUnsized stringWithOutLengthType = new StringUnsized();
@@ -143,6 +168,11 @@ public sealed interface StringType extends SimpleType {
         public TypeName name() {
             return name;
         }
+
+        @Override
+        public String toString() {
+            return name().toString();
+        }
     }
     public static final PChar pchar = new PChar();
 
@@ -155,6 +185,11 @@ public sealed interface StringType extends SimpleType {
         @Override
         public TypeName name() {
             return name;
+        }
+
+        @Override
+        public String toString() {
+            return name().toString();
         }
     }
     public static final PWideChar pwidechar = new PWideChar();

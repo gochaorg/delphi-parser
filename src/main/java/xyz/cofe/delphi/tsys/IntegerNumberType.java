@@ -38,6 +38,11 @@ public sealed interface IntegerNumberType extends NamesOfType, SimpleType {
         public TypeName[] names() {
             return names;
         }
+
+        @Override
+        public String toString() {
+            return name().toString();
+        }
     }
 
     public static final class SmallIntType implements IntegerNumberType {
@@ -46,6 +51,11 @@ public sealed interface IntegerNumberType extends NamesOfType, SimpleType {
         @Override
         public TypeName[] names() {
             return names;
+        }
+
+        @Override
+        public String toString() {
+            return name().toString();
         }
     }
 
@@ -64,6 +74,11 @@ public sealed interface IntegerNumberType extends NamesOfType, SimpleType {
         public TypeName[] names() {
             return names;
         }
+
+        @Override
+        public String toString() {
+            return name().toString();
+        }
     }
 
     public final static class IntegerType implements IntegerNumberType {
@@ -72,6 +87,11 @@ public sealed interface IntegerNumberType extends NamesOfType, SimpleType {
         @Override
         public TypeName[] names() {
             return names;
+        }
+
+        @Override
+        public String toString() {
+            return name().toString();
         }
     }
 
@@ -82,6 +102,11 @@ public sealed interface IntegerNumberType extends NamesOfType, SimpleType {
         public TypeName[] names() {
             return names;
         }
+
+        @Override
+        public String toString() {
+            return name().toString();
+        }
     }
 
     public final static class ByteType implements IntegerNumberType {
@@ -90,6 +115,11 @@ public sealed interface IntegerNumberType extends NamesOfType, SimpleType {
         @Override
         public TypeName[] names() {
             return names;
+        }
+
+        @Override
+        public String toString() {
+            return name().toString();
         }
     }
 
@@ -100,6 +130,11 @@ public sealed interface IntegerNumberType extends NamesOfType, SimpleType {
         public TypeName[] names() {
             return names;
         }
+
+        @Override
+        public String toString() {
+            return name().toString();
+        }
     }
 
     public final static class FixedUintType implements IntegerNumberType {
@@ -108,6 +143,11 @@ public sealed interface IntegerNumberType extends NamesOfType, SimpleType {
         @Override
         public TypeName[] names() {
             return names;
+        }
+
+        @Override
+        public String toString() {
+            return name().toString();
         }
     }
 
@@ -118,6 +158,11 @@ public sealed interface IntegerNumberType extends NamesOfType, SimpleType {
         public TypeName[] names() {
             return names;
         }
+
+        @Override
+        public String toString() {
+            return name().toString();
+        }
     }
 
     public final static class UInt64Type implements IntegerNumberType {
@@ -126,6 +171,11 @@ public sealed interface IntegerNumberType extends NamesOfType, SimpleType {
         @Override
         public TypeName[] names() {
             return names;
+        }
+
+        @Override
+        public String toString() {
+            return name().toString();
         }
     }
 }

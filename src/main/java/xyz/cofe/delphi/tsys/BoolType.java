@@ -28,6 +28,11 @@ public sealed interface BoolType extends NamedType, SimpleType {
         public TypeName name() {
             return name;
         }
+
+        @Override
+        public String toString() {
+            return name().toString();
+        }
     }
     public static final class ByteBool implements BoolType {
         private ByteBool() {}
@@ -36,6 +41,11 @@ public sealed interface BoolType extends NamedType, SimpleType {
         @Override
         public TypeName name() {
             return name;
+        }
+
+        @Override
+        public String toString() {
+            return name().toString();
         }
     }
     public static final class WordBool implements BoolType {
@@ -46,6 +56,11 @@ public sealed interface BoolType extends NamedType, SimpleType {
         public TypeName name() {
             return name;
         }
+
+        @Override
+        public String toString() {
+            return name().toString();
+        }
     }
     public static final class LongBool implements BoolType {
         private LongBool() {}
@@ -54,6 +69,11 @@ public sealed interface BoolType extends NamedType, SimpleType {
         @Override
         public TypeName name() {
             return name;
+        }
+
+        @Override
+        public String toString() {
+            return name().toString();
         }
     }
 }

@@ -12,4 +12,9 @@ public final class Variant implements SimpleType, NamedType {
     public TypeName name() {
         return name;
     }
+
+    @Override
+    public String toString() {
+        return name().toString();
+    }
 }

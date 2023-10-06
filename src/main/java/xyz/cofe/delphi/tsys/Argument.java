@@ -3,10 +3,10 @@ package xyz.cofe.delphi.tsys;
 import java.util.Optional;
 
 /**
- * Параметр
+ * Аргумент метода
  */
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-public class MethodArgument implements Freeze {
+public class Argument implements Freeze {
     //region freeze
     private volatile boolean frozen;
 

@@ -155,6 +155,7 @@ public class TypeScope implements Freeze {
         var methods = astItf.body().map(itfItm -> {
             if( itfItm instanceof ClassMethodAst cm){
                 if(cm instanceof ClassMethodAst.Procedure p){
+                    return interfaceItemOf(unit,itf,ident,p).mapErr(e -> "procedure "+p.name()+" "+e);
                 }else if(cm instanceof ClassMethodAst.Constructor c) {
                 }else if(cm instanceof ClassMethodAst.Destructor d) {
                 }else if(cm instanceof ClassMethodAst.Function f) {
@@ -163,6 +164,7 @@ public class TypeScope implements Freeze {
                 }
             }else if( itfItm instanceof ClassPropertyAst cp){
                 if(cp instanceof ClassPropertyAst.Property p){
+                    return interfaceItemOf(unit,itf,ident,p).mapErr(e -> "property "+p.name()+" "+e);
                 }
             }
 
@@ -186,9 +188,9 @@ public class TypeScope implements Freeze {
         m.setDirectives(proc.directives().map(MethodDirective::of));
         m.setComments(proc.comments());
         var args = proc.arguments().foldRight(
-            Result.ok(ImListLinked.<MethodArgument>of(),String.class),
+            Result.ok(ImListLinked.<Argument>of(),String.class),
             (acc,it) -> acc.fmap(lst -> {
-                var ma = new MethodArgument();
+                var ma = new Argument();
 
                 if( it.typeDecl().isEmpty() && it.defaultValue().isEmpty() ){
                     return Result.error("arg "+it.name()+" both typeDecl and defaultValue is empty - not implemented");
@@ -230,7 +232,7 @@ public class TypeScope implements Freeze {
     protected Result<InterfaceItem,String> interfaceItemOf(PascalFileAst.Unit unit, InterfaceType.Named self, TypeIdentAst selfName, ClassMethodAst.Function fun ){
         var m = new Method();
         m.setName(fun.name());
-        m.setReturns(Optional.of(returnTypeOf(unit,self,selfName,fun.result())));
+        m.setReturns(Optional.of(prepareTypeOf(unit,self,selfName,fun.result())));
         m.setVisibility(Visibility.Public);
         m.setDeclaration(Optional.of(fun.position()));
         m.setImplementation(Optional.empty());
@@ -245,9 +247,9 @@ public class TypeScope implements Freeze {
 //        );
 
         var args = fun.arguments().foldRight(
-            Result.ok(ImListLinked.<MethodArgument>of(),String.class),
+            Result.ok(ImListLinked.<Argument>of(),String.class),
             (acc,it) -> acc.fmap(lst -> {
-                var ma = new MethodArgument();
+                var ma = new Argument();
 
                 if( it.typeDecl().isEmpty() && it.defaultValue().isEmpty() ){
                     return Result.error("arg "+it.name()+" both typeDecl and defaultValue is empty - not implemented");
@@ -287,21 +289,51 @@ public class TypeScope implements Freeze {
         });
     }
 
-    protected Type returnTypeOf(PascalFileAst.Unit unit, Type self, TypeIdentAst selfName, TypeDeclAst returns){
+    protected Result<InterfaceItem,String> interfaceItemOf(PascalFileAst.Unit unit, InterfaceType.Named self, TypeIdentAst selfName, ClassPropertyAst.Property prop) {
+        var p = new Property();
+        p.setName(prop.name());
+        argsParse(unit,self,selfName,prop.propertyArray()).fmap( arrArgs -> {
+            p.setArrayArguments(arrArgs);
+
+            if( prop.type().isEmpty() )return Result.error("property type not defined");
+            p.setType(prepareTypeOf(unit,self,selfName,prop.type().get()));
+
+            p.setDeclaration(Optional.of(prop.position()));
+
+            p.setComments(prop.comments());
+            p.setStatik(prop.classFlag());
+
+            ImList<PropertySpecifier,?> propSpec = prop.specifiers().map( s -> propertySpecifier(unit,self,selfName,s) );
+            p.setSpecifiers( propSpec );
+
+            return Result.ok(p);
+        });
+
+        return Result.error("not implemented");
+    }
+
+    protected Type prepareTypeOf(PascalFileAst.Unit unit, Type self, TypeIdentAst selfName, TypeDeclAst returns){
         if( selfName.equals(returns) ) {
             return self;
-        } else if( returns instanceof TypeIdentAst t ){
-            return get(TypeName.of(t.name())).orElse( new Type.UnitTypeRef(unit,returns) );
+        } else if( returns instanceof TypeIdentAst t ) {
+            return get(TypeName.of(t.name())).orElse(new Type.UnitTypeRef(unit, returns));
+        } else if( returns instanceof TypeDeclAst.Variant ) {
+            return get(TypeName.of("Variant")).orElse(new Type.UnitTypeRef(unit, returns));
+        } else if( returns instanceof TypeDeclAst.StringType.StrIng s ){
+            if( s.expression().isEmpty() ){
+                return StringType.stringWithOutLengthType;
+            }
+            return new Type.UnitTypeRef(unit, returns);
         } else {
             return new Type.UnitTypeRef(unit, returns);
         }
     }
 
-    protected Result<ImList<MethodArgument,?>,String> argsParse(PascalFileAst.Unit unit, Type self, TypeIdentAst selfName, ImList<Argument,?> arguments) {
+    protected Result<ImList<Argument,?>,String> argsParse(PascalFileAst.Unit unit, Type self, TypeIdentAst selfName, ImList<xyz.cofe.delphi.ast.Argument,?> arguments) {
         return arguments.foldRight(
-            Result.ok(ImListLinked.<MethodArgument>of(),String.class),
+            Result.ok(ImListLinked.<Argument>of(),String.class),
             (acc,it) -> acc.fmap(lst -> {
-                var ma = new MethodArgument();
+                var ma = new Argument();
 
                 if( it.typeDecl().isEmpty() && it.defaultValue().isEmpty() ){
                     return Result.error("arg "+it.name()+" both typeDecl and defaultValue is empty - not implemented");
@@ -334,5 +366,56 @@ public class TypeScope implements Freeze {
                 return Result.ok(lst.prepend(ma));
             })
         );
+    }
+
+    protected PropertySpecifier propertySpecifier(PascalFileAst.Unit unit, Type self, TypeIdentAst selfName, ClassPropertyAst.Specifier spec) {
+        if( spec instanceof ClassPropertyAst.Read r ){
+            return new PropertySpecifier.Read(
+                r.name(),
+                r.expression().map(ExpressionAst::text)
+            );
+        }
+        if( spec instanceof ClassPropertyAst.Write w ){
+            return new PropertySpecifier.Write(
+                w.name(),
+                w.expression().map(ExpressionAst::text)
+            );
+        }
+        if( spec instanceof ClassPropertyAst.ReadOnly r ){
+            return new PropertySpecifier.ReadOnly();
+        }
+        if( spec instanceof ClassPropertyAst.WriteOnly r ){
+            return new PropertySpecifier.WriteOnly();
+        }
+        if( spec instanceof ClassPropertyAst.DispID r ){
+            return new PropertySpecifier.DispID(r.expression().text());
+        }
+        if( spec instanceof ClassPropertyAst.Stored s ){
+            return new PropertySpecifier.Stored(s.expression().text());
+        }
+        if( spec instanceof ClassPropertyAst.DefaultExp d ){
+            return new PropertySpecifier.DefaultExp(d.expression().text());
+        }
+        if( spec instanceof ClassPropertyAst.Default d ){
+            return new PropertySpecifier.Default();
+        }
+        if( spec instanceof ClassPropertyAst.NoDefault n ){
+            return new PropertySpecifier.NoDefault();
+        }
+        if( spec instanceof ClassPropertyAst.Implements i ){
+            Type t = null;
+            var tn = TypeName.of(i.typeId());
+            var selfTn = TypeName.of(selfName.name());
+            if( tn.equals(selfTn) ){
+                t = self;
+            }else{
+                var t2 = get(tn);
+                t = t2.orElseGet(() -> new Type.UnitTypeRef(unit, new TypeIdentAst(i.typeId(), ImListLinked.of())));
+            }
+
+            return new PropertySpecifier.Implements(t);
+        }
+
+        throw new RuntimeException("bug! unexpected");
     }
 }
