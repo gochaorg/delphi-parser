@@ -175,13 +175,18 @@ public class TypeScope implements Freeze {
             itf.setBody( itf.getBody().append(m.unwrap(InterfaceItem.BrokenMethod::new)) );
         });
 
+        ImList<Type,?> parents = astItf.parents().map( pAst -> {
+            var tn = TypeName.of(pAst.name());
+            return get(tn).orElse(new Type.UnitTypeRef(unit, TypeIdentAst.of(tn)));
+        });
+        itf.setParents(parents);
+
         add(itf);
     }
 
     protected Result<InterfaceItem,String> interfaceItemOf(PascalFileAst.Unit unit, InterfaceType.Named self, TypeIdentAst selfName, ClassMethodAst.Procedure proc ){
-        var m = new Method();
+        var m = new Procedure();
         m.setName(proc.name());
-        m.setReturns(Optional.empty());
         m.setVisibility(Visibility.Public);
         m.setDeclaration(Optional.of(proc.position()));
         m.setImplementation(Optional.empty());
@@ -230,9 +235,9 @@ public class TypeScope implements Freeze {
     }
 
     protected Result<InterfaceItem,String> interfaceItemOf(PascalFileAst.Unit unit, InterfaceType.Named self, TypeIdentAst selfName, ClassMethodAst.Function fun ){
-        var m = new Method();
+        var m = new Function();
         m.setName(fun.name());
-        m.setReturns(Optional.of(prepareTypeOf(unit,self,selfName,fun.result())));
+        m.setReturns(prepareTypeOf(unit,self,selfName,fun.result()));
         m.setVisibility(Visibility.Public);
         m.setDeclaration(Optional.of(fun.position()));
         m.setImplementation(Optional.empty());

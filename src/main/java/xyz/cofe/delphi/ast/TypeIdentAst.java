@@ -4,6 +4,7 @@ import org.antlr.v4.runtime.RuleContext;
 import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.delphi.parser.DelphiParser;
+import xyz.cofe.delphi.tsys.TypeName;
 
 import java.util.Objects;
 
@@ -61,6 +62,11 @@ public record TypeIdentAst(
         return new TypeIdentAst(
             ImListLinked.of(name), ImListLinked.of()
         );
+    }
+
+    public static TypeIdentAst of(TypeName typeName){
+        if( typeName==null ) throw new IllegalArgumentException("typeName==null");
+        return new TypeIdentAst(typeName,ImListLinked.of());
     }
 
     public TypeIdentAst withParams(ImList<GenericAst.Param,?> params ){

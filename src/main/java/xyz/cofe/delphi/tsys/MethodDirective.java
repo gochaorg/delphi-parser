@@ -2,6 +2,9 @@ package xyz.cofe.delphi.tsys;
 
 import xyz.cofe.delphi.ast.ClassMethodAst;
 
+/**
+ * Директивы метода
+ */
 public sealed interface MethodDirective {
     record Reintroduce() implements MethodDirective {}
     record Overload() implements MethodDirective {}

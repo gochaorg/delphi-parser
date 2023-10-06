@@ -8,7 +8,7 @@ import java.util.Optional;
 /**
  * Простые типы, ну типа простые
  */
-public sealed interface SimpleType extends Type permits BoolType, CharType, EnumType, FloatNumberType, IntegerNumberType, RangeType, StringType, Variant {
+public sealed interface SimpleType extends Type permits BoolType, CharType, EnumType, FloatNumberType, IntegerNumberType, RangeType, StringType, VariantType {
     /**
      * Поиск типа по его имени среди предопределенных
      * @param name имя типа

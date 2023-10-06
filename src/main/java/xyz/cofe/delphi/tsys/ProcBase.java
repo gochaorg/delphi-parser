@@ -7,13 +7,13 @@ import xyz.cofe.delphi.ast.SourcePosition;
 
 import java.util.Optional;
 
-import static xyz.cofe.delphi.impl.Indent.indent;
-
 /**
- * Метод интерфейса/класса
+ * Базовый класс для имплементации функции
  */
-@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-public final class Method implements Freeze, InterfaceItem {
+public abstract class ProcBase implements Freeze {
+    public ProcBase(){
+    }
+
     //region freeze
     private volatile boolean frozen;
 
@@ -23,9 +23,7 @@ public final class Method implements Freeze, InterfaceItem {
 
     public void freeze(){
         arguments.forEach(Argument::freeze);
-        returns.ifPresent(p -> {
-            if (p instanceof Freeze f) f.freeze();
-        } );
+        if( returns instanceof Freeze f )f.freeze();
         this.frozen = true;
     }
     //endregion
@@ -46,25 +44,40 @@ public final class Method implements Freeze, InterfaceItem {
     //region arguments : ImList<MethodParam,?> - параметры метода
     private ImList<Argument,?> arguments = ImListLinked.of();
 
+    /**
+     * Возвращает аргументы функции
+     * @return аргументы функции
+     */
     public ImList<Argument, ?> getArguments() {
         return arguments;
     }
 
+    /**
+     * Указывает аргументы функции
+     * @param arguments аргументы функции
+     */
     public void setArguments(ImList<Argument, ?> arguments) {
         if( arguments==null ) throw new IllegalArgumentException("arguments==null");
         if( frozen )throw new TypeSysError.Frozen();
         this.arguments = arguments;
     }
     //endregion
-    //region returns : Optional<Type> - тип результата
-    private Optional<Type> returns = Optional.empty();
+    //region returns : Type - тип результата
+    private Type returns = Type.VoidType.instance;
 
-    public Optional<Type> getReturns() {
+    /**
+     * Возвращает тип результата
+     * @return Тип результата
+     */
+    public Type getReturns() {
         return returns;
     }
 
-    @SuppressWarnings("OptionalAssignedToNull")
-    public void setReturns(Optional<Type> returns) {
+    /**
+     * Указывает тип результата
+     * @param returns Тип результата
+     */
+    protected void setReturns(Type returns) {
         if( returns==null ) throw new IllegalArgumentException("returns==null");
         if( frozen )throw new TypeSysError.Frozen();
         this.returns = returns;
@@ -110,13 +123,14 @@ public final class Method implements Freeze, InterfaceItem {
     }
     //endregion
     //region declaration : Optional<SourcePosition>
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     private Optional<SourcePosition> declaration = Optional.empty();
 
     public Optional<SourcePosition> getDeclaration() {
         return declaration;
     }
 
-    @SuppressWarnings("OptionalAssignedToNull")
+    @SuppressWarnings({"OptionalAssignedToNull", "OptionalUsedAsFieldOrParameterType"})
     public void setDeclaration(Optional<SourcePosition> declaration) {
         if( declaration==null ) throw new IllegalArgumentException("declaration==null");
         if( frozen )throw new TypeSysError.Frozen();
@@ -124,35 +138,18 @@ public final class Method implements Freeze, InterfaceItem {
     }
     //endregion
     //region implementation : Optional<SourcePosition>
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     private Optional<SourcePosition> implementation = Optional.empty();
 
     public Optional<SourcePosition> getImplementation() {
         return implementation;
     }
 
-    @SuppressWarnings("OptionalAssignedToNull")
+    @SuppressWarnings({"OptionalAssignedToNull", "OptionalUsedAsFieldOrParameterType"})
     public void setImplementation(Optional<SourcePosition> implementation) {
         if( implementation==null ) throw new IllegalArgumentException("implementation==null");
         if( frozen )throw new TypeSysError.Frozen();
         this.implementation = implementation;
     }
     //endregion
-
-    @Override
-    public String toString(){
-        StringBuilder sb = new StringBuilder();
-        sb.append(returns.isPresent() ? "function" : "method").append(" ").append(name).append("\n");
-        sb.append(indent("arguments:",arguments));
-
-        returns.ifPresent( retType -> {
-            sb.append("  returns:\n");
-            sb.append(indent("    ",retType.toString())).append("\n");
-        });
-        sb.append(indent("directives:",directives));
-
-        ImList<String,?> cmnt = comments.map(c -> c.text().replaceAll("[\\r\\n]",""));
-        sb.append(indent("comments:",cmnt));
-
-        return sb.toString();
-    }
 }

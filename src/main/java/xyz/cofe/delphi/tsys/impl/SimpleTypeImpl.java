@@ -23,7 +23,7 @@ public class SimpleTypeImpl {
     static {
         ImList<SimpleType, ?> types = ImListLinked.of();
         types = types
-            .prepend(Variant.variant)
+            .prepend(VariantType.variant)
             .prepend(upcast(IntegerNumberType.values))
             .prepend(upcast(FloatNumberType.values))
             .prepend(upcast(CharType.values))
