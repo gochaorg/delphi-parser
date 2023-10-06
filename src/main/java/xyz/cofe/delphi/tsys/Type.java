@@ -90,5 +90,16 @@ public interface Type {
         }
     }
 
+    /**
+     * Тип Void / Unit - для данных которые не могут существовать. В частности если деструктор/процедура - функция, тогда результат void
+     */
+    public final class VoidType implements Type {
+        private VoidType(){}
+        public static final VoidType instance = new VoidType();
+        public String toString(){
+            return "()";
+        }
+    }
+
     // TODO добавить Unresolved Type implements SpecialType
 }
