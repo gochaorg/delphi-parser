@@ -74,7 +74,6 @@ public class Argument implements Freeze {
     }
     //endregion
 
-
     @Override
     public String toString() {
         var sb = new StringBuilder();
