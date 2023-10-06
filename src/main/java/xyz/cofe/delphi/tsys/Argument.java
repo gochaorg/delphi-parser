@@ -73,4 +73,17 @@ public class Argument implements Freeze {
         this.direction = direction;
     }
     //endregion
+
+
+    @Override
+    public String toString() {
+        var sb = new StringBuilder();
+        sb.append(name).append("\n");
+        sb.append("  type: ").append(type).append("\n");
+        expression.ifPresent(e -> {
+            sb.append("  expression: ").append(e).append("\n");
+        });
+        sb.append("  direction: ").append(direction).append("\n");
+        return sb.toString();
+    }
 }

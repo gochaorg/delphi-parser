@@ -142,26 +142,17 @@ public final class Method implements Freeze, InterfaceItem {
     public String toString(){
         StringBuilder sb = new StringBuilder();
         sb.append(returns.isPresent() ? "function" : "method").append(" ").append(name).append("\n");
-        if( arguments.size()>0 ){
-            sb.append("  arguments:\n");
-            arguments.forEach(a -> sb.append(indent("    ",a.toString())).append("\n"));
-        }
+        sb.append(indent("arguments:",arguments));
+
         returns.ifPresent( retType -> {
             sb.append("  returns:\n");
             sb.append(indent("    ",retType.toString())).append("\n");
         });
-        if( directives.size()>0 ){
-            sb.append("  directives:\n");
-            directives.forEach( d -> {
-                sb.append(indent("    ",d.toString())).append("\n");
-            });
-        }
-        if( comments.size()>0 ){
-            sb.append("  comments:\n");
-            comments.forEach(c -> {
-                sb.append(indent("    ", c.text())).append("\n");
-            });
-        }
+        sb.append(indent("directives:",directives));
+
+        ImList<String,?> cmnt = comments.map(c -> c.text().replaceAll("[\\r\\n]",""));
+        sb.append(indent("comments:",cmnt));
+
         return sb.toString();
     }
 }

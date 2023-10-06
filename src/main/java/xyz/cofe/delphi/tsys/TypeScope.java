@@ -239,13 +239,6 @@ public class TypeScope implements Freeze {
         m.setDirectives(fun.directives().map(MethodDirective::of));
         m.setComments(fun.comments());
 
-//        m.setArguments(
-//            fun.arguments().map( astArg -> {
-//                var ma = new MethodArgument();
-//                return ma; // idea bug! ma - по факту нормально компилируется, но idea думает что тип не совпадает
-//            })
-//        );
-
         var args = fun.arguments().foldRight(
             Result.ok(ImListLinked.<Argument>of(),String.class),
             (acc,it) -> acc.fmap(lst -> {
@@ -258,14 +251,7 @@ public class TypeScope implements Freeze {
                     return Result.error("arg "+it.name()+" both typeDecl");
                 }
 
-                var argType = it.typeDecl().get();
-                if( selfName.equals(argType) ){
-                    ma.setType(self);
-                } else if( argType instanceof TypeIdentAst t ){
-                    ma.setType(
-                        get(TypeName.of(t.name())).orElse( new Type.UnitTypeRef(unit, argType) )
-                    );
-                }
+                ma.setType(prepareTypeOf(unit,self,selfName,it.typeDecl().get()));
 
                 ma.setName(it.name());
 
