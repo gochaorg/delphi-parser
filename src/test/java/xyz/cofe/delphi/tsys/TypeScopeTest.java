@@ -1,6 +1,7 @@
 package xyz.cofe.delphi.tsys;
 
 import org.junit.jupiter.api.Test;
+import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.delphi.ast.*;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -41,5 +42,10 @@ public class TypeScopeTest {
         var cls = (ClassType)clsOpt.get();
 
         cls.getBody().forEach(System.out::println);
+        var ctors = cls.getBody().fmap(i -> i instanceof Constructor c ? ImListLinked.of(c) : ImListLinked.of() );
+
+        var copyCtor = ctors.find(c -> c.getName().equalsIgnoreCase("Copy") ).get();
+        assertTrue(copyCtor.getArguments().size()==1);
+        assertTrue(copyCtor.getArguments().get(0).get().getType() == cls );
     }
 }
