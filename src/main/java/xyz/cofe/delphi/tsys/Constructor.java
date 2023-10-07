@@ -1,7 +1,5 @@
 package xyz.cofe.delphi.tsys;
 
-import xyz.cofe.coll.im.ImList;
-
 import static xyz.cofe.delphi.impl.Indent.indent;
 
 /**

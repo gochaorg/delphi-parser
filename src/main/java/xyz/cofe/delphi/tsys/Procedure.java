@@ -1,12 +1,5 @@
 package xyz.cofe.delphi.tsys;
 
-import xyz.cofe.coll.im.ImList;
-import xyz.cofe.coll.im.ImListLinked;
-import xyz.cofe.delphi.ast.Comment;
-import xyz.cofe.delphi.ast.SourcePosition;
-
-import java.util.Optional;
-
 import static xyz.cofe.delphi.impl.Indent.indent;
 
 /**

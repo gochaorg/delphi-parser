@@ -7,6 +7,7 @@ import xyz.cofe.delphi.parser.DelphiParser;
 /**
  * Элемент класса
  */
+@SuppressWarnings("rawtypes")
 public sealed interface ClassItemAst
     extends AstNode, AstUpdate
     permits
@@ -47,7 +48,7 @@ public sealed interface ClassItemAst
             return ImListLinked.of(ClassMethodAst.of(ctx.classMethod()));
 
         if(ctx.classField()!=null && !ctx.classField().isEmpty())
-            return ClassFieldAst.of(ctx.classField()).map(i -> (ClassItemAst) i);
+            return ClassFieldAst.of(ctx.classField()).map(i -> i);
 
         if(ctx.classProperty()!=null && !ctx.classProperty().isEmpty())
             return ImListLinked.of(ClassPropertyAst.Property.of(ctx.classProperty()));

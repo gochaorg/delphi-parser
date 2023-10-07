@@ -58,6 +58,7 @@ public class TypeScope implements Freeze {
      * Возвращает карту типов
      * @return карта
      */
+    @SuppressWarnings("unused")
     public Map<TypeName,Type> typeMap(){
         return typeByName;
     }
@@ -122,26 +123,24 @@ public class TypeScope implements Freeze {
         if( frozen )throw new TypeSysError.Frozen();
 
         var typeSec = unit.api().declarations().filter( d -> d instanceof TypeSectionAst).map(d -> (TypeSectionAst)d );
-        typeSec.forEach(typeSection -> {
-            typeSection.types().forEach( tdecl -> {
-                var ident = tdecl.typeIdent();
-                var decl = tdecl.typeDecl();
-                if( decl instanceof TypeDeclAst.Array a ) {}
-                if( decl instanceof TypeDeclAst.Interface a ) {
-                    add(unit, ident, a);
-                }
-                if( decl instanceof TypeDeclAst.Clazz a ) {
-                    add(unit, ident, a);
-                }
-                if( decl instanceof TypeDeclAst.MetaClass a ) {}
-                if( decl instanceof TypeDeclAst.Simple a ) {}
-                if( decl instanceof TypeDeclAst.StringType a ) {}
-                if( decl instanceof TypeDeclAst.Structured a ) {}
-                if( decl instanceof TypeDeclAst.TypeAlias a ) {}
-                if( decl instanceof TypeDeclAst.Variant a ) {}
-                if( decl instanceof TypeIdentAst a ) {}
-            });
-        });
+        typeSec.forEach(typeSection -> typeSection.types().forEach(tdecl -> {
+            var ident = tdecl.typeIdent();
+            var decl = tdecl.typeDecl();
+            if( decl instanceof TypeDeclAst.Array a ) {}
+            if( decl instanceof TypeDeclAst.Interface a ) {
+                add(unit, ident, a);
+            }
+            if( decl instanceof TypeDeclAst.Clazz a ) {
+                add(unit, ident, a);
+            }
+            if( decl instanceof TypeDeclAst.MetaClass a ) {}
+            if( decl instanceof TypeDeclAst.Simple a ) {}
+            if( decl instanceof TypeDeclAst.StringType a ) {}
+            if( decl instanceof TypeDeclAst.Structured a ) {}
+            if( decl instanceof TypeDeclAst.TypeAlias a ) {}
+            if( decl instanceof TypeDeclAst.Variant a ) {}
+            if( decl instanceof TypeIdentAst a ) {}
+        }));
     }
     //endregion
 
@@ -181,9 +180,7 @@ public class TypeScope implements Freeze {
             return Result.<InterfaceItem,String>error("can't map "+itfItm.getClass());
         });
 
-        methods.forEach( m -> {
-            itf.setBody( itf.getBody().append(m.map(i -> (InterfaceItem)i).unwrap(InterfaceItem.Broken::new)) );
-        });
+        methods.forEach( m -> itf.setBody( itf.getBody().append(m.map(i -> (InterfaceItem)i).unwrap(InterfaceItem.Broken::new)) ));
 
         itf.setParents(astItf.parents().map( pAst -> {
             var tn = TypeName.of(pAst.name());
@@ -193,7 +190,7 @@ public class TypeScope implements Freeze {
         add(itf);
     }
 
-    private static record ClassAddState(ImListLinked<Result<ClassItem,String>> items, Visibility visibility) {}
+    private record ClassAddState(ImListLinked<Result<ClassItem,String>> items, Visibility visibility) {}
 
     protected void add(PascalFileAst.Unit unit, TypeIdentAst ident, TypeDeclAst.Clazz astClass) {
         if( unit==null ) throw new IllegalArgumentException("unit==null");
@@ -220,7 +217,7 @@ public class TypeScope implements Freeze {
                         acc.items.prepend(
                             procedureOf(unit,cls,ident,p).mapErr(e -> "procedure "+p.name()+" "+e).map(i -> {
                                 i.setVisibility(acc.visibility);
-                                return (ClassItem) i;
+                                return i;
                             })
                         ),
                         acc.visibility
@@ -230,7 +227,7 @@ public class TypeScope implements Freeze {
                         acc.items.prepend(
                             constructorOf(unit,cls,ident,c).mapErr(e -> "constructor "+c.name()+" "+e).map(i -> {
                                 i.setVisibility(acc.visibility);
-                                return (ClassItem) i;
+                                return i;
                             })
                         ),
                         acc.visibility
@@ -240,7 +237,7 @@ public class TypeScope implements Freeze {
                         acc.items.prepend(
                             destructorOf(unit,cls,ident,d).mapErr(e -> "destructor "+d.name()+" "+e).map(i -> {
                                 i.setVisibility(acc.visibility);
-                                return (ClassItem) i;
+                                return i;
                             })
                         ),
                         acc.visibility
