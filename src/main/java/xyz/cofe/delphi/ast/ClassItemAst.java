@@ -9,7 +9,14 @@ import xyz.cofe.delphi.parser.DelphiParser;
  */
 public sealed interface ClassItemAst
     extends AstNode, AstUpdate
-    permits ClassFieldAst, ClassItemAst.ClassVarSection, ClassMethodAst, ClassPropertyAst, ConstSectionAst.Constants, TypeSectionAst, VisibilityAst
+    permits
+        ClassFieldAst,
+        ClassItemAst.ClassVarSection,
+        ClassMethodAst,
+        ClassPropertyAst,
+        ConstSectionAst.Constants,
+        TypeSectionAst,
+        VisibilityAst
 {
     @Override
     ClassItemAst astUpdate(AstUpdate.UpdateContext ctx);

@@ -49,6 +49,7 @@ public class TypeScope implements Freeze {
     }
     //endregion
 
+    //region typeMap() / get()
     private void initSimpleTypes() {
         SimpleType.typeMap().forEach(this::add);
     }
@@ -72,7 +73,9 @@ public class TypeScope implements Freeze {
         if( type!=null )return Optional.of(type);
         return Optional.empty();
     }
+    //endregion
 
+    //region add / import type
     /**
      * Добавляем тип в область видимости
      *
@@ -113,6 +116,7 @@ public class TypeScope implements Freeze {
      * Импортирует типы определенные в Unit файле
      * @param unit файл
      */
+    @SuppressWarnings("StatementWithEmptyBody")
     public void add(PascalFileAst.Unit unit) {
         if (unit == null) throw new IllegalArgumentException("unit==null");
         if( frozen )throw new TypeSysError.Frozen();
@@ -126,7 +130,9 @@ public class TypeScope implements Freeze {
                 if( decl instanceof TypeDeclAst.Interface a ) {
                     add(unit, ident, a);
                 }
-                if( decl instanceof TypeDeclAst.Clazz a ) {}
+                if( decl instanceof TypeDeclAst.Clazz a ) {
+                    add(unit, ident, a);
+                }
                 if( decl instanceof TypeDeclAst.MetaClass a ) {}
                 if( decl instanceof TypeDeclAst.Simple a ) {}
                 if( decl instanceof TypeDeclAst.StringType a ) {}
@@ -137,6 +143,7 @@ public class TypeScope implements Freeze {
             });
         });
     }
+    //endregion
 
     protected void add(PascalFileAst.Unit unit, TypeIdentAst ident, TypeDeclAst.Interface astItf) {
         if( unit==null ) throw new IllegalArgumentException("unit==null");
@@ -155,16 +162,19 @@ public class TypeScope implements Freeze {
         var methods = astItf.body().map(itfItm -> {
             if( itfItm instanceof ClassMethodAst cm){
                 if(cm instanceof ClassMethodAst.Procedure p){
-                    return interfaceItemOf(unit,itf,ident,p).mapErr(e -> "procedure "+p.name()+" "+e);
+                    return procedureOf(unit,itf,ident,p).mapErr(e -> "procedure "+p.name()+" "+e);
                 }else if(cm instanceof ClassMethodAst.Constructor c) {
+                    return Result.error("unexpected Constructor in interface");
                 }else if(cm instanceof ClassMethodAst.Destructor d) {
+                    return Result.error("unexpected Destructor in interface");
                 }else if(cm instanceof ClassMethodAst.Function f) {
-                    return interfaceItemOf(unit,itf,ident,f).mapErr(e -> "function "+f.name()+" "+e);
+                    return functionOf(unit,itf,ident,f).mapErr(e -> "function "+f.name()+" "+e);
                 }else if(cm instanceof ClassMethodAst.Operator o) {
+                    return Result.error("unexpected Operator in interface");
                 }
             }else if( itfItm instanceof ClassPropertyAst cp){
                 if(cp instanceof ClassPropertyAst.Property p){
-                    return interfaceItemOf(unit,itf,ident,p).mapErr(e -> "property "+p.name()+" "+e);
+                    return propertyOf(unit,itf,ident,p).mapErr(e -> "property "+p.name()+" "+e);
                 }
             }
 
@@ -172,26 +182,286 @@ public class TypeScope implements Freeze {
         });
 
         methods.forEach( m -> {
-            itf.setBody( itf.getBody().append(m.unwrap(InterfaceItem.BrokenMethod::new)) );
+            itf.setBody( itf.getBody().append(m.map(i -> (InterfaceItem)i).unwrap(InterfaceItem.Broken::new)) );
         });
 
-        ImList<Type,?> parents = astItf.parents().map( pAst -> {
+        itf.setParents(astItf.parents().map( pAst -> {
             var tn = TypeName.of(pAst.name());
             return get(tn).orElse(new Type.UnitTypeRef(unit, TypeIdentAst.of(tn)));
-        });
-        itf.setParents(parents);
+        }));
 
         add(itf);
     }
 
-    protected Result<InterfaceItem,String> interfaceItemOf(PascalFileAst.Unit unit, InterfaceType.Named self, TypeIdentAst selfName, ClassMethodAst.Procedure proc ){
-        var m = new Procedure();
-        m.setName(proc.name());
-        m.setVisibility(Visibility.Public);
-        m.setDeclaration(Optional.of(proc.position()));
-        m.setImplementation(Optional.empty());
-        m.setDirectives(proc.directives().map(MethodDirective::of));
-        m.setComments(proc.comments());
+    private static record ClassAddState(ImListLinked<Result<ClassItem,String>> items, Visibility visibility) {}
+
+    protected void add(PascalFileAst.Unit unit, TypeIdentAst ident, TypeDeclAst.Clazz astClass) {
+        if( unit==null ) throw new IllegalArgumentException("unit==null");
+        if( ident==null ) throw new IllegalArgumentException("ident==null");
+        if( astClass==null ) throw new IllegalArgumentException("astClass==null");
+        if( frozen )throw new TypeSysError.Frozen();
+
+        var unitName = TypeName.of(unit.name());
+        var clsName = TypeName.of(ident.name());
+        var typeName = unitName.append(clsName);
+
+        var cls = new ClassType.Named();
+        cls.setName(typeName);
+        cls.setComments(astClass.comments());
+        cls.setParents(astClass.parents().map( pAst -> {
+            var tn = TypeName.of(pAst.name());
+            return get(tn).orElse(new Type.UnitTypeRef(unit, TypeIdentAst.of(tn)));
+        }));
+
+        var body = astClass.body().foldLeft( new ClassAddState(ImListLinked.of(), Visibility.Public), (acc,classItem) -> {
+            if( classItem instanceof ClassMethodAst cm){
+                if(cm instanceof ClassMethodAst.Procedure p){
+                    return new ClassAddState(
+                        acc.items.prepend(
+                            procedureOf(unit,cls,ident,p).mapErr(e -> "procedure "+p.name()+" "+e).map(i -> {
+                                i.setVisibility(acc.visibility);
+                                return (ClassItem) i;
+                            })
+                        ),
+                        acc.visibility
+                    );
+                }else if(cm instanceof ClassMethodAst.Constructor c) {
+                    return new ClassAddState(
+                        acc.items.prepend(
+                            constructorOf(unit,cls,ident,c).mapErr(e -> "constructor "+c.name()+" "+e).map(i -> {
+                                i.setVisibility(acc.visibility);
+                                return (ClassItem) i;
+                            })
+                        ),
+                        acc.visibility
+                    );
+                }else if(cm instanceof ClassMethodAst.Destructor d) {
+                    return new ClassAddState(
+                        acc.items.prepend(
+                            destructorOf(unit,cls,ident,d).mapErr(e -> "destructor "+d.name()+" "+e).map(i -> {
+                                i.setVisibility(acc.visibility);
+                                return (ClassItem) i;
+                            })
+                        ),
+                        acc.visibility
+                    );
+                }else if(cm instanceof ClassMethodAst.Function f) {
+                    return new ClassAddState(
+                        acc.items.prepend(
+                            functionOf(unit,cls,ident,f).mapErr(e -> "function "+f.name()+" "+e).map(i -> {
+                                i.setVisibility(acc.visibility);
+                                return (ClassItem) i;
+                            })
+                        ),
+                        acc.visibility
+                    );
+                }else if(cm instanceof ClassMethodAst.Operator o) {
+                    return new ClassAddState(
+                        acc.items.prepend(
+                            operatorOf(unit,cls,ident,o).mapErr(e -> "operator "+o.name()+" "+e).map(i -> {
+                                i.setVisibility(acc.visibility);
+                                return (ClassItem) i;
+                            })
+                        ),
+                        acc.visibility
+                    );
+                }
+            }else if( classItem instanceof ClassPropertyAst cp){
+                if(cp instanceof ClassPropertyAst.Property p){
+                    return new ClassAddState(
+                        acc.items.prepend(
+                            propertyOf(unit,cls,ident,p).mapErr(e -> "property "+p.name()+" "+e).map(i -> {
+                                i.setVisibility(acc.visibility);
+                                return (ClassItem) i;
+                            })
+                        ),
+                        acc.visibility
+                    );
+                }
+            }else if( classItem instanceof VisibilityAst v ){
+                return new ClassAddState(
+                    acc.items,
+                    Visibility.of(v)
+                );
+            }
+
+            return new ClassAddState(
+                acc.items.prepend(Result.error("can't map "+classItem.getClass())),
+                acc.visibility
+            );
+        });
+        cls.setBody(body.items().reverse().map(clsRes -> clsRes.unwrap(ClassItem.Broken::new)));
+
+        add(cls);
+    }
+
+    protected Result<Constructor,String> constructorOf(PascalFileAst.Unit unit, Type self, TypeIdentAst selfName, ClassMethodAst.Constructor ctorAst) {
+        var ctor = new Constructor();
+        ctor.setName(ctorAst.name());
+        ctor.setVisibility(Visibility.Public);
+        ctor.setDeclaration(Optional.of(ctorAst.position()));
+        ctor.setImplementation(Optional.empty());
+        ctor.setDirectives(ctorAst.directives().map(MethodDirective::of));
+        ctor.setComments(ctorAst.comments());
+        var args = ctorAst.arguments().foldRight(
+            Result.ok(ImListLinked.<Argument>of(),String.class),
+            (acc,it) -> acc.fmap(lst -> {
+                var ma = new Argument();
+
+                if( it.typeDecl().isEmpty() && it.defaultValue().isEmpty() ){
+                    return Result.error("arg "+it.name()+" both typeDecl and defaultValue is empty - not implemented");
+                }
+                if( it.typeDecl().isEmpty() ){
+                    return Result.error("arg "+it.name()+" both typeDecl");
+                }
+
+                var argType = it.typeDecl().get();
+                if( selfName.equals(argType) ){
+                    ma.setType(self);
+                } else if( argType instanceof TypeIdentAst t ){
+                    ma.setType(
+                        get(TypeName.of(t.name())).orElse( new Type.UnitTypeRef(unit, argType) )
+                    );
+                }
+
+                ma.setName(it.name());
+
+                if( it.constraint().isEmpty() ){
+                    ma.setDirection(ArgumentDirection.Input);
+                }else{
+                    ma.setDirection(switch (it.constraint().get()){
+                        case Out -> ArgumentDirection.Output;
+                        case Var -> ArgumentDirection.InputOutput;
+                        case Const -> ArgumentDirection.ConstInput;
+                    });
+                }
+
+                return Result.ok(lst.prepend(ma));
+            })
+        );
+        return args.map( argz -> {
+            ctor.setArguments(argz);
+            return ctor;
+        });
+    }
+
+    protected Result<Destructor,String> destructorOf(PascalFileAst.Unit unit, Type self, TypeIdentAst selfName, ClassMethodAst.Destructor dtorAst) {
+        var dtor = new Destructor();
+        dtor.setName(dtorAst.name());
+        dtor.setVisibility(Visibility.Public);
+        dtor.setDeclaration(Optional.of(dtorAst.position()));
+        dtor.setImplementation(Optional.empty());
+        dtor.setDirectives(dtorAst.directives().map(MethodDirective::of));
+        dtor.setComments(dtorAst.comments());
+        var args = dtorAst.arguments().foldRight(
+            Result.ok(ImListLinked.<Argument>of(),String.class),
+            (acc,it) -> acc.fmap(lst -> {
+                var ma = new Argument();
+
+                if( it.typeDecl().isEmpty() && it.defaultValue().isEmpty() ){
+                    return Result.error("arg "+it.name()+" both typeDecl and defaultValue is empty - not implemented");
+                }
+                if( it.typeDecl().isEmpty() ){
+                    return Result.error("arg "+it.name()+" both typeDecl");
+                }
+
+                var argType = it.typeDecl().get();
+                if( selfName.equals(argType) ){
+                    ma.setType(self);
+                } else if( argType instanceof TypeIdentAst t ){
+                    ma.setType(
+                        get(TypeName.of(t.name())).orElse( new Type.UnitTypeRef(unit, argType) )
+                    );
+                }
+
+                ma.setName(it.name());
+
+                if( it.constraint().isEmpty() ){
+                    ma.setDirection(ArgumentDirection.Input);
+                }else{
+                    ma.setDirection(switch (it.constraint().get()){
+                        case Out -> ArgumentDirection.Output;
+                        case Var -> ArgumentDirection.InputOutput;
+                        case Const -> ArgumentDirection.ConstInput;
+                    });
+                }
+
+                return Result.ok(lst.prepend(ma));
+            })
+        );
+        return args.map( argz -> {
+            dtor.setArguments(argz);
+            return dtor;
+        });
+    }
+
+    protected Result<Operator,String> operatorOf(PascalFileAst.Unit unit, Type self, TypeIdentAst selfName, ClassMethodAst.Operator otor) {
+        var op = new Operator();
+        op.setName(otor.name());
+        op.setVisibility(Visibility.Public);
+        op.setDeclaration(Optional.of(otor.position()));
+        op.setImplementation(Optional.empty());
+        op.setComments(otor.comments());
+        var args = otor.arguments().foldRight(
+            Result.ok(ImListLinked.<Argument>of(),String.class),
+            (acc,it) -> acc.fmap(lst -> {
+                var ma = new Argument();
+
+                if( it.typeDecl().isEmpty() && it.defaultValue().isEmpty() ){
+                    return Result.error("arg "+it.name()+" both typeDecl and defaultValue is empty - not implemented");
+                }
+                if( it.typeDecl().isEmpty() ){
+                    return Result.error("arg "+it.name()+" both typeDecl");
+                }
+
+                var argType = it.typeDecl().get();
+                if( selfName.equals(argType) ){
+                    ma.setType(self);
+                } else if( argType instanceof TypeIdentAst t ){
+                    ma.setType(
+                        get(TypeName.of(t.name())).orElse( new Type.UnitTypeRef(unit, argType) )
+                    );
+                }
+
+                ma.setName(it.name());
+
+                if( it.constraint().isEmpty() ){
+                    ma.setDirection(ArgumentDirection.Input);
+                }else{
+                    ma.setDirection(switch (it.constraint().get()){
+                        case Out -> ArgumentDirection.Output;
+                        case Var -> ArgumentDirection.InputOutput;
+                        case Const -> ArgumentDirection.ConstInput;
+                    });
+                }
+
+                return Result.ok(lst.prepend(ma));
+            })
+        );
+        return args.map( argz -> {
+            op.setArguments(argz);
+            return op;
+        });
+    }
+
+    protected Result<Field,String> fieldOf(PascalFileAst.Unit unit, Type self, TypeIdentAst selfName, ClassFieldAst fieldAst) {
+        var field = new Field();
+        field.setFieldType(prepareTypeOf(unit,self,selfName,fieldAst.type()));
+        field.setName(fieldAst.name());
+        field.setVisibility(Visibility.Public);
+        field.setComments(fieldAst.comments());
+        field.setDeclaration(Optional.of(fieldAst.position()));
+        return Result.ok(field);
+    }
+
+    protected Result<Procedure,String> procedureOf(PascalFileAst.Unit unit, Type self, TypeIdentAst selfName, ClassMethodAst.Procedure proc ){
+        var p = new Procedure();
+        p.setName(proc.name());
+        p.setVisibility(Visibility.Public);
+        p.setDeclaration(Optional.of(proc.position()));
+        p.setImplementation(Optional.empty());
+        p.setDirectives(proc.directives().map(MethodDirective::of));
+        p.setComments(proc.comments());
         var args = proc.arguments().foldRight(
             Result.ok(ImListLinked.<Argument>of(),String.class),
             (acc,it) -> acc.fmap(lst -> {
@@ -229,20 +499,20 @@ public class TypeScope implements Freeze {
             })
         );
         return args.map( argz -> {
-            m.setArguments(argz);
-            return m;
+            p.setArguments(argz);
+            return p;
         });
     }
 
-    protected Result<InterfaceItem,String> interfaceItemOf(PascalFileAst.Unit unit, InterfaceType.Named self, TypeIdentAst selfName, ClassMethodAst.Function fun ){
-        var m = new Function();
-        m.setName(fun.name());
-        m.setReturns(prepareTypeOf(unit,self,selfName,fun.result()));
-        m.setVisibility(Visibility.Public);
-        m.setDeclaration(Optional.of(fun.position()));
-        m.setImplementation(Optional.empty());
-        m.setDirectives(fun.directives().map(MethodDirective::of));
-        m.setComments(fun.comments());
+    protected Result<Function,String> functionOf(PascalFileAst.Unit unit, Type self, TypeIdentAst selfName, ClassMethodAst.Function fun ){
+        var f = new Function();
+        f.setName(fun.name());
+        f.setReturns(prepareTypeOf(unit,self,selfName,fun.result()));
+        f.setVisibility(Visibility.Public);
+        f.setDeclaration(Optional.of(fun.position()));
+        f.setImplementation(Optional.empty());
+        f.setDirectives(fun.directives().map(MethodDirective::of));
+        f.setComments(fun.comments());
 
         var args = fun.arguments().foldRight(
             Result.ok(ImListLinked.<Argument>of(),String.class),
@@ -275,12 +545,12 @@ public class TypeScope implements Freeze {
         );
 
         return args.map( argz -> {
-            m.setArguments(argz);
-            return m;
+            f.setArguments(argz);
+            return f;
         });
     }
 
-    protected Result<InterfaceItem,String> interfaceItemOf(PascalFileAst.Unit unit, InterfaceType.Named self, TypeIdentAst selfName, ClassPropertyAst.Property prop) {
+    protected Result<Property,String> propertyOf(PascalFileAst.Unit unit, Type self, TypeIdentAst selfName, ClassPropertyAst.Property prop) {
         var p = new Property();
         p.setName(prop.name());
         argsParse(unit,self,selfName,prop.propertyArray()).fmap( arrArgs -> {

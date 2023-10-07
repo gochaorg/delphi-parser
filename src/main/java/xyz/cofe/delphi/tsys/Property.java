@@ -8,7 +8,7 @@ import xyz.cofe.delphi.ast.SourcePosition;
 import java.util.Optional;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-public final class Property implements Freeze, InterfaceItem {
+public final class Property implements Freeze, InterfaceItem, ClassItem {
     //region freeze
     private volatile boolean frozen;
 
@@ -110,6 +110,19 @@ public final class Property implements Freeze, InterfaceItem {
         if( specifiers==null ) throw new IllegalArgumentException("specifiers==null");
         if( frozen )throw new TypeSysError.Frozen();
         this.specifiers = specifiers;
+    }
+    //endregion
+    //region visibility : Visibility - видимость
+    private Visibility visibility = Visibility.Private;
+
+    public Visibility getVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(Visibility visibility) {
+        if( visibility==null ) throw new IllegalArgumentException("visibility==null");
+        if( frozen )throw new TypeSysError.Frozen();
+        this.visibility = visibility;
     }
     //endregion
     //region declaration : Optional<SourcePosition>

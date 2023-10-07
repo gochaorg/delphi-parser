@@ -1,14 +1,12 @@
 package xyz.cofe.delphi.tsys;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
-import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.delphi.ast.*;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static xyz.cofe.delphi.TextResource.textResource;
 
-public class InterfaceTypeCompileTest {
+public class TypeScopeTest {
     private static PascalFileAst sampleFile = PascalFileAst.parse(
         textResource("/samples/Map.pas"),
         "Map.pas",true
@@ -18,7 +16,7 @@ public class InterfaceTypeCompileTest {
         (PascalFileAst.Unit)sampleFile;
 
     @Test
-    public void try1(){
+    public void iStringMap(){
         var ts = new TypeScope();
         ts.add(sampleUnit);
 
@@ -28,6 +26,20 @@ public class InterfaceTypeCompileTest {
         assertTrue(itfOpt.get() instanceof InterfaceType);
         var itf = (InterfaceType)itfOpt.get();
 
-        itf.getBody().forEach( itm -> System.out.println(itm) );
+        itf.getBody().forEach(System.out::println);
+    }
+
+    @Test
+    public void tStringMap(){
+        var ts = new TypeScope();
+        ts.add(sampleUnit);
+
+        var clsOpt = ts.get(TypeName.of("Map","TStringMap"));
+
+        assertTrue(clsOpt.isPresent());
+        assertTrue(clsOpt.get() instanceof ClassType);
+        var cls = (ClassType)clsOpt.get();
+
+        cls.getBody().forEach(System.out::println);
     }
 }
