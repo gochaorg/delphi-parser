@@ -6,10 +6,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import org.junit.jupiter.api.Test;
 import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.delphi.ast.PascalFileAst;
-import xyz.cofe.delphi.tsys.ClassType;
-import xyz.cofe.delphi.tsys.Constructor;
-import xyz.cofe.delphi.tsys.TypeName;
-import xyz.cofe.delphi.tsys.TypeScope;
+import xyz.cofe.delphi.tsys.*;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static xyz.cofe.delphi.TextResource.textResource;
@@ -24,7 +21,7 @@ public class DocTest {
         (PascalFileAst.Unit)sampleFile;
 
     @Test
-    public void jsonOut() {
+    public void classJsonOut() {
         var ts = new TypeScope();
         ts.add(sampleUnit);
 
@@ -40,9 +37,33 @@ public class DocTest {
         var om = new ObjectMapper();
         om.findAndRegisterModules();
         om.enable(SerializationFeature.INDENT_OUTPUT);
+        om.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
 
         try {
             System.out.println(om.writeValueAsString(cls));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void interfaceJsonOut() {
+        var ts = new TypeScope();
+        ts.add(sampleUnit);
+
+        var clsOpt = ts.get(TypeName.of("Map","IStringMap"));
+
+        assertTrue(clsOpt.isPresent());
+        assertTrue(clsOpt.get() instanceof InterfaceType);
+        var itf = (InterfaceType)clsOpt.get();
+
+        var om = new ObjectMapper();
+        om.findAndRegisterModules();
+        om.enable(SerializationFeature.INDENT_OUTPUT);
+        om.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+
+        try {
+            System.out.println(om.writeValueAsString(itf));
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

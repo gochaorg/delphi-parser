@@ -1,7 +1,10 @@
 package xyz.cofe.delphi.tsys;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
+import xyz.cofe.delphi.tsys.json.jakson.FlatStr;
+import xyz.cofe.delphi.tsys.json.jakson.FlatStrSer;
 
 /**
  * Булево тип
@@ -19,6 +22,8 @@ public sealed interface BoolType extends NamedType, SimpleType {
         longBoolType
     );
 
+    @JsonSerialize(using = FlatStrSer.class)
+    @FlatStr("Boolean")
     public static final class Bool implements BoolType {
         private Bool() {}
 

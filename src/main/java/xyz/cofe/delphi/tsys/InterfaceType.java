@@ -1,5 +1,6 @@
 package xyz.cofe.delphi.tsys;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.delphi.ast.Comment;
@@ -7,10 +8,17 @@ import xyz.cofe.delphi.ast.SourcePosition;
 
 import java.util.Optional;
 
+import static xyz.cofe.delphi.tsys.json.jakson.JsonAttr.JSON_TYPE_FIELD;
+
 /**
  * Интерфейс
  */
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+@JsonTypeInfo(
+    use = JsonTypeInfo.Id.NAME,
+    include = JsonTypeInfo.As.PROPERTY,
+    property = JSON_TYPE_FIELD
+)
 public class InterfaceType implements Freeze {
     //region Конструкторы
     public InterfaceType(){}

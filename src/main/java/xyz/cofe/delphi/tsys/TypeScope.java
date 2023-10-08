@@ -280,6 +280,13 @@ public class TypeScope implements Freeze {
                     acc.items,
                     Visibility.of(v)
                 );
+            }else if( classItem instanceof ClassFieldAst f ){
+                return new ClassAddState(acc.items.prepend(
+                    fieldOf(unit,cls,ident,f).mapErr(e -> "field "+f.name()+" "+e).map(i -> {
+                        i.setVisibility(acc.visibility);
+                        return (ClassItem) i;
+                    })
+                ), acc.visibility);
             }
 
             return new ClassAddState(

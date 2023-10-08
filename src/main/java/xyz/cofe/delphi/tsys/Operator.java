@@ -142,6 +142,7 @@ public final class Operator implements Freeze, Fun, ClassItem {
     @Override
     public String toString(){
         return "operator " + getName() + "\n" +
+            "  visibility: "+getVisibility()+"\n"+
             indent("arguments:", getArguments()) +
             "  returns:\n" +
             indent("    ", getReturns().toString()) + "\n" +

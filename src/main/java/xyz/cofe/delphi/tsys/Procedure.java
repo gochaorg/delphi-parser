@@ -9,6 +9,7 @@ public final class Procedure extends ProcBase implements Freeze, InterfaceItem, 
     @Override
     public String toString(){
         return "procedure " + getName() + "\n" +
+            "  visibility: "+getVisibility()+"\n"+
             indent("arguments:", getArguments()) +
             indent("directives:", getDirectives()) +
             indent("comments:", getComments().map(c -> c.text().replaceAll("[\\r\\n]", "")));

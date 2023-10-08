@@ -9,6 +9,7 @@ public final class Function extends FunBase implements Freeze, InterfaceItem, Cl
     @Override
     public String toString(){
         return "function " + getName() + "\n" +
+            "  visibility: "+getVisibility()+"\n"+
             indent("arguments:", getArguments()) +
             "  returns:\n" +
             indent("    ", getReturns().toString()) + "\n" +

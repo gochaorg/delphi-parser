@@ -42,6 +42,10 @@ public class TypeScopeTest {
         var cls = (ClassType)clsOpt.get();
 
         cls.getBody().forEach(System.out::println);
+
+        var brokens = cls.getBody().fmap(i -> i instanceof ClassItem.Broken b ? ImListLinked.of(b) : ImListLinked.of());
+        assertTrue(brokens.size()==0);
+
         var ctors = cls.getBody().fmap(i -> i instanceof Constructor c ? ImListLinked.of(c) : ImListLinked.of() );
 
         var copyCtor = ctors.find(c -> c.getName().equalsIgnoreCase("Copy") ).get();

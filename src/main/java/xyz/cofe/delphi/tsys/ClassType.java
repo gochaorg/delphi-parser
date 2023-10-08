@@ -95,7 +95,7 @@ public class ClassType {
     }
     //endregion
     //region declaration : Optional<SourcePosition>
-    private Optional<SourcePosition> declaration;
+    private Optional<SourcePosition> declaration = Optional.empty();
 
     public Optional<SourcePosition> getDeclaration() {
         return declaration;
@@ -109,7 +109,7 @@ public class ClassType {
     }
     //endregion
     //region implementation : Optional<SourcePosition>
-    private Optional<SourcePosition> implementation;
+    private Optional<SourcePosition> implementation = Optional.empty();
 
     public Optional<SourcePosition> getImplementation() {
         return implementation;

@@ -7,6 +7,8 @@ import xyz.cofe.delphi.ast.SourcePosition;
 
 import java.util.Optional;
 
+import static xyz.cofe.delphi.impl.Indent.indent;
+
 public final class Field implements Freeze, ClassItem {
     //region freeze
     private volatile boolean frozen;
@@ -94,4 +96,11 @@ public final class Field implements Freeze, ClassItem {
         this.declaration = declaration;
     }
     //endregion
+
+    public String toString(){
+        return "field "+name+"\n"+
+            "  visibility: "+visibility+"\n"+
+            "  type: "+fieldType+"\n"+
+            indent("comments:", getComments().map(c -> c.text().replaceAll("[\\r\\n]", "")));
+    }
 }

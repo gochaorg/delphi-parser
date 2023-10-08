@@ -5,24 +5,42 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import xyz.cofe.delphi.tsys.ClassType;
 
 import java.util.Optional;
+import java.util.WeakHashMap;
 
 public class JsonAttr {
-    public static String JSON_TYPE_FIELD = "jsonKind";
+    public static final String JSON_TYPE_FIELD = "@type";
+    public static final String RECURSIVE_FIELD = "_recursive";
 
-    public enum Key {
-        ClassTypeKey
-    }
+    public static record ClassStack(ClassType classType, Optional<ClassStack> next) {}
+    private static final WeakHashMap<JsonGenerator, Object> linked = new WeakHashMap<>();
 
-    public static Optional<ClassType> classType(SerializerProvider provider) {
-        if( provider==null ) throw new IllegalArgumentException("provider==null");
-        var r = provider.getAttribute(Key.ClassTypeKey);
-        if( r instanceof ClassType ct )return Optional.of(ct);
+    public static Optional<ClassType> classType(JsonGenerator jgen) {
+        if( jgen==null ) throw new IllegalArgumentException("jgen==null");
+
+        var r = linked.get(jgen);
+        if( r instanceof ClassStack cs ) {
+            return Optional.of(cs.classType);
+        }
+
         return Optional.empty();
     }
 
-    public static void classType(SerializerProvider provider, ClassType ct){
-        if( provider==null ) throw new IllegalArgumentException("provider==null");
+    public static void classType(JsonGenerator jgen, ClassType ct, Runnable code){
+        if( jgen==null ) throw new IllegalArgumentException("jgen==null");
         if( ct==null ) throw new IllegalArgumentException("ct==null");
-        provider.setAttribute(Key.ClassTypeKey, ct);
+        if( code==null ) throw new IllegalArgumentException("code==null");
+
+        var attr  = linked.get(jgen);
+        if( attr instanceof ClassStack cs ){
+            var csHead = new ClassStack(ct, Optional.of(cs));
+            linked.put(jgen,csHead);
+        }else{
+            var csHead = new ClassStack(ct,Optional.empty());
+            linked.put(jgen,csHead);
+        }
+
+        code.run();
+
+        if(attr!=null) linked.put(jgen, attr); else linked.remove(jgen);
     }
 }

@@ -3,6 +3,9 @@ package xyz.cofe.delphi.tsys;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import xyz.cofe.delphi.ast.PascalFileAst;
 import xyz.cofe.delphi.ast.TypeDeclAst;
+import xyz.cofe.delphi.tsys.json.jakson.FlatStr;
+import xyz.cofe.delphi.tsys.json.jakson.FlatStrSer;
+import xyz.cofe.delphi.tsys.json.jakson.UnitTypeRefSer;
 import xyz.cofe.delphi.tsys.json.jakson.VoidTypeSer;
 
 /**
@@ -79,6 +82,8 @@ public interface Type {
      * @param unit файл
      * @param type тип
      */
+    @JsonSerialize(using = UnitTypeRefSer.class)
+    //@FlatStr("UnitTypeRef unit=${unit} type=${type}")
     public static record UnitTypeRef(PascalFileAst.Unit unit, TypeDeclAst type) implements TypeRef {
         @Override
         public String toString(){
@@ -95,7 +100,8 @@ public interface Type {
     /**
      * Тип Void / Unit - для данных которые не могут существовать. В частности если деструктор/процедура - функция, тогда результат void
      */
-    @JsonSerialize(using = VoidTypeSer.class)
+    @JsonSerialize(using = FlatStrSer.class)
+    @FlatStr("Void")
     public final class VoidType implements Type {
         private VoidType(){}
         public static final VoidType instance = new VoidType();

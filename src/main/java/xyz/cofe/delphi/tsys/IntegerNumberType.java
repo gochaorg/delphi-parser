@@ -1,7 +1,10 @@
 package xyz.cofe.delphi.tsys;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
+import xyz.cofe.delphi.tsys.json.jakson.FlatStr;
+import xyz.cofe.delphi.tsys.json.jakson.FlatStrSer;
 
 /**
  * Цело-численные типы
@@ -81,6 +84,8 @@ public sealed interface IntegerNumberType extends NamesOfType, SimpleType {
         }
     }
 
+    @JsonSerialize(using = FlatStrSer.class)
+    @FlatStr("Integer")
     public final static class IntegerType implements IntegerNumberType {
         private IntegerType() {}
         private static final TypeName[] names = new TypeName[]{ TypeName.of("Integer"), TypeName.of("Int32") };

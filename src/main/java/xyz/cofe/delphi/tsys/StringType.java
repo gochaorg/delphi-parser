@@ -1,7 +1,10 @@
 package xyz.cofe.delphi.tsys;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
+import xyz.cofe.delphi.tsys.json.jakson.FlatStr;
+import xyz.cofe.delphi.tsys.json.jakson.FlatStrSer;
 
 import java.util.Optional;
 
@@ -136,6 +139,9 @@ public sealed interface StringType extends SimpleType {
             this.maxLength = maxLength;
         }
     }
+
+    @JsonSerialize(using = FlatStrSer.class)
+    @FlatStr("String")
     public static final class StringUnsized implements StringType, STRING, NamedType, NamedStringType {
         private StringUnsized() {}
 
