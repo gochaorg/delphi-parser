@@ -1,7 +1,10 @@
 package xyz.cofe.delphi.tsys;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
+import xyz.cofe.delphi.tsys.json.jakson.FlatStr;
+import xyz.cofe.delphi.tsys.json.jakson.FlatStrSer;
 
 /**
  * Символ строки
@@ -21,6 +24,8 @@ public sealed interface CharType extends NamedType, SimpleType {
         ucs4CharType
     );
 
+    @JsonSerialize(using = FlatStrSer.class)
+    @FlatStr("Char")
     public static final class Char implements CharType {
         private Char() {}
         private static TypeName name = TypeName.of("Char");
@@ -35,6 +40,9 @@ public sealed interface CharType extends NamedType, SimpleType {
             return name().toString();
         }
     }
+
+    @JsonSerialize(using = FlatStrSer.class)
+    @FlatStr("AnsiChar")
     public static final class AnsiChar implements CharType {
         private AnsiChar() {}
         private static TypeName name = TypeName.of("AnsiChar");
@@ -46,6 +54,9 @@ public sealed interface CharType extends NamedType, SimpleType {
             return name().toString();
         }
     }
+
+    @JsonSerialize(using = FlatStrSer.class)
+    @FlatStr("WideChar")
     public static final class WideChar implements CharType {
         private WideChar() {}
         private static TypeName name = TypeName.of("WideChar");
@@ -56,6 +67,9 @@ public sealed interface CharType extends NamedType, SimpleType {
             return name().toString();
         }
     }
+
+    @JsonSerialize(using = FlatStrSer.class)
+    @FlatStr("UCS2Char")
     public static final class UCS2Char implements CharType {
         private UCS2Char() {}
         private static TypeName name = TypeName.of("UCS2Char");
@@ -66,6 +80,9 @@ public sealed interface CharType extends NamedType, SimpleType {
             return name().toString();
         }
     }
+
+    @JsonSerialize(using = FlatStrSer.class)
+    @FlatStr("UCS4Char")
     public static final class UCS4Char implements CharType {
         private UCS4Char() {}
         private static TypeName name = TypeName.of("UCS4Char");

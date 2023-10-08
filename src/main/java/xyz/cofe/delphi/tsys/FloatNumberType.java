@@ -1,7 +1,10 @@
 package xyz.cofe.delphi.tsys;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
+import xyz.cofe.delphi.tsys.json.jakson.FlatStr;
+import xyz.cofe.delphi.tsys.json.jakson.FlatStrSer;
 
 /**
  * Числа с плавающей десятичной точкой
@@ -25,6 +28,8 @@ public sealed interface FloatNumberType extends NamedType, SimpleType {
         currencyType
     );
 
+    @JsonSerialize(using = FlatStrSer.class)
+    @FlatStr("Real48")
     public static final class Real48 implements FloatNumberType {
         private Real48(){}
         private static TypeName name = TypeName.of("Real48");
@@ -35,6 +40,9 @@ public sealed interface FloatNumberType extends NamedType, SimpleType {
             return name().toString();
         }
     }
+
+    @JsonSerialize(using = FlatStrSer.class)
+    @FlatStr("Single")
     public static final class Single implements FloatNumberType {
         private Single() {}
         private static TypeName name = TypeName.of("Single");
@@ -45,6 +53,9 @@ public sealed interface FloatNumberType extends NamedType, SimpleType {
             return name().toString();
         }
     }
+
+    @JsonSerialize(using = FlatStrSer.class)
+    @FlatStr("Double")
     public static final class Double implements FloatNumberType {
         private Double() {}
         private static TypeName name = TypeName.of("Double");
@@ -55,6 +66,9 @@ public sealed interface FloatNumberType extends NamedType, SimpleType {
             return name().toString();
         }
     }
+
+    @JsonSerialize(using = FlatStrSer.class)
+    @FlatStr("Real")
     public static final class Real implements FloatNumberType {
         private Real() {}
         private static TypeName name = TypeName.of("Real");
@@ -65,6 +79,9 @@ public sealed interface FloatNumberType extends NamedType, SimpleType {
             return name().toString();
         }
     }
+
+    @JsonSerialize(using = FlatStrSer.class)
+    @FlatStr("Extended")
     public static final class Extended implements FloatNumberType {
         private Extended() {}
         private static TypeName name = TypeName.of("Extended");
@@ -75,6 +92,9 @@ public sealed interface FloatNumberType extends NamedType, SimpleType {
             return name().toString();
         }
     }
+
+    @JsonSerialize(using = FlatStrSer.class)
+    @FlatStr("Comp")
     public static final class Comp implements FloatNumberType {
         private Comp() {}
         private static TypeName name = TypeName.of("Comp");
@@ -85,6 +105,9 @@ public sealed interface FloatNumberType extends NamedType, SimpleType {
             return name().toString();
         }
     }
+
+    @JsonSerialize(using = FlatStrSer.class)
+    @FlatStr("Currency")
     public static final class Currency implements FloatNumberType {
         private Currency() {}
         private static TypeName name = TypeName.of("Currency");

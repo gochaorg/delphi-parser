@@ -40,6 +40,9 @@ public sealed interface BoolType extends NamedType, SimpleType {
             return name().toString();
         }
     }
+
+    @JsonSerialize(using = FlatStrSer.class)
+    @FlatStr("ByteBool")
     public static final class ByteBool implements BoolType {
         private ByteBool() {}
         private static TypeName name = TypeName.of("ByteBool");
@@ -54,6 +57,9 @@ public sealed interface BoolType extends NamedType, SimpleType {
             return name().toString();
         }
     }
+
+    @JsonSerialize(using = FlatStrSer.class)
+    @FlatStr("WordBool")
     public static final class WordBool implements BoolType {
         private WordBool() {}
         private static TypeName name =TypeName.of("WordBool");
@@ -68,6 +74,9 @@ public sealed interface BoolType extends NamedType, SimpleType {
             return name().toString();
         }
     }
+
+    @JsonSerialize(using = FlatStrSer.class)
+    @FlatStr("LongBool")
     public static final class LongBool implements BoolType {
         private LongBool() {}
         private static TypeName name = TypeName.of("LongBool");

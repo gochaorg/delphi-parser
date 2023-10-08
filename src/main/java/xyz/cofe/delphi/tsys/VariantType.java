@@ -1,8 +1,14 @@
 package xyz.cofe.delphi.tsys;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import xyz.cofe.delphi.tsys.json.jakson.FlatStr;
+import xyz.cofe.delphi.tsys.json.jakson.FlatStrSer;
+
 /**
  * Тип Varaint, он же Any
  */
+@JsonSerialize(using = FlatStrSer.class)
+@FlatStr("Variant")
 public final class VariantType implements SimpleType, NamedType {
     public static final VariantType variant = new VariantType();
     private VariantType() {}

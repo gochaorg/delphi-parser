@@ -15,11 +15,15 @@ import java.util.Optional;
 public sealed interface StringType extends SimpleType {
     public sealed interface NamedStringType extends StringType, NamedType {}
 
+    //region ShortString
     public sealed interface ShortString {}
+
+    @JsonSerialize(using = FlatStrSer.class)
+    @FlatStr("ShortString")
     public static final class ShortStringUnsized implements StringType, ShortString, NamedType, NamedStringType {
         private ShortStringUnsized() {}
 
-        private static TypeName name = TypeName.of("ShortString");
+        private static final TypeName name = TypeName.of("ShortString");
 
         @Override
         public TypeName name() {
@@ -43,12 +47,16 @@ public sealed interface StringType extends SimpleType {
         if( len==null ) throw new IllegalArgumentException("len==null");
         return len.isEmpty() ? StringType.shortStringWithOutLengthType : new ShortStringSized(len.get());
     }
-
+    //endregion
+    //region AnsiString
     public sealed interface AnsiString {}
+
+    @JsonSerialize(using = FlatStrSer.class)
+    @FlatStr("AnsiString")
     public static final class AnsiStringWOCodePage implements StringType, AnsiString, NamedType, NamedStringType {
         private AnsiStringWOCodePage() {}
 
-        private static TypeName name = TypeName.of("AnsiString");
+        private static final TypeName name = TypeName.of("AnsiString");
 
         @Override
         public TypeName name() {
@@ -72,12 +80,16 @@ public sealed interface StringType extends SimpleType {
         if( codePage==null ) throw new IllegalArgumentException("codePage==null");
         return codePage.isEmpty() ? StringType.ansiStringWithOutCodePageType : new AnsiStringWithCodePage(codePage.get());
     }
-
+    //endregion
+    //region UnicodeString
     public sealed interface UnicodeString {}
+
+    @JsonSerialize(using = FlatStrSer.class)
+    @FlatStr("UnicodeString")
     public static final class UnicodeStringUnsized implements StringType, UnicodeString, NamedType, NamedStringType {
         private UnicodeStringUnsized() {}
 
-        private static TypeName name = TypeName.of("UnicodeString");
+        private static final TypeName name = TypeName.of("UnicodeString");
 
         @Override
         public TypeName name() {
@@ -101,12 +113,15 @@ public sealed interface StringType extends SimpleType {
         if( len==null ) throw new IllegalArgumentException("len==null");
         return len.isEmpty() ? StringType.unicodeStringWithOutLengthType : new UnicodeStringSized(len.get());
     }
-
+    //endregion
+    //region WideString
     public sealed interface WideString {}
+    @JsonSerialize(using = FlatStrSer.class)
+    @FlatStr("WideString")
     public static final class WideStringUnsized implements StringType, WideString, NamedType, NamedStringType {
         private WideStringUnsized() {}
 
-        private static TypeName name = TypeName.of("WideString");
+        private static final TypeName name = TypeName.of("WideString");
 
         @Override
         public TypeName name() {
@@ -130,7 +145,8 @@ public sealed interface StringType extends SimpleType {
         if( len==null ) throw new IllegalArgumentException("len==null");
         return len.isEmpty() ? StringType.wideStringWithOutLengthType : new WideStringSized(len.get());
     }
-
+    //endregion
+    //region String
     public sealed interface STRING {}
     public static final class StringSized implements StringType, STRING {
         public final long maxLength;
@@ -145,7 +161,7 @@ public sealed interface StringType extends SimpleType {
     public static final class StringUnsized implements StringType, STRING, NamedType, NamedStringType {
         private StringUnsized() {}
 
-        private static TypeName name = TypeName.of("String");
+        private static final TypeName name = TypeName.of("String");
 
         @Override
         public TypeName name() {
@@ -163,12 +179,15 @@ public sealed interface StringType extends SimpleType {
         if( len==null ) throw new IllegalArgumentException("len==null");
         return len.isEmpty() ? StringType.stringWithOutLengthType : new StringSized(len.get());
     }
+    //endregion
 
+    @JsonSerialize(using = FlatStrSer.class)
+    @FlatStr("PChar")
     public static final class PChar implements StringType, NamedType, NamedStringType {
         private PChar() {
         }
 
-        private static TypeName name = TypeName.of("PChar");
+        private static final TypeName name = TypeName.of("PChar");
 
         @Override
         public TypeName name() {
@@ -182,11 +201,13 @@ public sealed interface StringType extends SimpleType {
     }
     public static final PChar pchar = new PChar();
 
+    @JsonSerialize(using = FlatStrSer.class)
+    @FlatStr("PWideChar")
     public static final class PWideChar implements StringType, NamedType, NamedStringType {
         private PWideChar() {
         }
 
-        private static TypeName name = TypeName.of("PWideChar");
+        private static final TypeName name = TypeName.of("PWideChar");
 
         @Override
         public TypeName name() {
