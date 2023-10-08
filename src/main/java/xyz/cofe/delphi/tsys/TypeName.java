@@ -9,7 +9,7 @@ import java.util.Arrays;
 /**
  * Имя типа
  */
-public class TypeName extends ImListLinkedBase<String,TypeName> {
+public class TypeName extends ImListLinkedBase<String,TypeName> implements Comparable<TypeName> {
     public static final TypeName DEFAULT = TypeName.of();
 
     private TypeName(){
@@ -123,7 +123,23 @@ public class TypeName extends ImListLinkedBase<String,TypeName> {
     }
 
     @Override
+    public int compareTo(TypeName o) {
+        if( o==null )return -1;
+        for( var i=0; i<size(); i++ ){
+            var n0 = get(i);
+            if( n0.isEmpty() )break;
+
+            var n1 = o.get(i);
+            if( n1.isEmpty() )break;
+
+            int cmp = n1.flatMap( a -> n1.map(a::compareToIgnoreCase) ).get();
+            if( cmp!=0 )return cmp;
+        }
+        return Integer.compare(size(), o.size());
+    }
+
+    @Override
     public String toString() {
-        return foldLeft("", (acc,it) -> acc.length()>0 ? acc + "." + it : it);
+        return foldLeft("", (acc,it) -> !acc.isEmpty() ? acc + "." + it : it);
     }
 }

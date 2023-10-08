@@ -27,7 +27,8 @@ public class TypeScope implements Freeze {
     private volatile boolean frozen;
 
     private final Set<Type> types = new HashSet<>();
-    private final Map<TypeName, Type> typeByName = new HashMap<>();
+    private final Map<TypeName, List<Type>> typeByName = new HashMap<>();
+    private final Map<TypeName, List<PascalUnit>> units = new HashMap<>();
 
     public TypeScope() {
         initSimpleTypes();
@@ -42,14 +43,17 @@ public class TypeScope implements Freeze {
         types.forEach(t -> {
             if( t instanceof Freeze f )f.freeze();
         });
-        typeByName.values().forEach( t -> {
-            if( t instanceof Freeze f )f.freeze();
+        typeByName.values().forEach( l -> {
+            l.forEach( t -> {
+                if (t instanceof Freeze f) f.freeze();
+            });
         });
+        units.values().forEach( l -> l.forEach(PascalUnit::freeze));
         this.frozen = true;
     }
     //endregion
 
-    //region typeMap() / get()
+    //region typeMap() / getType()
     private void initSimpleTypes() {
         SimpleType.typeMap().forEach(this::add);
     }
@@ -59,7 +63,7 @@ public class TypeScope implements Freeze {
      * @return карта
      */
     @SuppressWarnings("unused")
-    public Map<TypeName,Type> typeMap(){
+    public Map<TypeName,List<Type>> typeMap(){
         return typeByName;
     }
 
@@ -68,13 +72,21 @@ public class TypeScope implements Freeze {
      * @param typeName имя типа
      * @return тип
      */
-    public Optional<Type> get(TypeName typeName){
+    public Optional<Type> getType(TypeName typeName){
         if( typeName==null ) throw new IllegalArgumentException("typeName==null");
-        var type = typeByName.get(typeName);
-        if( type!=null )return Optional.of(type);
+        var lst = typeByName.get(typeName);
+        if( lst!=null && !lst.isEmpty() )return Optional.of(lst.get(0));
         return Optional.empty();
     }
     //endregion
+
+    /**
+     * Возвращает карту модулей
+     * @return карта
+     */
+    public Map<TypeName,List<PascalUnit>> unitMap() {
+        return units;
+    }
 
     //region add / import type
     /**
@@ -90,11 +102,11 @@ public class TypeScope implements Freeze {
         if (type instanceof NamesOfType t) {
             var names = t.names();
             for (var name : names) {
-                typeByName.put(name, type);
+                typeByName.computeIfAbsent(name, n -> new ArrayList<>()).add(type);
             }
         } else if (type instanceof NamedType t) {
             var typeName = t.name();
-            typeByName.put(typeName, type);
+            typeByName.computeIfAbsent(typeName, n -> new ArrayList<>()).add(type);
         }
     }
 
@@ -110,7 +122,7 @@ public class TypeScope implements Freeze {
         if( frozen )throw new TypeSysError.Frozen();
 
         types.add(type);
-        typeByName.put(typeName, type);
+        typeByName.computeIfAbsent(typeName, n -> new ArrayList<>()).add(type);
     }
 
     /**
@@ -122,16 +134,28 @@ public class TypeScope implements Freeze {
         if (unit == null) throw new IllegalArgumentException("unit==null");
         if( frozen )throw new TypeSysError.Frozen();
 
+        var pasUnit = new PascalUnit();
+        pasUnit.setName(TypeName.of(unit.name()));
+        pasUnit.setComments(unit.comments());
+        pasUnit.setDeclaration(Optional.of(unit.position()));
+        pasUnit.setUses(unit.api().uses().map(ns -> TypeName.of(ns.name())));
+
+        List<Type> types = new ArrayList<>();
+
         var typeSec = unit.api().declarations().filter( d -> d instanceof TypeSectionAst).map(d -> (TypeSectionAst)d );
         typeSec.forEach(typeSection -> typeSection.types().forEach(tdecl -> {
             var ident = tdecl.typeIdent();
             var decl = tdecl.typeDecl();
             if( decl instanceof TypeDeclAst.Array) {}
             if( decl instanceof TypeDeclAst.Interface a ) {
-                add(unit, ident, a);
+                var itf = interfaceTypeOf(unit, ident, a);
+                types.add(itf);
+                add(itf);
             }
             if( decl instanceof TypeDeclAst.Clazz a ) {
-                add(unit, ident, a);
+                var cls = classTypeOf(unit, ident, a);
+                types.add(cls);
+                add((Type) cls);
             }
             if( decl instanceof TypeDeclAst.MetaClass ) {}
             if( decl instanceof TypeDeclAst.Simple ) {}
@@ -141,10 +165,14 @@ public class TypeScope implements Freeze {
             if( decl instanceof TypeDeclAst.Variant ) {}
             if( decl instanceof TypeIdentAst ) {}
         }));
+
+        pasUnit.setTypes(ImListLinked.of(types));
+        units.computeIfAbsent(pasUnit.getName(), u -> new ArrayList<>()).add(pasUnit);
     }
     //endregion
 
-    protected void add(PascalFileAst.Unit unit, TypeIdentAst ident, TypeDeclAst.Interface astItf) {
+    //region конструирование interface / class
+    protected InterfaceType interfaceTypeOf(PascalFileAst.Unit unit, TypeIdentAst ident, TypeDeclAst.Interface astItf) {
         if( unit==null ) throw new IllegalArgumentException("unit==null");
         if( ident==null ) throw new IllegalArgumentException("ident==null");
         if( astItf==null ) throw new IllegalArgumentException("astItf==null");
@@ -184,16 +212,16 @@ public class TypeScope implements Freeze {
 
         itf.setParents(astItf.parents().map( pAst -> {
             var tn = TypeName.of(pAst.name());
-            return get(tn).orElse(new Type.UnitTypeRef(unit, TypeIdentAst.of(tn)));
+            return getType(tn).orElse(new Type.UnitTypeRef(unit, TypeIdentAst.of(tn)));
         }));
 
-        add(itf);
+        return itf;
     }
 
     private record ClassAddState(ImListLinked<Result<ClassItem,String>> items, Visibility visibility) {}
 
     @SuppressWarnings("RedundantCast")
-    protected void add(PascalFileAst.Unit unit, TypeIdentAst ident, TypeDeclAst.Clazz astClass) {
+    protected ClassType classTypeOf(PascalFileAst.Unit unit, TypeIdentAst ident, TypeDeclAst.Clazz astClass) {
         if( unit==null ) throw new IllegalArgumentException("unit==null");
         if( ident==null ) throw new IllegalArgumentException("ident==null");
         if( astClass==null ) throw new IllegalArgumentException("astClass==null");
@@ -208,7 +236,7 @@ public class TypeScope implements Freeze {
         cls.setComments(astClass.comments());
         cls.setParents(astClass.parents().map( pAst -> {
             var tn = TypeName.of(pAst.name());
-            return get(tn).orElse(new Type.UnitTypeRef(unit, TypeIdentAst.of(tn)));
+            return getType(tn).orElse(new Type.UnitTypeRef(unit, TypeIdentAst.of(tn)));
         }));
 
         var body = astClass.body().foldLeft( new ClassAddState(ImListLinked.of(), Visibility.Public), (acc,classItem) -> {
@@ -297,7 +325,7 @@ public class TypeScope implements Freeze {
         });
         cls.setBody(body.items().reverse().map(clsRes -> clsRes.unwrap(ClassItem.Broken::new)));
 
-        add(cls);
+        return cls;
     }
 
     protected Result<Constructor,String> constructorOf(PascalFileAst.Unit unit, Type self, TypeIdentAst selfName, ClassMethodAst.Constructor ctorAst) {
@@ -325,7 +353,7 @@ public class TypeScope implements Freeze {
                     ma.setType(self);
                 } else if( argType instanceof TypeIdentAst t ){
                     ma.setType(
-                        get(TypeName.of(t.name())).orElse( new Type.UnitTypeRef(unit, argType) )
+                        getType(TypeName.of(t.name())).orElse( new Type.UnitTypeRef(unit, argType) )
                     );
                 }
 
@@ -375,7 +403,7 @@ public class TypeScope implements Freeze {
                     ma.setType(self);
                 } else if( argType instanceof TypeIdentAst t ){
                     ma.setType(
-                        get(TypeName.of(t.name())).orElse( new Type.UnitTypeRef(unit, argType) )
+                        getType(TypeName.of(t.name())).orElse( new Type.UnitTypeRef(unit, argType) )
                     );
                 }
 
@@ -424,7 +452,7 @@ public class TypeScope implements Freeze {
                     ma.setType(self);
                 } else if( argType instanceof TypeIdentAst t ){
                     ma.setType(
-                        get(TypeName.of(t.name())).orElse( new Type.UnitTypeRef(unit, argType) )
+                        getType(TypeName.of(t.name())).orElse( new Type.UnitTypeRef(unit, argType) )
                     );
                 }
 
@@ -484,7 +512,7 @@ public class TypeScope implements Freeze {
                     ma.setType(self);
                 } else if( argType instanceof TypeIdentAst t ){
                     ma.setType(
-                        get(TypeName.of(t.name())).orElse( new Type.UnitTypeRef(unit, argType) )
+                        getType(TypeName.of(t.name())).orElse( new Type.UnitTypeRef(unit, argType) )
                     );
                 }
 
@@ -582,9 +610,9 @@ public class TypeScope implements Freeze {
         if( selfName.equals(returns) ) {
             return self;
         } else if( returns instanceof TypeIdentAst t ) {
-            return get(TypeName.of(t.name())).orElse(new Type.UnitTypeRef(unit, returns));
+            return getType(TypeName.of(t.name())).orElse(new Type.UnitTypeRef(unit, returns));
         } else if( returns instanceof TypeDeclAst.Variant ) {
-            return get(TypeName.of("Variant")).orElse(new Type.UnitTypeRef(unit, returns));
+            return getType(TypeName.of("Variant")).orElse(new Type.UnitTypeRef(unit, returns));
         } else if( returns instanceof TypeDeclAst.StringType.StrIng s ){
             if( s.expression().isEmpty() ){
                 return StringType.stringWithOutLengthType;
@@ -613,7 +641,7 @@ public class TypeScope implements Freeze {
                     ma.setType(self);
                 } else if( argType instanceof TypeIdentAst t ){
                     ma.setType(
-                        get(TypeName.of(t.name())).orElse( new Type.UnitTypeRef(unit, argType) )
+                        getType(TypeName.of(t.name())).orElse( new Type.UnitTypeRef(unit, argType) )
                     );
                 }
 
@@ -675,7 +703,7 @@ public class TypeScope implements Freeze {
             if( tn.equals(selfTn) ){
                 t = self;
             }else{
-                var t2 = get(tn);
+                var t2 = getType(tn);
                 t = t2.orElseGet(() -> new Type.UnitTypeRef(unit, new TypeIdentAst(i.typeId(), ImListLinked.of())));
             }
 
@@ -684,4 +712,5 @@ public class TypeScope implements Freeze {
 
         throw new RuntimeException("bug! unexpected");
     }
+    //endregion
 }

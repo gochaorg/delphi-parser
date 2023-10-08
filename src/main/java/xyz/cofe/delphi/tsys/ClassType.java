@@ -14,7 +14,8 @@ import java.util.Optional;
  */
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 @JsonSerialize(using = ClassTypeSer.class)
-public class ClassType {
+public sealed class ClassType implements PascalUnitItem, Type, Freeze
+{
     public ClassType(){}
     public ClassType(ClassType sample){
         if( sample==null ) throw new IllegalArgumentException("sample==null");
@@ -124,7 +125,7 @@ public class ClassType {
     //endregion
 
     @JsonSerialize(using = ClassTypeSer.class)
-    public static class Named extends ClassType implements NamedType {
+    public static final class Named extends ClassType implements NamedType {
         public Named(){
         }
         public Named(ClassType sample){

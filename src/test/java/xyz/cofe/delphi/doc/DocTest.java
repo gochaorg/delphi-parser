@@ -25,7 +25,7 @@ public class DocTest {
         var ts = new TypeScope();
         ts.add(sampleUnit);
 
-        var clsOpt = ts.get(TypeName.of("Map","TStringMap"));
+        var clsOpt = ts.getType(TypeName.of("Map","TStringMap"));
 
         assertTrue(clsOpt.isPresent());
         assertTrue(clsOpt.get() instanceof ClassType);
@@ -51,7 +51,7 @@ public class DocTest {
         var ts = new TypeScope();
         ts.add(sampleUnit);
 
-        var clsOpt = ts.get(TypeName.of("Map","IStringMap"));
+        var clsOpt = ts.getType(TypeName.of("Map","IStringMap"));
 
         assertTrue(clsOpt.isPresent());
         assertTrue(clsOpt.get() instanceof InterfaceType);

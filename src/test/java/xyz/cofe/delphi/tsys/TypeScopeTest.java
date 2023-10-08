@@ -21,7 +21,7 @@ public class TypeScopeTest {
         var ts = new TypeScope();
         ts.add(sampleUnit);
 
-        var itfOpt = ts.get(TypeName.of("Map","IStringMap"));
+        var itfOpt = ts.getType(TypeName.of("Map","IStringMap"));
 
         assertTrue(itfOpt.isPresent());
         assertTrue(itfOpt.get() instanceof InterfaceType);
@@ -35,7 +35,7 @@ public class TypeScopeTest {
         var ts = new TypeScope();
         ts.add(sampleUnit);
 
-        var clsOpt = ts.get(TypeName.of("Map","TStringMap"));
+        var clsOpt = ts.getType(TypeName.of("Map","TStringMap"));
 
         assertTrue(clsOpt.isPresent());
         assertTrue(clsOpt.get() instanceof ClassType);

@@ -13,13 +13,13 @@ import static xyz.cofe.delphi.tsys.json.jakson.JsonAttr.JSON_TYPE_FIELD;
 /**
  * Интерфейс
  */
-@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+@SuppressWarnings({"OptionalUsedAsFieldOrParameterType", "DefaultAnnotationParam"})
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.NAME,
     include = JsonTypeInfo.As.PROPERTY,
     property = JSON_TYPE_FIELD
 )
-public class InterfaceType implements Freeze {
+public sealed class InterfaceType implements Type, Freeze, PascalUnitItem {
     //region Конструкторы
     public InterfaceType(){}
     public InterfaceType(InterfaceType sample){
@@ -130,7 +130,7 @@ public class InterfaceType implements Freeze {
     }
     //endregion
 
-    public static class Named extends InterfaceType implements NamedType {
+    public static final class Named extends InterfaceType implements NamedType {
         //region NamedInterfaceType
         public Named(){
         }
