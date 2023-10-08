@@ -9,6 +9,7 @@ import java.io.IOException;
 
 import static xyz.cofe.delphi.tsys.json.jakson.JsonAttr.JSON_TYPE_FIELD;
 
+@SuppressWarnings("unused")
 public class UnitTypeRefSer extends StdSerializer<Type.UnitTypeRef> {
     public UnitTypeRefSer() {
         this(null);

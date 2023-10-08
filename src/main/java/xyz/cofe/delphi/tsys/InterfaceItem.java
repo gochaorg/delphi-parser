@@ -7,6 +7,7 @@ import static xyz.cofe.delphi.tsys.json.jakson.JsonAttr.JSON_TYPE_FIELD;
 /**
  * Элемент интерфейса
  */
+@SuppressWarnings("DefaultAnnotationParam")
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.NAME,
     include = JsonTypeInfo.As.PROPERTY,

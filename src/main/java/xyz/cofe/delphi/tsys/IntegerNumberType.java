@@ -9,6 +9,7 @@ import xyz.cofe.delphi.tsys.json.jakson.FlatStrSer;
 /**
  * Цело-численные типы
  */
+@SuppressWarnings("UnnecessaryModifier")
 public sealed interface IntegerNumberType extends NamesOfType, SimpleType {
     public static final ShortIntType shortIntType = new ShortIntType();
     public static final SmallIntType smallIntType = new SmallIntType();

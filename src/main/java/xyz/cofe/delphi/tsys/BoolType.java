@@ -9,6 +9,7 @@ import xyz.cofe.delphi.tsys.json.jakson.FlatStrSer;
 /**
  * Булево тип
  */
+@SuppressWarnings("UnnecessaryModifier")
 public sealed interface BoolType extends NamedType, SimpleType {
     public static final Bool boolType = new Bool();
     public static final ByteBool byteBoolType = new ByteBool();

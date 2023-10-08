@@ -11,17 +11,17 @@ import java.util.*;
  * Область видимости типов
  * <p/>
  *
- * Задача
+ * Задача <p/>
  *
+ * <pre>
  *   Импортировать типы определенные в Unit
  *      Определенные типы - добавить как определение
  *         Для типов на которые ссылки - добавить как ссылки заглушки
- *
  *   По завершению импорта Unit-ов
  *      Рекурсивно обойти все ссылки и
  *          заменить на найденные
  *          заменить на нен найденые
- * </ul>
+ * </pre>
  */
 public class TypeScope implements Freeze {
     private volatile boolean frozen;
@@ -126,20 +126,20 @@ public class TypeScope implements Freeze {
         typeSec.forEach(typeSection -> typeSection.types().forEach(tdecl -> {
             var ident = tdecl.typeIdent();
             var decl = tdecl.typeDecl();
-            if( decl instanceof TypeDeclAst.Array a ) {}
+            if( decl instanceof TypeDeclAst.Array) {}
             if( decl instanceof TypeDeclAst.Interface a ) {
                 add(unit, ident, a);
             }
             if( decl instanceof TypeDeclAst.Clazz a ) {
                 add(unit, ident, a);
             }
-            if( decl instanceof TypeDeclAst.MetaClass a ) {}
-            if( decl instanceof TypeDeclAst.Simple a ) {}
-            if( decl instanceof TypeDeclAst.StringType a ) {}
-            if( decl instanceof TypeDeclAst.Structured a ) {}
-            if( decl instanceof TypeDeclAst.TypeAlias a ) {}
-            if( decl instanceof TypeDeclAst.Variant a ) {}
-            if( decl instanceof TypeIdentAst a ) {}
+            if( decl instanceof TypeDeclAst.MetaClass ) {}
+            if( decl instanceof TypeDeclAst.Simple ) {}
+            if( decl instanceof TypeDeclAst.StringType ) {}
+            if( decl instanceof TypeDeclAst.Structured ) {}
+            if( decl instanceof TypeDeclAst.TypeAlias ) {}
+            if( decl instanceof TypeDeclAst.Variant ) {}
+            if( decl instanceof TypeIdentAst ) {}
         }));
     }
     //endregion
@@ -192,6 +192,7 @@ public class TypeScope implements Freeze {
 
     private record ClassAddState(ImListLinked<Result<ClassItem,String>> items, Visibility visibility) {}
 
+    @SuppressWarnings("RedundantCast")
     protected void add(PascalFileAst.Unit unit, TypeIdentAst ident, TypeDeclAst.Clazz astClass) {
         if( unit==null ) throw new IllegalArgumentException("unit==null");
         if( ident==null ) throw new IllegalArgumentException("ident==null");

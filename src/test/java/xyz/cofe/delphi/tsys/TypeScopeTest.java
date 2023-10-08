@@ -8,12 +8,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static xyz.cofe.delphi.TextResource.textResource;
 
 public class TypeScopeTest {
-    private static PascalFileAst sampleFile = PascalFileAst.parse(
+    private static final PascalFileAst sampleFile = PascalFileAst.parse(
         textResource("/samples/Map.pas"),
         "Map.pas",true
     );
 
-    private static PascalFileAst.Unit sampleUnit =
+    private static final PascalFileAst.Unit sampleUnit =
         (PascalFileAst.Unit)sampleFile;
 
     @Test

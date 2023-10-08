@@ -11,7 +11,7 @@ import java.util.Optional;
 /**
  * https://docwiki.embarcadero.com/RADStudio/Alexandria/en/String_Types_(Delphi)
  */
-@SuppressWarnings({"OptionalUsedAsFieldOrParameterType", "OptionalAssignedToNull", "FieldCanBeLocal"})
+@SuppressWarnings({"OptionalUsedAsFieldOrParameterType", "OptionalAssignedToNull", "FieldCanBeLocal", "UnnecessaryModifier"})
 public sealed interface StringType extends SimpleType {
     public sealed interface NamedStringType extends StringType, NamedType {}
 

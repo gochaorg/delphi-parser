@@ -1,7 +1,6 @@
 package xyz.cofe.delphi.tsys.json.jakson;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
 import xyz.cofe.delphi.tsys.ClassType;
 
 import java.util.Optional;
@@ -11,7 +10,7 @@ public class JsonAttr {
     public static final String JSON_TYPE_FIELD = "@type";
     public static final String RECURSIVE_FIELD = "_recursive";
 
-    public static record ClassStack(ClassType classType, Optional<ClassStack> next) {}
+    public record ClassStack(ClassType classType, Optional<ClassStack> next) {}
     private static final WeakHashMap<JsonGenerator, Object> linked = new WeakHashMap<>();
 
     public static Optional<ClassType> classType(JsonGenerator jgen) {

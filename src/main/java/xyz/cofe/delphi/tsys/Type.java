@@ -6,7 +6,6 @@ import xyz.cofe.delphi.ast.TypeDeclAst;
 import xyz.cofe.delphi.tsys.json.jakson.FlatStr;
 import xyz.cofe.delphi.tsys.json.jakson.FlatStrSer;
 import xyz.cofe.delphi.tsys.json.jakson.UnitTypeRefSer;
-import xyz.cofe.delphi.tsys.json.jakson.VoidTypeSer;
 
 /**
  * <a href="https://docwiki.embarcadero.com/RADStudio/Alexandria/en/About_Data_Types_(Delphi)">Некий тип данных</a>
@@ -50,6 +49,7 @@ import xyz.cofe.delphi.tsys.json.jakson.VoidTypeSer;
  * <li>type identifier
  * </ul>
  */
+@SuppressWarnings("UnnecessaryModifier")
 public interface Type {
     /**
      * Специальные типы для описания типов
