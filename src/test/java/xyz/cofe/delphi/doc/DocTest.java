@@ -1,0 +1,50 @@
+package xyz.cofe.delphi.doc;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import org.junit.jupiter.api.Test;
+import xyz.cofe.coll.im.ImListLinked;
+import xyz.cofe.delphi.ast.PascalFileAst;
+import xyz.cofe.delphi.tsys.ClassType;
+import xyz.cofe.delphi.tsys.Constructor;
+import xyz.cofe.delphi.tsys.TypeName;
+import xyz.cofe.delphi.tsys.TypeScope;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static xyz.cofe.delphi.TextResource.textResource;
+
+public class DocTest {
+    private static PascalFileAst sampleFile = PascalFileAst.parse(
+        textResource("/samples/Map.pas"),
+        "Map.pas",true
+    );
+
+    private static PascalFileAst.Unit sampleUnit =
+        (PascalFileAst.Unit)sampleFile;
+
+    @Test
+    public void jsonOut() {
+        var ts = new TypeScope();
+        ts.add(sampleUnit);
+
+        var clsOpt = ts.get(TypeName.of("Map","TStringMap"));
+
+        assertTrue(clsOpt.isPresent());
+        assertTrue(clsOpt.get() instanceof ClassType);
+        var cls = (ClassType)clsOpt.get();
+
+        var ctors = cls.getBody().fmap(i -> i instanceof Constructor c ? ImListLinked.of(c) : ImListLinked.of() );
+        var copyCtor = ctors.find(c -> c.getName().equalsIgnoreCase("Copy") ).get();
+
+        var om = new ObjectMapper();
+        om.findAndRegisterModules();
+        om.enable(SerializationFeature.INDENT_OUTPUT);
+
+        try {
+            System.out.println(om.writeValueAsString(cls));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}

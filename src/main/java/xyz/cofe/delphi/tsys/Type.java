@@ -1,7 +1,9 @@
 package xyz.cofe.delphi.tsys;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import xyz.cofe.delphi.ast.PascalFileAst;
 import xyz.cofe.delphi.ast.TypeDeclAst;
+import xyz.cofe.delphi.tsys.json.jakson.VoidTypeSer;
 
 /**
  * <a href="https://docwiki.embarcadero.com/RADStudio/Alexandria/en/About_Data_Types_(Delphi)">Некий тип данных</a>
@@ -93,6 +95,7 @@ public interface Type {
     /**
      * Тип Void / Unit - для данных которые не могут существовать. В частности если деструктор/процедура - функция, тогда результат void
      */
+    @JsonSerialize(using = VoidTypeSer.class)
     public final class VoidType implements Type {
         private VoidType(){}
         public static final VoidType instance = new VoidType();

@@ -1,9 +1,13 @@
 package xyz.cofe.coll.im;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import xyz.cofe.coll.im.json.jakson.ImListSerializer;
+
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
+@JsonSerialize(using = ImListSerializer.class)
 public interface ImList<A,SELF extends ImList<A,SELF>>
 extends
     PositionalRead<A>,

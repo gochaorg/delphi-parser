@@ -1,9 +1,11 @@
 package xyz.cofe.delphi.tsys;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.delphi.ast.Comment;
 import xyz.cofe.delphi.ast.SourcePosition;
+import xyz.cofe.delphi.tsys.json.jakson.ClassTypeSer;
 
 import java.util.Optional;
 
@@ -11,6 +13,7 @@ import java.util.Optional;
  * Класс
  */
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+@JsonSerialize(using = ClassTypeSer.class)
 public class ClassType {
     public ClassType(){}
     public ClassType(ClassType sample){
@@ -120,6 +123,7 @@ public class ClassType {
     }
     //endregion
 
+    @JsonSerialize(using = ClassTypeSer.class)
     public static class Named extends ClassType implements NamedType {
         public Named(){
         }
