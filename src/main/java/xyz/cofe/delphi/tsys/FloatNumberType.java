@@ -29,6 +29,7 @@ public sealed interface FloatNumberType extends NamedType, SimpleType {
         currencyType
     );
 
+    //region Real48
     @JsonSerialize(using = FlatStrSer.class)
     @FlatStr("Real48")
     public static final class Real48 implements FloatNumberType {
@@ -41,7 +42,8 @@ public sealed interface FloatNumberType extends NamedType, SimpleType {
             return name().toString();
         }
     }
-
+    //endregion
+    //region Single
     @JsonSerialize(using = FlatStrSer.class)
     @FlatStr("Single")
     public static final class Single implements FloatNumberType {
@@ -54,7 +56,8 @@ public sealed interface FloatNumberType extends NamedType, SimpleType {
             return name().toString();
         }
     }
-
+    //endregion
+    //region Double
     @JsonSerialize(using = FlatStrSer.class)
     @FlatStr("Double")
     public static final class Double implements FloatNumberType {
@@ -67,7 +70,8 @@ public sealed interface FloatNumberType extends NamedType, SimpleType {
             return name().toString();
         }
     }
-
+    //endregion
+    //region Real
     @JsonSerialize(using = FlatStrSer.class)
     @FlatStr("Real")
     public static final class Real implements FloatNumberType {
@@ -80,7 +84,8 @@ public sealed interface FloatNumberType extends NamedType, SimpleType {
             return name().toString();
         }
     }
-
+    //endregion
+    //region Extended
     @JsonSerialize(using = FlatStrSer.class)
     @FlatStr("Extended")
     public static final class Extended implements FloatNumberType {
@@ -93,7 +98,8 @@ public sealed interface FloatNumberType extends NamedType, SimpleType {
             return name().toString();
         }
     }
-
+    //endregion
+    //region Comp
     @JsonSerialize(using = FlatStrSer.class)
     @FlatStr("Comp")
     public static final class Comp implements FloatNumberType {
@@ -106,7 +112,8 @@ public sealed interface FloatNumberType extends NamedType, SimpleType {
             return name().toString();
         }
     }
-
+    //endregion
+    //region Currency
     @JsonSerialize(using = FlatStrSer.class)
     @FlatStr("Currency")
     public static final class Currency implements FloatNumberType {
@@ -119,4 +126,5 @@ public sealed interface FloatNumberType extends NamedType, SimpleType {
             return name().toString();
         }
     }
+    //endregion
 }

@@ -25,6 +25,7 @@ public sealed interface CharType extends NamedType, SimpleType {
         ucs4CharType
     );
 
+    //region Char
     @JsonSerialize(using = FlatStrSer.class)
     @FlatStr("Char")
     public static final class Char implements CharType {
@@ -41,7 +42,8 @@ public sealed interface CharType extends NamedType, SimpleType {
             return name().toString();
         }
     }
-
+    //endregion
+    //region AnsiChar
     @JsonSerialize(using = FlatStrSer.class)
     @FlatStr("AnsiChar")
     public static final class AnsiChar implements CharType {
@@ -55,7 +57,8 @@ public sealed interface CharType extends NamedType, SimpleType {
             return name().toString();
         }
     }
-
+    //endregion
+    //region WideChar
     @JsonSerialize(using = FlatStrSer.class)
     @FlatStr("WideChar")
     public static final class WideChar implements CharType {
@@ -68,7 +71,8 @@ public sealed interface CharType extends NamedType, SimpleType {
             return name().toString();
         }
     }
-
+    //endregion
+    //region UCS2Char
     @JsonSerialize(using = FlatStrSer.class)
     @FlatStr("UCS2Char")
     public static final class UCS2Char implements CharType {
@@ -81,7 +85,8 @@ public sealed interface CharType extends NamedType, SimpleType {
             return name().toString();
         }
     }
-
+    //endregion
+    //region UCS4Char
     @JsonSerialize(using = FlatStrSer.class)
     @FlatStr("UCS4Char")
     public static final class UCS4Char implements CharType {
@@ -94,4 +99,5 @@ public sealed interface CharType extends NamedType, SimpleType {
             return name().toString();
         }
     }
+    //endregion
 }

@@ -23,6 +23,7 @@ public sealed interface BoolType extends NamedType, SimpleType {
         longBoolType
     );
 
+    //region Boolean
     @JsonSerialize(using = FlatStrSer.class)
     @FlatStr("Boolean")
     public static final class Bool implements BoolType {
@@ -40,7 +41,8 @@ public sealed interface BoolType extends NamedType, SimpleType {
             return name().toString();
         }
     }
-
+    //endregion
+    //region ByteBool
     @JsonSerialize(using = FlatStrSer.class)
     @FlatStr("ByteBool")
     public static final class ByteBool implements BoolType {
@@ -57,7 +59,8 @@ public sealed interface BoolType extends NamedType, SimpleType {
             return name().toString();
         }
     }
-
+    //endregion
+    //region WordBool
     @JsonSerialize(using = FlatStrSer.class)
     @FlatStr("WordBool")
     public static final class WordBool implements BoolType {
@@ -74,7 +77,8 @@ public sealed interface BoolType extends NamedType, SimpleType {
             return name().toString();
         }
     }
-
+    //endregion
+    //region LongBool
     @JsonSerialize(using = FlatStrSer.class)
     @FlatStr("LongBool")
     public static final class LongBool implements BoolType {
@@ -91,4 +95,5 @@ public sealed interface BoolType extends NamedType, SimpleType {
             return name().toString();
         }
     }
+    //endregion
 }
