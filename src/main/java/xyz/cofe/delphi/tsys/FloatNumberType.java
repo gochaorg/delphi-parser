@@ -9,6 +9,7 @@ import xyz.cofe.delphi.tsys.json.jakson.FlatStrSer;
 /**
  * Числа с плавающей десятичной точкой
  */
+@SuppressWarnings("UnnecessaryModifier")
 public sealed interface FloatNumberType extends NamedType, SimpleType {
     public static final Real48 real48Type = new Real48();
     public static final Single singleType = new Single();
@@ -32,7 +33,7 @@ public sealed interface FloatNumberType extends NamedType, SimpleType {
     @FlatStr("Real48")
     public static final class Real48 implements FloatNumberType {
         private Real48(){}
-        private static TypeName name = TypeName.of("Real48");
+        private static final TypeName name = TypeName.of("Real48");
         @Override public TypeName name() { return name; }
 
         @Override
@@ -45,7 +46,7 @@ public sealed interface FloatNumberType extends NamedType, SimpleType {
     @FlatStr("Single")
     public static final class Single implements FloatNumberType {
         private Single() {}
-        private static TypeName name = TypeName.of("Single");
+        private static final TypeName name = TypeName.of("Single");
         @Override public TypeName name() { return name; }
 
         @Override
@@ -58,7 +59,7 @@ public sealed interface FloatNumberType extends NamedType, SimpleType {
     @FlatStr("Double")
     public static final class Double implements FloatNumberType {
         private Double() {}
-        private static TypeName name = TypeName.of("Double");
+        private static final TypeName name = TypeName.of("Double");
         @Override public TypeName name() { return name; }
 
         @Override
@@ -71,7 +72,7 @@ public sealed interface FloatNumberType extends NamedType, SimpleType {
     @FlatStr("Real")
     public static final class Real implements FloatNumberType {
         private Real() {}
-        private static TypeName name = TypeName.of("Real");
+        private static final TypeName name = TypeName.of("Real");
         @Override public TypeName name() { return name; }
 
         @Override
@@ -84,7 +85,7 @@ public sealed interface FloatNumberType extends NamedType, SimpleType {
     @FlatStr("Extended")
     public static final class Extended implements FloatNumberType {
         private Extended() {}
-        private static TypeName name = TypeName.of("Extended");
+        private static final TypeName name = TypeName.of("Extended");
         @Override public TypeName name() { return name; }
 
         @Override
@@ -97,7 +98,7 @@ public sealed interface FloatNumberType extends NamedType, SimpleType {
     @FlatStr("Comp")
     public static final class Comp implements FloatNumberType {
         private Comp() {}
-        private static TypeName name = TypeName.of("Comp");
+        private static final TypeName name = TypeName.of("Comp");
         @Override public TypeName name() { return name; }
 
         @Override
@@ -110,7 +111,7 @@ public sealed interface FloatNumberType extends NamedType, SimpleType {
     @FlatStr("Currency")
     public static final class Currency implements FloatNumberType {
         private Currency() {}
-        private static TypeName name = TypeName.of("Currency");
+        private static final TypeName name = TypeName.of("Currency");
         @Override public TypeName name() { return name; }
 
         @Override

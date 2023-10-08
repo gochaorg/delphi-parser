@@ -9,6 +9,7 @@ import xyz.cofe.delphi.tsys.json.jakson.FlatStrSer;
 /**
  * Символ строки
  */
+@SuppressWarnings("UnnecessaryModifier")
 public sealed interface CharType extends NamedType, SimpleType {
     public static final Char charType = new Char();
     public static final AnsiChar ansiCharType = new AnsiChar();
@@ -28,7 +29,7 @@ public sealed interface CharType extends NamedType, SimpleType {
     @FlatStr("Char")
     public static final class Char implements CharType {
         private Char() {}
-        private static TypeName name = TypeName.of("Char");
+        private static final TypeName name = TypeName.of("Char");
 
         @Override
         public TypeName name() {
@@ -45,7 +46,7 @@ public sealed interface CharType extends NamedType, SimpleType {
     @FlatStr("AnsiChar")
     public static final class AnsiChar implements CharType {
         private AnsiChar() {}
-        private static TypeName name = TypeName.of("AnsiChar");
+        private static final TypeName name = TypeName.of("AnsiChar");
         @Override
         public TypeName name() { return name; }
 
@@ -59,7 +60,7 @@ public sealed interface CharType extends NamedType, SimpleType {
     @FlatStr("WideChar")
     public static final class WideChar implements CharType {
         private WideChar() {}
-        private static TypeName name = TypeName.of("WideChar");
+        private static final TypeName name = TypeName.of("WideChar");
         @Override public TypeName name() { return name; }
 
         @Override
@@ -72,7 +73,7 @@ public sealed interface CharType extends NamedType, SimpleType {
     @FlatStr("UCS2Char")
     public static final class UCS2Char implements CharType {
         private UCS2Char() {}
-        private static TypeName name = TypeName.of("UCS2Char");
+        private static final TypeName name = TypeName.of("UCS2Char");
         @Override public TypeName name() { return name; }
 
         @Override
@@ -85,7 +86,7 @@ public sealed interface CharType extends NamedType, SimpleType {
     @FlatStr("UCS4Char")
     public static final class UCS4Char implements CharType {
         private UCS4Char() {}
-        private static TypeName name = TypeName.of("UCS4Char");
+        private static final TypeName name = TypeName.of("UCS4Char");
         @Override public TypeName name() { return name; }
 
         @Override

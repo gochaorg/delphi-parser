@@ -28,7 +28,7 @@ public sealed interface BoolType extends NamedType, SimpleType {
     public static final class Bool implements BoolType {
         private Bool() {}
 
-        private static TypeName name = TypeName.of("Boolean");
+        private static final TypeName name = TypeName.of("Boolean");
 
         @Override
         public TypeName name() {
@@ -45,7 +45,7 @@ public sealed interface BoolType extends NamedType, SimpleType {
     @FlatStr("ByteBool")
     public static final class ByteBool implements BoolType {
         private ByteBool() {}
-        private static TypeName name = TypeName.of("ByteBool");
+        private static final TypeName name = TypeName.of("ByteBool");
 
         @Override
         public TypeName name() {
@@ -62,7 +62,7 @@ public sealed interface BoolType extends NamedType, SimpleType {
     @FlatStr("WordBool")
     public static final class WordBool implements BoolType {
         private WordBool() {}
-        private static TypeName name =TypeName.of("WordBool");
+        private static final TypeName name =TypeName.of("WordBool");
 
         @Override
         public TypeName name() {
@@ -79,7 +79,7 @@ public sealed interface BoolType extends NamedType, SimpleType {
     @FlatStr("LongBool")
     public static final class LongBool implements BoolType {
         private LongBool() {}
-        private static TypeName name = TypeName.of("LongBool");
+        private static final TypeName name = TypeName.of("LongBool");
 
         @Override
         public TypeName name() {
