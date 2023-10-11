@@ -2,6 +2,7 @@ package xyz.cofe.delphi.tsys;
 
 import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
+import xyz.cofe.coll.im.ImListLinkedBase;
 import xyz.cofe.coll.im.Result;
 import xyz.cofe.delphi.ast.*;
 
@@ -336,42 +337,7 @@ public class TypeScope implements Freeze {
         ctor.setImplementation(Optional.empty());
         ctor.setDirectives(ctorAst.directives().map(MethodDirective::of));
         ctor.setComments(ctorAst.comments());
-        var args = ctorAst.arguments().foldRight(
-            Result.ok(ImListLinked.<Argument>of(),String.class),
-            (acc,it) -> acc.fmap(lst -> {
-                var ma = new Argument();
-
-                if( it.typeDecl().isEmpty() && it.defaultValue().isEmpty() ){
-                    return Result.error("arg "+it.name()+" both typeDecl and defaultValue is empty - not implemented");
-                }
-                if( it.typeDecl().isEmpty() ){
-                    return Result.error("arg "+it.name()+" both typeDecl");
-                }
-
-                var argType = it.typeDecl().get();
-                if( selfName.equals(argType) ){
-                    ma.setType(self);
-                } else if( argType instanceof TypeIdentAst t ){
-                    ma.setType(
-                        getType(TypeName.of(t.name())).orElse( new Type.UnitTypeRef(unit, argType) )
-                    );
-                }
-
-                ma.setName(it.name());
-
-                if( it.constraint().isEmpty() ){
-                    ma.setDirection(ArgumentDirection.Input);
-                }else{
-                    ma.setDirection(switch (it.constraint().get()){
-                        case Out -> ArgumentDirection.Output;
-                        case Var -> ArgumentDirection.InputOutput;
-                        case Const -> ArgumentDirection.ConstInput;
-                    });
-                }
-
-                return Result.ok(lst.prepend(ma));
-            })
-        );
+        var args = argsParse(unit,self,selfName,ctorAst.arguments());
         return args.map( argz -> {
             ctor.setArguments(argz);
             return ctor;
@@ -386,43 +352,7 @@ public class TypeScope implements Freeze {
         dtor.setImplementation(Optional.empty());
         dtor.setDirectives(dtorAst.directives().map(MethodDirective::of));
         dtor.setComments(dtorAst.comments());
-        var args = dtorAst.arguments().foldRight(
-            Result.ok(ImListLinked.<Argument>of(),String.class),
-            (acc,it) -> acc.fmap(lst -> {
-                var ma = new Argument();
-
-                if( it.typeDecl().isEmpty() && it.defaultValue().isEmpty() ){
-                    return Result.error("arg "+it.name()+" both typeDecl and defaultValue is empty - not implemented");
-                }
-                if( it.typeDecl().isEmpty() ){
-                    return Result.error("arg "+it.name()+" both typeDecl");
-                }
-
-                var argType = it.typeDecl().get();
-                if( selfName.equals(argType) ){
-                    ma.setType(self);
-                } else if( argType instanceof TypeIdentAst t ){
-                    ma.setType(
-                        getType(TypeName.of(t.name())).orElse( new Type.UnitTypeRef(unit, argType) )
-                    );
-                }
-
-                ma.setName(it.name());
-
-                if( it.constraint().isEmpty() ){
-                    ma.setDirection(ArgumentDirection.Input);
-                }else{
-                    ma.setDirection(switch (it.constraint().get()){
-                        case Out -> ArgumentDirection.Output;
-                        case Var -> ArgumentDirection.InputOutput;
-                        case Const -> ArgumentDirection.ConstInput;
-                    });
-                }
-
-                return Result.ok(lst.prepend(ma));
-            })
-        );
-        return args.map( argz -> {
+        return argsParse(unit,self,selfName,dtorAst.arguments()).map( argz -> {
             dtor.setArguments(argz);
             return dtor;
         });
@@ -435,43 +365,7 @@ public class TypeScope implements Freeze {
         op.setDeclaration(Optional.of(otor.position()));
         op.setImplementation(Optional.empty());
         op.setComments(otor.comments());
-        var args = otor.arguments().foldRight(
-            Result.ok(ImListLinked.<Argument>of(),String.class),
-            (acc,it) -> acc.fmap(lst -> {
-                var ma = new Argument();
-
-                if( it.typeDecl().isEmpty() && it.defaultValue().isEmpty() ){
-                    return Result.error("arg "+it.name()+" both typeDecl and defaultValue is empty - not implemented");
-                }
-                if( it.typeDecl().isEmpty() ){
-                    return Result.error("arg "+it.name()+" both typeDecl");
-                }
-
-                var argType = it.typeDecl().get();
-                if( selfName.equals(argType) ){
-                    ma.setType(self);
-                } else if( argType instanceof TypeIdentAst t ){
-                    ma.setType(
-                        getType(TypeName.of(t.name())).orElse( new Type.UnitTypeRef(unit, argType) )
-                    );
-                }
-
-                ma.setName(it.name());
-
-                if( it.constraint().isEmpty() ){
-                    ma.setDirection(ArgumentDirection.Input);
-                }else{
-                    ma.setDirection(switch (it.constraint().get()){
-                        case Out -> ArgumentDirection.Output;
-                        case Var -> ArgumentDirection.InputOutput;
-                        case Const -> ArgumentDirection.ConstInput;
-                    });
-                }
-
-                return Result.ok(lst.prepend(ma));
-            })
-        );
-        return args.map( argz -> {
+        return argsParse(unit,self,selfName,otor.arguments()).map( argz -> {
             op.setArguments(argz);
             return op;
         });
@@ -479,7 +373,7 @@ public class TypeScope implements Freeze {
 
     protected Result<Field,String> fieldOf(PascalFileAst.Unit unit, Type self, TypeIdentAst selfName, ClassFieldAst fieldAst) {
         var field = new Field();
-        field.setFieldType(prepareTypeOf(unit,self,selfName,fieldAst.type()));
+        field.setFieldType(typeOf(unit,self,selfName,fieldAst.type()));
         field.setName(fieldAst.name());
         field.setVisibility(Visibility.Public);
         field.setComments(fieldAst.comments());
@@ -487,7 +381,7 @@ public class TypeScope implements Freeze {
         return Result.ok(field);
     }
 
-    protected Result<Procedure,String> procedureOf(PascalFileAst.Unit unit, Type self, TypeIdentAst selfName, ClassMethodAst.Procedure proc ){
+    protected Result<Procedure,String> procedureOf(PascalFileAst.Unit unit, Type self, TypeIdentAst selfName, ClassMethodAst.Procedure proc){
         var p = new Procedure();
         p.setName(proc.name());
         p.setVisibility(Visibility.Public);
@@ -495,89 +389,22 @@ public class TypeScope implements Freeze {
         p.setImplementation(Optional.empty());
         p.setDirectives(proc.directives().map(MethodDirective::of));
         p.setComments(proc.comments());
-        var args = proc.arguments().foldRight(
-            Result.ok(ImListLinked.<Argument>of(),String.class),
-            (acc,it) -> acc.fmap(lst -> {
-                var ma = new Argument();
-
-                if( it.typeDecl().isEmpty() && it.defaultValue().isEmpty() ){
-                    return Result.error("arg "+it.name()+" both typeDecl and defaultValue is empty - not implemented");
-                }
-                if( it.typeDecl().isEmpty() ){
-                    return Result.error("arg "+it.name()+" both typeDecl");
-                }
-
-                var argType = it.typeDecl().get();
-                if( selfName.equals(argType) ){
-                    ma.setType(self);
-                } else if( argType instanceof TypeIdentAst t ){
-                    ma.setType(
-                        getType(TypeName.of(t.name())).orElse( new Type.UnitTypeRef(unit, argType) )
-                    );
-                }
-
-                ma.setName(it.name());
-
-                if( it.constraint().isEmpty() ){
-                    ma.setDirection(ArgumentDirection.Input);
-                }else{
-                    ma.setDirection(switch (it.constraint().get()){
-                        case Out -> ArgumentDirection.Output;
-                        case Var -> ArgumentDirection.InputOutput;
-                        case Const -> ArgumentDirection.ConstInput;
-                    });
-                }
-
-                return Result.ok(lst.prepend(ma));
-            })
-        );
-        return args.map( argz -> {
+        return argsParse(unit,self,selfName,proc.arguments()).map( argz -> {
             p.setArguments(argz);
             return p;
         });
     }
 
-    protected Result<Function,String> functionOf(PascalFileAst.Unit unit, Type self, TypeIdentAst selfName, ClassMethodAst.Function fun ){
+    protected Result<Function,String> functionOf(PascalFileAst.Unit unit, Type self, TypeIdentAst selfName, ClassMethodAst.Function fun){
         var f = new Function();
         f.setName(fun.name());
-        f.setReturns(prepareTypeOf(unit,self,selfName,fun.result()));
+        f.setReturns(typeOf(unit,self,selfName,fun.result()));
         f.setVisibility(Visibility.Public);
         f.setDeclaration(Optional.of(fun.position()));
         f.setImplementation(Optional.empty());
         f.setDirectives(fun.directives().map(MethodDirective::of));
         f.setComments(fun.comments());
-
-        var args = fun.arguments().foldRight(
-            Result.ok(ImListLinked.<Argument>of(),String.class),
-            (acc,it) -> acc.fmap(lst -> {
-                var ma = new Argument();
-
-                if( it.typeDecl().isEmpty() && it.defaultValue().isEmpty() ){
-                    return Result.error("arg "+it.name()+" both typeDecl and defaultValue is empty - not implemented");
-                }
-                if( it.typeDecl().isEmpty() ){
-                    return Result.error("arg "+it.name()+" both typeDecl");
-                }
-
-                ma.setType(prepareTypeOf(unit,self,selfName,it.typeDecl().get()));
-
-                ma.setName(it.name());
-
-                if( it.constraint().isEmpty() ){
-                    ma.setDirection(ArgumentDirection.Input);
-                }else{
-                    ma.setDirection(switch (it.constraint().get()){
-                        case Out -> ArgumentDirection.Output;
-                        case Var -> ArgumentDirection.InputOutput;
-                        case Const -> ArgumentDirection.ConstInput;
-                    });
-                }
-
-                return Result.ok(lst.prepend(ma));
-            })
-        );
-
-        return args.map( argz -> {
+        return argsParse(unit,self,selfName,fun.arguments()).map( argz -> {
             f.setArguments(argz);
             return f;
         });
@@ -590,7 +417,7 @@ public class TypeScope implements Freeze {
             p.setArrayArguments(arrArgs);
 
             if( prop.type().isEmpty() )return Result.error("property type not defined");
-            p.setType(prepareTypeOf(unit,self,selfName,prop.type().get()));
+            p.setType(typeOf(unit,self,selfName,prop.type().get()));
 
             p.setDeclaration(Optional.of(prop.position()));
 
@@ -606,23 +433,6 @@ public class TypeScope implements Freeze {
         return Result.error("not implemented");
     }
 
-    protected Type prepareTypeOf(PascalFileAst.Unit unit, Type self, TypeIdentAst selfName, TypeDeclAst returns){
-        if( selfName.equals(returns) ) {
-            return self;
-        } else if( returns instanceof TypeIdentAst t ) {
-            return getType(TypeName.of(t.name())).orElse(new Type.UnitTypeRef(unit, returns));
-        } else if( returns instanceof TypeDeclAst.Variant ) {
-            return getType(TypeName.of("Variant")).orElse(new Type.UnitTypeRef(unit, returns));
-        } else if( returns instanceof TypeDeclAst.StringType.StrIng s ){
-            if( s.expression().isEmpty() ){
-                return StringType.stringWithOutLengthType;
-            }
-            return new Type.UnitTypeRef(unit, returns);
-        } else {
-            return new Type.UnitTypeRef(unit, returns);
-        }
-    }
-
     protected Result<ImList<Argument,?>,String> argsParse(PascalFileAst.Unit unit, Type self, TypeIdentAst selfName, ImList<xyz.cofe.delphi.ast.Argument,?> arguments) {
         return arguments.foldRight(
             Result.ok(ImListLinked.<Argument>of(),String.class),
@@ -636,15 +446,8 @@ public class TypeScope implements Freeze {
                     return Result.error("arg "+it.name()+" typeDecl not implemented");
                 }
 
-                var argType = it.typeDecl().get();
-                if( selfName.equals(argType) ){
-                    ma.setType(self);
-                } else if( argType instanceof TypeIdentAst t ){
-                    ma.setType(
-                        getType(TypeName.of(t.name())).orElse( new Type.UnitTypeRef(unit, argType) )
-                    );
-                }
-
+                var argTypeAst = it.typeDecl().get();
+                ma.setType(typeOf(unit,self,selfName,argTypeAst));
                 ma.setName(it.name());
 
                 if( it.constraint().isEmpty() ){
@@ -657,7 +460,8 @@ public class TypeScope implements Freeze {
                     });
                 }
 
-                return Result.ok(lst.prepend(ma));
+                var res = lst.prepend(ma);
+                return Result.ok(res);
             })
         );
     }
@@ -711,6 +515,23 @@ public class TypeScope implements Freeze {
         }
 
         throw new RuntimeException("bug! unexpected");
+    }
+
+    protected Type typeOf(PascalFileAst.Unit unit, Type self, TypeIdentAst selfName, TypeDeclAst typeIdOrName){
+        if( selfName.equals(typeIdOrName) ) {
+            return self;
+        } else if( typeIdOrName instanceof TypeIdentAst t ) {
+            return getType(TypeName.of(t.name())).orElse(new Type.UnitTypeRef(unit, typeIdOrName));
+        } else if( typeIdOrName instanceof TypeDeclAst.Variant ) {
+            return getType(TypeName.of("Variant")).orElse(new Type.UnitTypeRef(unit, typeIdOrName));
+        } else if( typeIdOrName instanceof TypeDeclAst.StringType.StrIng s ){
+            if( s.expression().isEmpty() ){
+                return StringType.stringWithOutLengthType;
+            }
+            return new Type.UnitTypeRef(unit, typeIdOrName);
+        } else {
+            return new Type.UnitTypeRef(unit, typeIdOrName);
+        }
     }
     //endregion
 }

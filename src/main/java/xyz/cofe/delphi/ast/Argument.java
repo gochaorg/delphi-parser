@@ -74,7 +74,7 @@ public record Argument(
                 params = params.prepend(arg);
             }
         }
-        return params;
+        return params.reverse();
     }
 
     static ImList<Argument,?> of(DelphiParser.FormalParameterListContext lst){

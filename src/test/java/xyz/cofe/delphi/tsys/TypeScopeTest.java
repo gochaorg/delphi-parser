@@ -52,4 +52,16 @@ public class TypeScopeTest {
         assertTrue(copyCtor.getArguments().size()==1);
         assertTrue(copyCtor.getArguments().get(0).get().getType() == cls );
     }
+
+    @Test
+    public void TStringPair(){
+        var ts = new TypeScope();
+        ts.add(sampleUnit);
+
+        var clsOpt = ts.getType(TypeName.of("Map","TStringPair"));
+        assertTrue(clsOpt.get() instanceof ClassType);
+        var cls = (ClassType)clsOpt.get();
+
+        cls.getBody().forEach(System.out::println);
+    }
 }

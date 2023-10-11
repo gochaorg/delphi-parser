@@ -68,4 +68,23 @@ public class DocTest {
             throw new RuntimeException(e);
         }
     }
+
+    @Test
+    public void unitOut() {
+        var ts = new TypeScope();
+        ts.add(sampleUnit);
+
+        var unit = ts.unitMap().get(TypeName.of("Map")).get(0);
+
+        var om = new ObjectMapper();
+        om.findAndRegisterModules();
+        om.enable(SerializationFeature.INDENT_OUTPUT);
+        om.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+
+        try {
+            System.out.println(om.writeValueAsString(unit));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

@@ -108,4 +108,15 @@ public class ImListLinkedTest {
         assertTrue(res.size()==1);
         assertTrue(res.get(0).map(v->v==3).orElse(false));
     }
+
+    @Test
+    public void rebuild_test(){
+        var l1 = ImListLinked.of(1,2,3,4);
+        var res = l1.foldRight(ImListLinked.<Integer>of(), (acc,it) -> acc.prepend(it));
+        assertTrue(res.size()==4);
+        assertTrue(res.get(0).map(v->v==1).orElse(false));
+        assertTrue(res.get(1).map(v->v==2).orElse(false));
+        assertTrue(res.get(2).map(v->v==3).orElse(false));
+        assertTrue(res.get(3).map(v->v==4).orElse(false));
+    }
 }
