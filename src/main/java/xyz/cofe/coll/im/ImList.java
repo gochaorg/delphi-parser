@@ -41,18 +41,34 @@ extends
         return cnt[0];
     }
 
+    /**
+     * Проверка наличия указанных элементов
+     * @param items искомые элементы
+     * @return true - указанные элементы есть в списке / false - указанные элементы отсутствуют или присутствуют в не полном объеме
+     */
     default boolean containsAll( PositionalRead<A> items ){
         if( items==null )throw new IllegalArgumentException("items==null");
         var cnt = containsCount( Objects::equals, items );
         return items.size() == cnt;
     }
 
-    default boolean containsAll( A ... items ){
+    /**
+     * Проверка наличия указанных элементов
+     * @param items искомые элементы
+     * @return true - указанные элементы есть в списке / false - указанные элементы отсутствуют или присутствуют в не полном объеме
+     */
+    @SuppressWarnings("unchecked")
+    default boolean containsAll(A ... items ){
         if( items==null )throw new IllegalArgumentException("items==null");
         var cnt = containsCount( Objects::equals, ImListLinked.of(items) );
         return items.length == cnt;
     }
 
+    /**
+     * Проверка наличия указанных элементов
+     * @param items искомые элементы
+     * @return true - указанные элементы есть в списке / false - указанные элементы отсутствуют или присутствуют в не полном объеме
+     */
     default boolean containsAll( Iterable<A> items ){
         if( items==null )throw new IllegalArgumentException("items==null");
         var itms = ImListLinked.of(items);
@@ -60,11 +76,20 @@ extends
         return itms.size() == cnt;
     }
 
+    /**
+     * Поиск элемента
+     * @param predicate искомый элемент
+     * @return искомый элемент или None
+     */
     default Optional<A> find(Function<A,Boolean> predicate) {
         if( predicate==null ) throw new IllegalArgumentException("predicate==null");
         return filter(predicate).head();
     }
 
+    /**
+     * Разворот списка
+     * @return список в обратном порядке
+     */
     default SELF reverse(){
         return foldLeft(empty(), Prepend::prepend);
     }

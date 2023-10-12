@@ -3,6 +3,11 @@ package xyz.cofe.coll.im;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+/**
+ * Контейнер для успешного выполнения функции или наличия ошибки
+ * @param <VALUE> Результат успешного выполнения
+ * @param <ERROR> Результат выполнения с ошибкой
+ */
 public final class Result<VALUE,ERROR> {
     private final VALUE value;
     private final boolean hasValue;
