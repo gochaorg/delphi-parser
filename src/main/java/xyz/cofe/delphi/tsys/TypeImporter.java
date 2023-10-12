@@ -12,9 +12,14 @@ import java.util.Optional;
  * Импорт типов из AST
  */
 public class TypeImporter {
-    private Fn1<Optional<Type>, TypeName> typeFind;
+    private final Fn1<Optional<Type>, TypeName> typeFind;
 
-    protected InterfaceType interfaceTypeOf(PascalFileAst.Unit unit, TypeIdentAst ident, TypeDeclAst.Interface astItf) {
+    public TypeImporter(Fn1<Optional<Type>, TypeName> typeFind){
+        if( typeFind==null ) throw new IllegalArgumentException("typeFind==null");
+        this.typeFind = typeFind;
+    }
+
+    public InterfaceType interfaceTypeOf(PascalFileAst.Unit unit, TypeIdentAst ident, TypeDeclAst.Interface astItf) {
         if( unit==null ) throw new IllegalArgumentException("unit==null");
         if( ident==null ) throw new IllegalArgumentException("ident==null");
         if( astItf==null ) throw new IllegalArgumentException("astItf==null");
@@ -62,7 +67,7 @@ public class TypeImporter {
     private record ClassAddState(ImListLinked<Result<ClassItem,String>> items, Visibility visibility) {}
 
     @SuppressWarnings("RedundantCast")
-    protected ClassType classTypeOf(PascalFileAst.Unit unit, TypeIdentAst ident, TypeDeclAst.Clazz astClass) {
+    public ClassType classTypeOf(PascalFileAst.Unit unit, TypeIdentAst ident, TypeDeclAst.Clazz astClass) {
         if( unit==null ) throw new IllegalArgumentException("unit==null");
         if( ident==null ) throw new IllegalArgumentException("ident==null");
         if( astClass==null ) throw new IllegalArgumentException("astClass==null");
