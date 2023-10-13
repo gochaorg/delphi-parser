@@ -9,8 +9,8 @@ import xyz.cofe.delphi.tsys.tm.TypeName;
 import java.util.Objects;
 
 public record TypeIdentAst(
-    ImList<String,?> name,
-    ImList<GenericAst.Param,?> params
+    ImList<String> name,
+    ImList<GenericAst.Param> params
 ) implements TypeDeclAst, AstUpdate<TypeIdentAst>
 {
     @Override
@@ -19,7 +19,7 @@ public record TypeIdentAst(
     }
 
     @Override
-    public ImList<? extends AstNode, ?> nestedAstNodes() {
+    public ImList<? extends AstNode> nestedAstNodes() {
         return params;
     }
 
@@ -69,7 +69,7 @@ public record TypeIdentAst(
         return new TypeIdentAst(typeName,ImListLinked.of());
     }
 
-    public TypeIdentAst withParams(ImList<GenericAst.Param,?> params ){
+    public TypeIdentAst withParams(ImList<GenericAst.Param> params ){
         if( params==null ) throw new IllegalArgumentException("params==null");
         return new TypeIdentAst(name, params);
     }

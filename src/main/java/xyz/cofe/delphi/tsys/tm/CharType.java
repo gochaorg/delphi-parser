@@ -17,7 +17,7 @@ public sealed interface CharType extends NamedType, SimpleType {
     public static final UCS2Char ucs2CharType = new UCS2Char();
     public static final UCS4Char ucs4CharType = new UCS4Char();
 
-    public static ImList<CharType,?> values = ImListLinked.of(
+    public static ImList<CharType> values = ImListLinked.of(
         charType,
         ansiCharType,
         wideCharType,

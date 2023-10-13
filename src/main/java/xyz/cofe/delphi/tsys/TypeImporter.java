@@ -269,7 +269,7 @@ public class TypeImporter {
             p.setComments(prop.comments());
             p.setStatik(prop.classFlag());
 
-            ImList<PropertySpecifier,?> propSpec = prop.specifiers().map(s -> propertySpecifier(unit,self,selfName,s) );
+            ImList<PropertySpecifier> propSpec = prop.specifiers().map(s -> propertySpecifier(unit,self,selfName,s) );
             p.setSpecifiers( propSpec );
 
             return Result.ok(p);
@@ -278,7 +278,7 @@ public class TypeImporter {
         return Result.error("not implemented");
     }
 
-    protected Result<ImList<xyz.cofe.delphi.tsys.tm.Argument,?>,String> argsParse(PascalFileAst.Unit unit, Type self, TypeIdentAst selfName, ImList<xyz.cofe.delphi.ast.Argument,?> arguments) {
+    protected Result<ImList<xyz.cofe.delphi.tsys.tm.Argument>,String> argsParse(PascalFileAst.Unit unit, Type self, TypeIdentAst selfName, ImList<xyz.cofe.delphi.ast.Argument> arguments) {
         return arguments.foldRight(
             Result.ok(ImListLinked.<xyz.cofe.delphi.tsys.tm.Argument>of(),String.class),
             (acc,it) -> acc.fmap(lst -> {

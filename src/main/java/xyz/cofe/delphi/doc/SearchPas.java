@@ -28,7 +28,7 @@ public interface SearchPas {
         }
     }
 
-    record Roots(ImList<SearchPas,?> roots) implements SearchPas {
+    record Roots(ImList<SearchPas> roots) implements SearchPas {
         @SuppressWarnings("OptionalGetWithoutIsPresent")
         public Stream<PasFile> stream(){
             if( roots.size()==0 )return Stream.empty();

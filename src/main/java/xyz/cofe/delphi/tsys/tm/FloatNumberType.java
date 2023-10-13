@@ -19,7 +19,7 @@ public sealed interface FloatNumberType extends NamedType, SimpleType {
     public static Comp compType = new Comp();
     public static Currency currencyType = new Currency();
 
-    public static ImList<FloatNumberType,?> values = ImListLinked.of(
+    public static ImList<FloatNumberType> values = ImListLinked.of(
         real48Type,
         singleType,
         doubleType,

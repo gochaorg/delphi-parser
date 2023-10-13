@@ -15,7 +15,7 @@ public sealed interface ClassMethodAst extends InterfaceItemAst, ClassItemAst, S
      * аргументы метода
      * @return аргументы
      */
-    ImList<Argument,?> arguments();
+    ImList<Argument> arguments();
 
     @Override
     ClassMethodAst astUpdate(AstUpdate.UpdateContext ctx);
@@ -29,11 +29,11 @@ public sealed interface ClassMethodAst extends InterfaceItemAst, ClassItemAst, S
      */
     record Procedure(
         String name,
-        ImList<GenericAst.Param,?> genericParams,
-        ImList<Argument,?> arguments,
-        ImList<MethodDirective,?> directives,
+        ImList<GenericAst.Param> genericParams,
+        ImList<Argument> arguments,
+        ImList<MethodDirective> directives,
         SourcePosition position,
-        ImList<Comment,?> comments
+        ImList<Comment> comments
     ) implements ClassMethodAst, SrcPos {
         @Override
         public Procedure astUpdate(AstUpdate.UpdateContext ctx) {
@@ -61,13 +61,13 @@ public sealed interface ClassMethodAst extends InterfaceItemAst, ClassItemAst, S
         }
 
         @Override
-        public Procedure withComments(ImList<Comment, ?> comments) {
+        public Procedure withComments(ImList<Comment> comments) {
             if( comments==null ) throw new IllegalArgumentException("comments==null");
             return new Procedure(name,genericParams,arguments,directives,position,comments);
         }
 
         @Override
-        public ImList<? extends AstNode, ?> nestedAstNodes() {
+        public ImList<? extends AstNode> nestedAstNodes() {
             return upcast(genericParams).append(upcast(arguments)).append(upcast(directives));
         }
     }
@@ -81,14 +81,14 @@ public sealed interface ClassMethodAst extends InterfaceItemAst, ClassItemAst, S
      */
     record Constructor(
         String name,
-        ImList<GenericAst.Param,?> genericParams,
-        ImList<Argument,?> arguments,
-        ImList<MethodDirective,?> directives,
+        ImList<GenericAst.Param> genericParams,
+        ImList<Argument> arguments,
+        ImList<MethodDirective> directives,
         SourcePosition position,
-        ImList<Comment,?> comments
+        ImList<Comment> comments
     ) implements ClassMethodAst, SrcPos {
         @Override
-        public Constructor withComments(ImList<Comment, ?> comments) {
+        public Constructor withComments(ImList<Comment> comments) {
             return new Constructor(name,genericParams,arguments,directives,position,comments);
         }
 
@@ -117,7 +117,7 @@ public sealed interface ClassMethodAst extends InterfaceItemAst, ClassItemAst, S
         }
 
         @Override
-        public ImList<? extends AstNode, ?> nestedAstNodes() {
+        public ImList<? extends AstNode> nestedAstNodes() {
             return upcast(genericParams).append(upcast(arguments)).append(upcast(directives));
         }
     }
@@ -131,11 +131,11 @@ public sealed interface ClassMethodAst extends InterfaceItemAst, ClassItemAst, S
      */
     record Destructor(
         String name,
-        ImList<GenericAst.Param,?> genericParams,
-        ImList<Argument,?> arguments,
-        ImList<MethodDirective,?> directives,
+        ImList<GenericAst.Param> genericParams,
+        ImList<Argument> arguments,
+        ImList<MethodDirective> directives,
         SourcePosition position,
-        ImList<Comment,?> comments
+        ImList<Comment> comments
     ) implements ClassMethodAst, SrcPos {
         public Destructor astUpdate(AstUpdate.UpdateContext ctx) {
             var genericParams = ctx.update(this.genericParams);
@@ -162,12 +162,12 @@ public sealed interface ClassMethodAst extends InterfaceItemAst, ClassItemAst, S
         }
 
         @Override
-        public Destructor withComments(ImList<Comment, ?> comments) {
+        public Destructor withComments(ImList<Comment> comments) {
             return new Destructor(name,genericParams,arguments,directives,position,comments);
         }
 
         @Override
-        public ImList<? extends AstNode, ?> nestedAstNodes() {
+        public ImList<? extends AstNode> nestedAstNodes() {
             return upcast(genericParams).append(upcast(arguments)).append(upcast(directives));
         }
     }
@@ -182,12 +182,12 @@ public sealed interface ClassMethodAst extends InterfaceItemAst, ClassItemAst, S
      */
     record Function(
         String name,
-        ImList<GenericAst.Param,?> genericParams,
-        ImList<Argument,?> arguments,
+        ImList<GenericAst.Param> genericParams,
+        ImList<Argument> arguments,
         TypeDeclAst result,
-        ImList<MethodDirective,?> directives,
+        ImList<MethodDirective> directives,
         SourcePosition position,
-        ImList<Comment,?> comments
+        ImList<Comment> comments
     ) implements ClassMethodAst, SrcPos {
         @Override
         public Function astUpdate(AstUpdate.UpdateContext ctx) {
@@ -223,13 +223,13 @@ public sealed interface ClassMethodAst extends InterfaceItemAst, ClassItemAst, S
         }
 
         @Override
-        public Function withComments(ImList<Comment, ?> comments) {
+        public Function withComments(ImList<Comment> comments) {
             if( comments==null ) throw new IllegalArgumentException("comments==null");
             return new Function(name,genericParams,arguments,result,directives,position,comments);
         }
 
         @Override
-        public ImList<? extends AstNode, ?> nestedAstNodes() {
+        public ImList<? extends AstNode> nestedAstNodes() {
             return upcast(genericParams).append(upcast(arguments)).append(upcast(directives)).append(result);
         }
     }
@@ -243,11 +243,11 @@ public sealed interface ClassMethodAst extends InterfaceItemAst, ClassItemAst, S
      */
     record Operator(
         String name,
-        ImList<GenericAst.Param,?> genericParams,
-        ImList<Argument,?> arguments,
+        ImList<GenericAst.Param> genericParams,
+        ImList<Argument> arguments,
         TypeDeclAst result,
         SourcePosition position,
-        ImList<Comment,?> comments
+        ImList<Comment> comments
     ) implements ClassMethodAst, SrcPos {
         public Operator astUpdate(AstUpdate.UpdateContext ctx) {
             var genericParams = ctx.update(this.genericParams);
@@ -278,12 +278,12 @@ public sealed interface ClassMethodAst extends InterfaceItemAst, ClassItemAst, S
         }
 
         @Override
-        public Operator withComments(ImList<Comment, ?> comments) {
+        public Operator withComments(ImList<Comment> comments) {
             return this;
         }
 
         @Override
-        public ImList<? extends AstNode, ?> nestedAstNodes() {
+        public ImList<? extends AstNode> nestedAstNodes() {
             return upcast(genericParams).append(upcast(arguments)).append(result);
         }
     }
@@ -326,7 +326,7 @@ public sealed interface ClassMethodAst extends InterfaceItemAst, ClassItemAst, S
 
         record DispID(ExpressionAst expression) implements MethodDirective {
             @Override
-            public ImList<? extends AstNode, ?> nestedAstNodes() {
+            public ImList<? extends AstNode> nestedAstNodes() {
                 return ImListLinked.of(expression);
             }
 
@@ -399,12 +399,12 @@ public sealed interface ClassMethodAst extends InterfaceItemAst, ClassItemAst, S
             ? GenericAst.of(ctx.genericDefinition())
             : ImListLinked.of();
 
-        ImList<Argument,?> params =
+        ImList<Argument> params =
             ctx.formalParameterSection()!=null && !ctx.formalParameterSection().isEmpty() && ctx.formalParameterSection().formalParameterList()!=null ?
             Argument.of( ctx.formalParameterSection().formalParameterList() ):
             ImListLinked.of() ;
 
-        ImList<MethodDirective,?> meth_dir =
+        ImList<MethodDirective> meth_dir =
             ctx.methodDirective()!=null ?
             ImListLinked.of(ctx.methodDirective()).map(MethodDirective::of) :
             ImListLinked.of();

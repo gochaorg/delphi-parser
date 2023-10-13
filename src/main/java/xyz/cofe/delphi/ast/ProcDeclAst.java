@@ -15,7 +15,7 @@ import java.util.Optional;
  */
 public record ProcDeclAst(
     String name,
-    ImList<Argument,?> arguments,
+    ImList<Argument> arguments,
     Optional<TypeDeclAst> result
 ) implements InterfaceDecl, AstNode {
     @Override

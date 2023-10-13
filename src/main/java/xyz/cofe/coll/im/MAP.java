@@ -13,5 +13,5 @@ public interface MAP<A> {
      * @return коллекция с отображением
      * @param <B> тип элемента коллекции
      */
-    <B> ImList<B,?> map(Function<A,B> mapper);
+    <B> ImList<B> map(Function<A,B> mapper);
 }

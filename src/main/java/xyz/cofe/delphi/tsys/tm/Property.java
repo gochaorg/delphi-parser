@@ -74,14 +74,14 @@ public final class Property implements Freeze, InterfaceItem, ClassItem {
         this.statik = statik;
     }
     //endregion
-    //region arrayArguments : ImList<Argument,?>
-    private ImList<Argument,?> arrayArguments = ImListLinked.of();
+    //region arrayArguments : ImList<Argument>
+    private ImList<Argument> arrayArguments = ImListLinked.of();
 
-    public ImList<Argument, ?> getArrayArguments() {
+    public ImList<Argument> getArrayArguments() {
         return arrayArguments;
     }
 
-    public void setArrayArguments(ImList<Argument, ?> arrayArguments) {
+    public void setArrayArguments(ImList<Argument> arrayArguments) {
         if( arrayArguments==null ) throw new IllegalArgumentException("arrayArguments==null");
         if( frozen )throw new TypeSysError.Frozen();
         this.arrayArguments = arrayArguments;
@@ -101,14 +101,14 @@ public final class Property implements Freeze, InterfaceItem, ClassItem {
         this.expression = expression;
     }
     //endregion
-    //region specifiers : ImList<PropertySpecifier,?>
-    private ImList<PropertySpecifier,?> specifiers = ImListLinked.of();
+    //region specifiers : ImList<PropertySpecifier>
+    private ImList<PropertySpecifier> specifiers = ImListLinked.of();
 
-    public ImList<PropertySpecifier, ?> getSpecifiers() {
+    public ImList<PropertySpecifier> getSpecifiers() {
         return specifiers;
     }
 
-    public void setSpecifiers(ImList<PropertySpecifier, ?> specifiers) {
+    public void setSpecifiers(ImList<PropertySpecifier> specifiers) {
         if( specifiers==null ) throw new IllegalArgumentException("specifiers==null");
         if( frozen )throw new TypeSysError.Frozen();
         this.specifiers = specifiers;
@@ -141,14 +141,14 @@ public final class Property implements Freeze, InterfaceItem, ClassItem {
         this.declaration = declaration;
     }
     //endregion
-    //region comments : ImList<Comment,?> - Комментарии
-    private ImList<Comment,?> comments = ImListLinked.of();
+    //region comments : ImList<Comment> - Комментарии
+    private ImList<Comment> comments = ImListLinked.of();
 
-    public ImList<Comment, ?> getComments() {
+    public ImList<Comment> getComments() {
         return comments;
     }
 
-    public void setComments(ImList<Comment, ?> comments) {
+    public void setComments(ImList<Comment> comments) {
         if( comments==null ) throw new IllegalArgumentException("comments==null");
         if( frozen )throw new TypeSysError.Frozen();
         this.comments = comments;

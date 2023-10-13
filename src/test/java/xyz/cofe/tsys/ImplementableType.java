@@ -10,5 +10,5 @@ public interface ImplementableType extends Type {
      * От каких типов наследуется
      * @return типы
      */
-    ImList<Type,?> implemented();
+    ImList<Type> implemented();
 }

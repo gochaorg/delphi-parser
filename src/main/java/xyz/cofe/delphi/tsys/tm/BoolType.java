@@ -16,7 +16,7 @@ public sealed interface BoolType extends NamedType, SimpleType {
     public static final WordBool wordBoolType = new WordBool();
     public static final LongBool longBoolType = new LongBool();
 
-    public static ImList<BoolType,?> values = ImListLinked.of(
+    public static ImList<BoolType> values = ImListLinked.of(
         boolType,
         byteBoolType,
         wordBoolType,

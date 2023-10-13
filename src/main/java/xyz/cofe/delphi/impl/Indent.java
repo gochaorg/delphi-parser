@@ -34,7 +34,7 @@ public class Indent {
      * @param source данные
      * @return отформатированное представление
      */
-    public static String indent(String title, ImList<?,?> source){
+    public static String indent(String title, ImList<?> source){
         if( title==null ) throw new IllegalArgumentException("title==null");
         if( source==null ) throw new IllegalArgumentException("source==null");
         if( source.size()==0 )return "";

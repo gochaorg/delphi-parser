@@ -10,11 +10,11 @@ public sealed interface Fun permits Constructor, Destructor, Function, Operator,
      * Возвращает аргументы функции
      * @return аргументы функции
      */
-    ImList<Argument, ?> getArguments();
+    ImList<Argument> getArguments();
 
     /**
      * Указывает аргументы функции
      * @param arguments аргументы функции
      */
-    void setArguments(ImList<Argument, ?> arguments);
+    void setArguments(ImList<Argument> arguments);
 }

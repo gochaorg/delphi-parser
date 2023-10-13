@@ -11,7 +11,7 @@ import static xyz.cofe.delphi.impl.Indent.indent;
  * @param types типы
  */
 public record TypeSectionAst(
-    ImList<TypeDeclarationAst,?> types,
+    ImList<TypeDeclarationAst> types,
     SourcePosition position
 ) implements InterfaceDecl, ClassItemAst, SrcPos
 {
@@ -30,7 +30,7 @@ public record TypeSectionAst(
     }
 
     @Override
-    public ImList<? extends AstNode, ?> nestedAstNodes() {
+    public ImList<? extends AstNode> nestedAstNodes() {
         return upcast(types);
     }
 

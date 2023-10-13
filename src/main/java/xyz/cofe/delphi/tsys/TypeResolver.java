@@ -62,10 +62,10 @@ public class TypeResolver {
      * @param unit модуль
      * @return типы требующие разрешения
      */
-    public static ImList<TypeRefOwner, ?> typeRefs(PascalUnit unit) {
+    public static ImList<TypeRefOwner> typeRefs(PascalUnit unit) {
         if (unit == null) throw new IllegalArgumentException("unit==null");
         //noinspection UnnecessaryLocalVariable
-        ImList<TypeRefOwner, ?> result = unit.getTypes().fmap(someType -> {
+        ImList<TypeRefOwner> result = unit.getTypes().fmap(someType -> {
             if (someType instanceof ClassType ct) {
                 return typeRefs(unit, ct);
             } else if (someType instanceof InterfaceType it) {
@@ -77,14 +77,14 @@ public class TypeResolver {
         return result;
     }
 
-    private static ImList<TypeRefOwner, ?> typeRefs(PascalUnit unit, ClassType ct) {
-        ImList<TypeRefOwner, ?> parents =
+    private static ImList<TypeRefOwner> typeRefs(PascalUnit unit, ClassType ct) {
+        ImList<TypeRefOwner> parents =
             ct.getParents().fmap(
                 prntType -> prntType instanceof Type.UnitTypeRef ref
                     ? ImListLinked.of(new Parent(ref, ct, unit))
                     : ImListLinked.of());
 
-        ImList<TypeRefOwner, ?> returns = ct.getBody().fmap(clsItm -> {
+        ImList<TypeRefOwner> returns = ct.getBody().fmap(clsItm -> {
             if (clsItm instanceof FunSetReturns ret && ret.getReturns() instanceof Type.UnitTypeRef ref) {
                 return ImListLinked.of(
                     new ReturnsOfMethod(ref, ret, ct, unit)
@@ -94,7 +94,7 @@ public class TypeResolver {
             }
         });
 
-        ImList<TypeRefOwner, ?> args = ct.getBody().fmap(clsItm -> {
+        ImList<TypeRefOwner> args = ct.getBody().fmap(clsItm -> {
             if (clsItm instanceof Fun f) {
                 return ImListLinked.of(f);
             } else {
@@ -102,7 +102,7 @@ public class TypeResolver {
             }
         }).fmap(f -> {
             //noinspection UnnecessaryLocalVariable
-            ImList<TypeRefOwner, ?> res = f.getArguments().fmap(arg -> {
+            ImList<TypeRefOwner> res = f.getArguments().fmap(arg -> {
                 if (arg.getType() instanceof Type.UnitTypeRef ref) {
                     return ImListLinked.of(new ArgOfMethod(ref, arg, f, ct, unit));
                 } else {
@@ -115,14 +115,14 @@ public class TypeResolver {
         return parents.prepend(returns).prepend(args);
     }
 
-    private static ImList<TypeRefOwner, ?> typeRefs(PascalUnit unit, InterfaceType ct) {
-        ImList<TypeRefOwner, ?> parents =
+    private static ImList<TypeRefOwner> typeRefs(PascalUnit unit, InterfaceType ct) {
+        ImList<TypeRefOwner> parents =
             ct.getParents().fmap(
                 prntType -> prntType instanceof Type.UnitTypeRef ref
                     ? ImListLinked.of(new Parent(ref, ct, unit))
                     : ImListLinked.of());
 
-        ImList<TypeRefOwner, ?> returns = ct.getBody().fmap(clsItm -> {
+        ImList<TypeRefOwner> returns = ct.getBody().fmap(clsItm -> {
             if (clsItm instanceof FunSetReturns ret && ret.getReturns() instanceof Type.UnitTypeRef ref) {
                 return ImListLinked.of(
                     new ReturnsOfMethod(ref, ret, ct, unit)
@@ -132,7 +132,7 @@ public class TypeResolver {
             }
         });
 
-        ImList<TypeRefOwner, ?> args = ct.getBody().fmap(clsItm -> {
+        ImList<TypeRefOwner> args = ct.getBody().fmap(clsItm -> {
             if (clsItm instanceof Fun f) {
                 return ImListLinked.of(f);
             } else {
@@ -140,7 +140,7 @@ public class TypeResolver {
             }
         }).fmap(f -> {
             //noinspection UnnecessaryLocalVariable
-            ImList<TypeRefOwner, ?> res = f.getArguments().fmap(arg -> {
+            ImList<TypeRefOwner> res = f.getArguments().fmap(arg -> {
                 if (arg.getType() instanceof Type.UnitTypeRef ref) {
                     return ImListLinked.of(new ArgOfMethod(ref, arg, f, ct, unit));
                 } else {

@@ -9,15 +9,15 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 @JsonSerialize(using = ImListSerializer.class)
-public interface ImList<A,SELF extends ImList<A,SELF>>
+public interface ImList<A>
 extends
     PositionalRead<A>,
     Countable,
-    One<SELF,A>,
-    Append<SELF,A>,
-    Prepend<SELF,A>,
-    Tail<SELF,A>,
-    Filter<SELF,A>,
+    One<ImList<A>,A>,
+    Append<ImList<A>,A>,
+    Prepend<ImList<A>,A>,
+    Tail<ImList<A>,A>,
+    Filter<ImList<A>,A>,
     MAP<A>,
     FMap<A>
 {
@@ -91,7 +91,7 @@ extends
      * Разворот списка
      * @return список в обратном порядке
      */
-    default SELF reverse(){
+    default ImList<A> reverse(){
         return foldLeft(empty(), Prepend::prepend);
     }
 

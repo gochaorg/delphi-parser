@@ -74,7 +74,7 @@ public class CommentInjector {
 
         var injections = injectionsOf(unit);
         //noinspection rawtypes
-        var injectionsMap = new HashMap<Commented, ImList<Comment,?>>();
+        var injectionsMap = new HashMap<Commented, ImList<Comment>>();
         injections.forEach( (k,v) -> {
             injectionsMap.put(k, ImListLinked.of(v));
         });

@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
  */
 // TODO требует переименования/рефакторинга
 public sealed interface GenericAst {
-    record Param(String name, ImList<Bound,?> constraints) implements GenericAst, AstNode, AstUpdate<Param> {
+    record Param(String name, ImList<Bound> constraints) implements GenericAst, AstNode, AstUpdate<Param> {
         @Override
         public Param astUpdate(AstUpdate.UpdateContext ctx) {
             return this;
@@ -68,6 +68,7 @@ public sealed interface GenericAst {
     }
     static ImListLinked<GenericAst.Param> of(DelphiParser.GenericDefinitionContext ctx){
         var genParams = ImListLinked.<GenericAst.Param>of();
+
         if (!ctx.simpleGenericDefinition().isEmpty()) {
             genParams = ImListLinked.of(
                 ctx.simpleGenericDefinition().ident().stream()
@@ -83,7 +84,7 @@ public sealed interface GenericAst {
                     .stream()
                     .map(GenericAst::param)
                     .collect(Collectors.toList())
-            ).foldLeft(genParams, ImListLinkedBase::append);
+            ).foldLeft(genParams, ImListLinked::append);
         }
         return genParams;
     }

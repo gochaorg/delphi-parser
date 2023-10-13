@@ -43,14 +43,14 @@ public abstract class ProcBase implements Freeze {
         this.name = name;
     }
     //endregion
-    //region arguments : ImList<MethodParam,?> - параметры метода
-    private ImList<Argument,?> arguments = ImListLinked.of();
+    //region arguments : ImList<MethodParam> - параметры метода
+    private ImList<Argument> arguments = ImListLinked.of();
 
     /**
      * Возвращает аргументы функции
      * @return аргументы функции
      */
-    public ImList<Argument, ?> getArguments() {
+    public ImList<Argument> getArguments() {
         return arguments;
     }
 
@@ -58,7 +58,7 @@ public abstract class ProcBase implements Freeze {
      * Указывает аргументы функции
      * @param arguments аргументы функции
      */
-    public void setArguments(ImList<Argument, ?> arguments) {
+    public void setArguments(ImList<Argument> arguments) {
         if( arguments==null ) throw new IllegalArgumentException("arguments==null");
         if( frozen )throw new TypeSysError.Frozen();
         this.arguments = arguments;
@@ -85,14 +85,14 @@ public abstract class ProcBase implements Freeze {
         this.returns = returns;
     }
     //endregion
-    //region directives : ImList<MethodDirective,?> - опции/директивы
-    private ImList<MethodDirective,?> directives = ImListLinked.of();
+    //region directives : ImList<MethodDirective> - опции/директивы
+    private ImList<MethodDirective> directives = ImListLinked.of();
 
-    public ImList<MethodDirective, ?> getDirectives() {
+    public ImList<MethodDirective> getDirectives() {
         return directives;
     }
 
-    public void setDirectives(ImList<MethodDirective, ?> directives) {
+    public void setDirectives(ImList<MethodDirective> directives) {
         if( directives==null ) throw new IllegalArgumentException("directives==null");
         if( frozen )throw new TypeSysError.Frozen();
         this.directives = directives;
@@ -111,14 +111,14 @@ public abstract class ProcBase implements Freeze {
         this.visibility = visibility;
     }
     //endregion
-    //region comments : ImList<Comment,?> - Комментарии
-    private ImList<Comment,?> comments = ImListLinked.of();
+    //region comments : ImList<Comment> - Комментарии
+    private ImList<Comment> comments = ImListLinked.of();
 
-    public ImList<Comment, ?> getComments() {
+    public ImList<Comment> getComments() {
         return comments;
     }
 
-    public void setComments(ImList<Comment, ?> comments) {
+    public void setComments(ImList<Comment> comments) {
         if( comments==null ) throw new IllegalArgumentException("comments==null");
         if( frozen )throw new TypeSysError.Frozen();
         this.comments = comments;

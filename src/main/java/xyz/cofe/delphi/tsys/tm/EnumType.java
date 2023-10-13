@@ -9,7 +9,7 @@ import java.util.Optional;
  * @param body содержание
  */
 public record EnumType(
-    ImList<Entry, ?> body
+    ImList<Entry> body
 )
 implements SimpleType
 {

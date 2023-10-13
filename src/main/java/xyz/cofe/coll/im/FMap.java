@@ -13,7 +13,7 @@ public interface FMap<A> {
      * @return отображенная коллекция
      * @param <B> тип элементов в коллекции
      */
-    <B> ImList<B,?> fmap(Function<A, PositionalRead<B>> fmapper);
+    <B> ImList<B> fmap(Function<A, PositionalRead<B>> fmapper);
 
     /**
      * Фильтрует коллекцию и возвращает коллекцию содержащую элементы указанного класса
@@ -22,7 +22,7 @@ public interface FMap<A> {
      * @param <B> тип интересующих элементов
      */
     @SuppressWarnings("unchecked")
-    default <B> ImList<B,?> fmap(Class<B> cls) {
+    default <B> ImList<B> fmap(Class<B> cls) {
         if( cls==null ) throw new IllegalArgumentException("cls==null");
         return fmap( item -> item!=null && cls.isAssignableFrom(item.getClass()) ?
             ImListLinked.of((B)item) : ImListLinked.of()

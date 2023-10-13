@@ -34,7 +34,7 @@ permits
         throw AstParseError.notImplemented();
     }
 
-    static ImList<InterfaceDecl,?> of(Iterable<DelphiParser.InterfaceDeclContext> ctx){
+    static ImList<InterfaceDecl> of(Iterable<DelphiParser.InterfaceDeclContext> ctx){
         return ImListLinked.of(ctx).map(InterfaceDecl::of);
     }
 }

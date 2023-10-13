@@ -19,11 +19,11 @@ public sealed interface GenericParam {
      * @param name имя параметра
      * @param requiredImpl ограни
      */
-    record CoVariant(String name, ImList<Type,?> requiredImpl ) implements GenericParam {}
+    record CoVariant(String name, ImList<Type> requiredImpl ) implements GenericParam {}
 
     /**
      * Контр вариантная позиция
      * @param name имя параметра
      */
-    record ContraVariant( String name, ImList<Type,?> requiredImpl ) implements GenericParam {}
+    record ContraVariant( String name, ImList<Type> requiredImpl ) implements GenericParam {}
 }

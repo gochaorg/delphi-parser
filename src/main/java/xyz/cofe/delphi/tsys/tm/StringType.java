@@ -221,5 +221,5 @@ public sealed interface StringType extends SimpleType {
     }
     public static final PWideChar pwidechar = new PWideChar();
 
-    public static ImList<NamedStringType,?> namedValues = ImListLinked.of(pchar, pwidechar, stringWithOutLengthType, wideStringWithOutLengthType, unicodeStringWithOutLengthType, ansiStringWithOutCodePageType, shortStringWithOutLengthType);
+    public static ImList<NamedStringType> namedValues = ImListLinked.of(pchar, pwidechar, stringWithOutLengthType, wideStringWithOutLengthType, unicodeStringWithOutLengthType, ansiStringWithOutCodePageType, shortStringWithOutLengthType);
 }

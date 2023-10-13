@@ -13,7 +13,7 @@ import java.util.Optional;
  * @param type тип
  * @param position позиция в исходнике
  */
-public record ClassFieldAst(String name, TypeDeclAst type, SourcePosition position, ImList<Comment,?> comments)
+public record ClassFieldAst(String name, TypeDeclAst type, SourcePosition position, ImList<Comment> comments)
 implements ClassItemAst, AstNode, SrcPos, Commented<ClassFieldAst>
 {
     @Override
@@ -22,17 +22,17 @@ implements ClassItemAst, AstNode, SrcPos, Commented<ClassFieldAst>
     }
 
     @Override
-    public ClassFieldAst withComments(ImList<Comment, ?> comments) {
+    public ClassFieldAst withComments(ImList<Comment> comments) {
         return this;
     }
 
     @Override
-    public ImList<? extends AstNode, ?> nestedAstNodes() {
+    public ImList<? extends AstNode> nestedAstNodes() {
         return ImListLinked.of(type);
     }
 
-    static ImList<ClassFieldAst,?> of(DelphiParser.ClassFieldContext ctx){
-        ImList<ClassFieldAst,?> result = ImListLinked.of();
+    static ImList<ClassFieldAst> of(DelphiParser.ClassFieldContext ctx){
+        ImList<ClassFieldAst> result = ImListLinked.of();
         Optional<TypeDeclAst> type = Optional.empty();
 
         if(ctx.typeDecl()!=null && !ctx.typeDecl().isEmpty()){

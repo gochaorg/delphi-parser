@@ -5,10 +5,10 @@ import xyz.cofe.coll.im.ImListLinked;
 
 import java.util.Iterator;
 
-public class AstTreeIterator implements Iterator<ImList<AstNode,?>> {
-    private ImList<ImList<AstNode,?>,?> workSet;
+public class AstTreeIterator implements Iterator<ImList<AstNode>> {
+    private ImList<ImList<AstNode>> workSet;
 
-    public AstTreeIterator(ImList<ImList<AstNode,?>,?> workSet){
+    public AstTreeIterator(ImList<ImList<AstNode>> workSet){
         if( workSet==null ) throw new IllegalArgumentException("workSet==null");
         this.workSet = workSet;
     }
@@ -24,13 +24,13 @@ public class AstTreeIterator implements Iterator<ImList<AstNode,?>> {
     }
 
     @Override
-    public ImList<AstNode,?> next() {
+    public ImList<AstNode> next() {
         if(workSet.size()==0)return null;
         var nextSet = workSet.tail();
         var res = workSet.head().get();
         if( res.last().isPresent() ){
             var last = res.head().get();
-            ImList<ImList<AstNode,?>,?> inst = last.nestedAstNodes().map( n -> res.prepend(n) );
+            ImList<ImList<AstNode>> inst = last.nestedAstNodes().map( n -> res.prepend(n) );
             nextSet = nextSet.prepend(inst.reverse());
         }
 

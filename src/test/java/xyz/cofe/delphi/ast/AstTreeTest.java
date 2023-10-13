@@ -6,14 +6,14 @@ import xyz.cofe.coll.im.ImListLinked;
 
 public class AstTreeTest {
     public static class Node implements AstNode {
-        private ImList<Node,?> children;
+        private ImList<Node> children;
 
         public Node(Node ... children){
             this.children = ImListLinked.of(children);
         }
 
         @Override
-        public ImList<? extends AstNode, ?> nestedAstNodes() {
+        public ImList<? extends AstNode> nestedAstNodes() {
             return children;
         }
 

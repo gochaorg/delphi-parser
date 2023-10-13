@@ -16,14 +16,14 @@ public sealed interface ConstSectionAst extends InterfaceDecl, AstNode {
      * @param constants константы
      * @param key тип констант // TODO выяснить что за Resource string
      */
-    record Constants(ImList<Const,?> constants, ConstKey key) implements ConstSectionAst, ClassItemAst, AstNode {
+    record Constants(ImList<Const> constants, ConstKey key) implements ConstSectionAst, ClassItemAst, AstNode {
         @Override
         public Constants astUpdate(AstUpdate.UpdateContext ctx) {
             return this;
         }
 
         @Override
-        public ImList<? extends AstNode, ?> nestedAstNodes() {
+        public ImList<? extends AstNode> nestedAstNodes() {
             return upcast(constants).append(upcast(key));
         }
 
@@ -59,7 +59,7 @@ public sealed interface ConstSectionAst extends InterfaceDecl, AstNode {
         }
 
         @Override
-        public ImList<? extends AstNode, ?> nestedAstNodes() {
+        public ImList<? extends AstNode> nestedAstNodes() {
             return upcast(type).append(expression);
         }
 
@@ -104,13 +104,13 @@ public sealed interface ConstSectionAst extends InterfaceDecl, AstNode {
 
     record ConstExp( ExpressionAst expression ) implements ConstExpression {
         @Override
-        public ImList<? extends AstNode, ?> nestedAstNodes() {
+        public ImList<? extends AstNode> nestedAstNodes() {
             return upcast(expression);
         }
     }
     record NamedExp( String name, ConstExpression expression ) implements ConstExpression {
         @Override
-        public ImList<? extends AstNode, ?> nestedAstNodes() {
+        public ImList<? extends AstNode> nestedAstNodes() {
             return upcast(expression);
         }
 
@@ -121,15 +121,15 @@ public sealed interface ConstSectionAst extends InterfaceDecl, AstNode {
             );
         }
     }
-    record Sequence( ImList<ConstExpression,?> seq ) implements ConstExpression {
+    record Sequence( ImList<ConstExpression> seq ) implements ConstExpression {
         @Override
-        public ImList<? extends AstNode, ?> nestedAstNodes() {
+        public ImList<? extends AstNode> nestedAstNodes() {
             return upcast(seq);
         }
     }
-    record SeqNamed( ImList<NamedExp,?> seq ) implements ConstExpression {
+    record SeqNamed( ImList<NamedExp> seq ) implements ConstExpression {
         @Override
-        public ImList<? extends AstNode, ?> nestedAstNodes() {
+        public ImList<? extends AstNode> nestedAstNodes() {
             return upcast(seq);
         }
     }

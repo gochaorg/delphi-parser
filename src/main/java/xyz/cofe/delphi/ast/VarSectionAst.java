@@ -22,7 +22,7 @@ public sealed interface VarSectionAst
      */
     record Variables(
         VarKey key,
-        ImList<VarDeclaration,?> variables,
+        ImList<VarDeclaration> variables,
         SourcePosition position
     ) implements VarSectionAst, AstNode, SrcPos {
         @Override
@@ -31,7 +31,7 @@ public sealed interface VarSectionAst
         }
 
         @Override
-        public ImList<? extends AstNode, ?> nestedAstNodes() {
+        public ImList<? extends AstNode> nestedAstNodes() {
             return upcast(key).append(upcast(variables));
         }
 
@@ -43,7 +43,7 @@ public sealed interface VarSectionAst
                 throw AstParseError.unExpected(ctx.varKey());
             }
 
-            ImList<VarDeclaration,?> lst = ImListLinked.of(ctx.varDeclaration())
+            ImList<VarDeclaration> lst = ImListLinked.of(ctx.varDeclaration())
                 .fmap(VarDeclaration::of);
 
             return new Variables( key, lst, SourcePosition.of(ctx) );
@@ -74,11 +74,11 @@ public sealed interface VarSectionAst
         }
 
         @Override
-        public ImList<? extends AstNode, ?> nestedAstNodes() {
+        public ImList<? extends AstNode> nestedAstNodes() {
             return upcast(type).append(upcast(valueSpec));
         }
 
-        static ImList<VarDeclaration,?> of(DelphiParser.VarDeclarationContext ctx){
+        static ImList<VarDeclaration> of(DelphiParser.VarDeclarationContext ctx){
             var type = TypeDeclAst.of(ctx.typeDecl());
             Optional<VarValueSpec> valueSpec = Optional.empty();
             if(ctx.varValueSpec()!=null && !ctx.varValueSpec().isEmpty()){
@@ -129,7 +129,7 @@ public sealed interface VarSectionAst
         }
 
         @Override
-        public ImList<? extends AstNode, ?> nestedAstNodes() {
+        public ImList<? extends AstNode> nestedAstNodes() {
             return upcast(expression);
         }
     }
@@ -141,7 +141,7 @@ public sealed interface VarSectionAst
         }
 
         @Override
-        public ImList<? extends AstNode, ?> nestedAstNodes() {
+        public ImList<? extends AstNode> nestedAstNodes() {
             return upcast(expression);
         }
     }

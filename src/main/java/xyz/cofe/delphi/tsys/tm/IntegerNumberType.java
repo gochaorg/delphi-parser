@@ -22,7 +22,7 @@ public sealed interface IntegerNumberType extends NamesOfType, SimpleType {
     public static final CardinalType cardinalType = new CardinalType();
     public static final UInt64Type uInt64Type = new UInt64Type();
 
-    public static ImList<IntegerNumberType,?> values = ImListLinked.of(
+    public static ImList<IntegerNumberType> values = ImListLinked.of(
         cardinalType,
         shortIntType,
         smallIntType,

@@ -3,13 +3,14 @@ package xyz.cofe.delphi.tsys.tm;
 import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.coll.im.ImListLinkedBase;
+import xyz.cofe.coll.im.PositionalRead;
 
 import java.util.Arrays;
 
 /**
  * Имя типа
  */
-public class TypeName extends ImListLinkedBase<String,TypeName> implements Comparable<TypeName> {
+public class TypeName extends ImListLinkedBase<String> implements Comparable<TypeName> {
     public static final TypeName DEFAULT = TypeName.of();
 
     private TypeName(){
@@ -25,6 +26,8 @@ public class TypeName extends ImListLinkedBase<String,TypeName> implements Compa
         return new TypeName();
     }
 
+
+
     @Override
     public TypeName one(String s) {
         if( s==null ) throw new IllegalArgumentException("s==null");
@@ -36,14 +39,22 @@ public class TypeName extends ImListLinkedBase<String,TypeName> implements Compa
         return new TypeName(s,this);
     }
 
+    public TypeName prepend(PositionalRead<String> values){
+        return (TypeName) super.prepend(values);
+    }
+
     public TypeName prepend(TypeName typeName){
         if( typeName==null ) throw new IllegalArgumentException("typeName==null");
-        return super.prepend(typeName);
+        return prepend(ImListLinked.of(typeName));
+    }
+
+    public TypeName append(PositionalRead<String> values){
+        return (TypeName) super.append(values);
     }
 
     public TypeName append(TypeName typeName){
         if( typeName==null ) throw new IllegalArgumentException("typeName==null");
-        return super.append(typeName);
+        return append(ImListLinked.of(typeName));
     }
 
     @Override
@@ -58,7 +69,7 @@ public class TypeName extends ImListLinkedBase<String,TypeName> implements Compa
 
     @SuppressWarnings("unchecked")
     @Override
-    protected <A> ImListLinkedBase<A, ?> selfConstructor(A value, ImListLinkedBase<A, ?> next) {
+    protected <A> ImListLinkedBase<A> selfConstructor(A value, ImListLinkedBase<A> next) {
         return new ImListLinked(value,next);
     }
 
@@ -74,7 +85,7 @@ public class TypeName extends ImListLinkedBase<String,TypeName> implements Compa
     }
 
     @SuppressWarnings("OptionalGetWithoutIsPresent")
-    public static TypeName of(ImList<String,?> name){
+    public static TypeName of(ImList<String> name){
         if( name==null ) throw new IllegalArgumentException("name==null");
         if( name.size()==0 )return DEFAULT;
         if( name.size()==1 )return new TypeName(name.get(0).get(),null);

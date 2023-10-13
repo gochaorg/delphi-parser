@@ -18,7 +18,7 @@ public interface AstUpdate<SELF> {
      * @return обновленные узлы или none - если небыло обновленных узлов
      * @param <A> тип узла
      */
-    public static <A extends AstUpdate<A>> Optional<ImList<A,?>> astUpdates(ImList<A, ?> list, UpdateContext ctx) {
+    public static <A extends AstUpdate<A>> Optional<ImList<A>> astUpdates(ImList<A> list, UpdateContext ctx) {
         if( list==null ) throw new IllegalArgumentException("list==null");
 
         var self = ctx;
@@ -37,7 +37,7 @@ public interface AstUpdate<SELF> {
      * Контекст обновления
      */
     interface UpdateContext {
-        default  <A extends AstUpdate<A>> Optional<ImList<A,?>> update(ImList<A,?> list) {
+        default  <A extends AstUpdate<A>> Optional<ImList<A>> update(ImList<A> list) {
             if( list==null ) throw new IllegalArgumentException("list==null");
 
             var self = this;
@@ -71,10 +71,10 @@ public interface AstUpdate<SELF> {
      */
     static class Commenting implements CommentingContext {
         @SuppressWarnings("rawtypes")
-        private final Map<Commented, ImList<Comment,?>> comments;
+        private final Map<Commented, ImList<Comment>> comments;
 
         @SuppressWarnings("rawtypes")
-        public Commenting(Map<Commented, ImList<Comment,?>> comments){
+        public Commenting(Map<Commented, ImList<Comment>> comments){
             if( comments==null ) throw new IllegalArgumentException("comments==null");
             this.comments = comments;
         }

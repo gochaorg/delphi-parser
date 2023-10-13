@@ -13,15 +13,15 @@ import java.util.Map;
  * Перечень типов которые предопределены
  */
 public class SimpleTypeImpl {
-    private static final ImList<SimpleType, ?> simpleNamedTypeList;
+    private static final ImList<SimpleType> simpleNamedTypeList;
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private static ImList<SimpleType, ?> upcast(ImList<? extends SimpleType, ?> value) {
+    private static ImList<SimpleType> upcast(ImList<? extends SimpleType> value) {
         return ImListLinked.of((List) value.toList());
     }
 
     static {
-        ImList<SimpleType, ?> types = ImListLinked.of();
+        ImList<SimpleType> types = ImListLinked.of();
         types = types
             .prepend(VariantType.variant)
             .prepend(upcast(IntegerNumberType.values))

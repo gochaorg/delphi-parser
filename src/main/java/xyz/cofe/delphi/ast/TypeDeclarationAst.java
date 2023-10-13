@@ -27,11 +27,11 @@ public record TypeDeclarationAst(
     }
 
     @Override
-    public ImList<? extends AstNode, ?> nestedAstNodes() {
+    public ImList<? extends AstNode> nestedAstNodes() {
         return ImListLinked.of(typeIdent, typeDecl);
     }
 
-    static ImList<TypeDeclarationAst,?> of(Iterable<DelphiParser.TypeDeclarationContext> decs){
+    static ImList<TypeDeclarationAst> of(Iterable<DelphiParser.TypeDeclarationContext> decs){
         return ImListLinked.of(decs).map(TypeDeclarationAst::of);
     }
 

@@ -41,25 +41,25 @@ public sealed class ClassType implements PascalUnitItem, Type, Freeze
         this.frozen = true;
     }
     //endregion
-    //region parents : ImList<Type, ?>
-    private ImList<Type, ?> parents;
+    //region parents : ImList<Type>
+    private ImList<Type> parents;
 
-    public ImList<Type, ?> getParents() {
+    public ImList<Type> getParents() {
         return parents;
     }
 
-    public void setParents(ImList<Type, ?> parents) {
+    public void setParents(ImList<Type> parents) {
         if( parents==null ) throw new IllegalArgumentException("parents==null");
         if( frozen )throw new TypeSysError.Frozen();
         this.parents = parents;
     }
     //endregion
-    //region body : ImList<InterfaceItem, ?> - Содержание класса
-    private ImList<ClassItem, ?> body = ImListLinked.of();
-    public ImList<ClassItem, ?> getBody() {
+    //region body : ImList<InterfaceItem> - Содержание класса
+    private ImList<ClassItem> body = ImListLinked.of();
+    public ImList<ClassItem> getBody() {
         return body;
     }
-    public void setBody(ImList<ClassItem, ?> body) {
+    public void setBody(ImList<ClassItem> body) {
         if( body==null ) throw new IllegalArgumentException("body==null");
         if( frozen )throw new TypeSysError.Frozen();
         this.body = body;
@@ -84,14 +84,14 @@ public sealed class ClassType implements PascalUnitItem, Type, Freeze
         this.specifier = specifier;
     }
     //endregion
-    //region comments : ImList<Comment,?> - Комментарии
-    private ImList<Comment,?> comments = ImListLinked.of();
+    //region comments : ImList<Comment> - Комментарии
+    private ImList<Comment> comments = ImListLinked.of();
 
-    public ImList<Comment, ?> getComments() {
+    public ImList<Comment> getComments() {
         return comments;
     }
 
-    public void setComments(ImList<Comment, ?> comments) {
+    public void setComments(ImList<Comment> comments) {
         if( comments==null ) throw new IllegalArgumentException("comments==null");
         if( frozen )throw new TypeSysError.Frozen();
         this.comments = comments;

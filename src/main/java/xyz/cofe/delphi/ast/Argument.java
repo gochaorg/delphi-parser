@@ -33,7 +33,7 @@ public record Argument(
         Out
     }
 
-    static ImList<Argument,?> of(List<DelphiParser.FormalParameterContext> lst){
+    static ImList<Argument> of(List<DelphiParser.FormalParameterContext> lst){
         var params = ImListLinked.<Argument>of();
         for( var f_param : lst ){
             var constraint = Optional.<Argument.Constraint>empty();
@@ -77,7 +77,7 @@ public record Argument(
         return params.reverse();
     }
 
-    static ImList<Argument,?> of(DelphiParser.FormalParameterListContext lst){
+    static ImList<Argument> of(DelphiParser.FormalParameterListContext lst){
         return of(lst.formalParameter());
     }
 }

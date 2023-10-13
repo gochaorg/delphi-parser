@@ -35,12 +35,12 @@ public sealed interface ClassItemAst
         }
 
         @Override
-        public ImList<? extends AstNode, ?> nestedAstNodes() {
+        public ImList<? extends AstNode> nestedAstNodes() {
             return ImListLinked.of(variables);
         }
     }
 
-    static ImList<ClassItemAst,?> of(DelphiParser.ClassItemContext ctx){
+    static ImList<ClassItemAst> of(DelphiParser.ClassItemContext ctx){
         if( ctx.visibility()!=null && !ctx.visibility().isEmpty() )
             return ImListLinked.of(VisibilityAst.of(ctx.visibility()));
 

@@ -7,6 +7,6 @@ import xyz.cofe.coll.im.ImList;
  */
 public record Structure(
     String name,
-    ImList<Field,?> fields
+    ImList<Field> fields
 ) implements NamedType {
 }

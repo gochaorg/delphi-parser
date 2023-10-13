@@ -7,26 +7,26 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public abstract class ImListLinkedBase<A, SELF extends ImListLinkedBase<A, SELF>>
+public abstract class ImListLinkedBase<A>
     implements
-    Prepend<SELF, A>,
+    Prepend<ImList<A>, A>,
     Countable,
     ForEach<A>,
-    Emptable<SELF>,
-    One<SELF, A>,
+    Emptable<ImList<A>>,
+    One<ImList<A>, A>,
     PositionalRead<A>,
-    Append<SELF, A>,
-    Tail<SELF, A>,
-    Reverse<SELF>,
-    Filter<SELF, A>,
+    Append<ImList<A>, A>,
+    Tail<ImList<A>, A>,
+    Reverse<ImList<A>>,
+    Filter<ImList<A>, A>,
     MAP<A>,
     FMap<A>,
-    ImList<A, SELF> {
+    ImList<A> {
     private final A value;
-    private final ImListLinkedBase<A, SELF> next;
+    private final ImListLinkedBase<A> next;
     private final int size;
 
-    protected ImListLinkedBase(A value, ImListLinkedBase<A, SELF> next) {
+    protected ImListLinkedBase(A value, ImListLinkedBase<A> next) {
         this.value = value;
         this.next = next;
         if (next != null) {
@@ -52,26 +52,25 @@ public abstract class ImListLinkedBase<A, SELF extends ImListLinkedBase<A, SELF>
      * @param next  ссылка на следующий элемент
      * @return список
      */
-    protected abstract <B> ImListLinkedBase<B, ?> selfConstructor(B value, ImListLinkedBase<B, ?> next);
+    protected abstract <B> ImListLinkedBase<B> selfConstructor(B value, ImListLinkedBase<B> next);
 //    {
 //        return new ImListLinkedBase<>(value,next);
 //    }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public SELF empty() {
-        return (SELF) selfConstructor(null, null);
+    public ImListLinkedBase<A> empty() {
+        return selfConstructor(null, null);
     }
 
     @Override
-    public SELF one(A a) {
+    public ImListLinkedBase<A> one(A a) {
         return empty().prepend(a);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public SELF prepend(A a) {
-        return (SELF) selfConstructor(a, this);
+    public ImListLinkedBase<A> prepend(A a) {
+        return selfConstructor(a, this);
     }
 
     @Override
@@ -124,7 +123,7 @@ public abstract class ImListLinkedBase<A, SELF extends ImListLinkedBase<A, SELF>
         return Optional.empty();
     }
 
-    public SELF reverse() {
+    public ImListLinkedBase<A> reverse() {
         var lst = empty();
         var cur = this;
         while (cur != null) {
@@ -137,7 +136,7 @@ public abstract class ImListLinkedBase<A, SELF extends ImListLinkedBase<A, SELF>
 
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     @Override
-    public SELF append(A a) {
+    public ImListLinkedBase<A> append(A a) {
         if (size() == 0) return one(a);
         if (size() == 1) return one(a).prepend(get(0).get());
         return foldRight(one(a), ImListLinkedBase::prepend);
@@ -145,9 +144,9 @@ public abstract class ImListLinkedBase<A, SELF extends ImListLinkedBase<A, SELF>
 
     @SuppressWarnings("unchecked")
     @Override
-    public SELF tail() {
+    public ImListLinkedBase<A> tail() {
         if (next == null) return empty();
-        return (SELF) next;
+        return next;
     }
 
     @Override
@@ -170,7 +169,7 @@ public abstract class ImListLinkedBase<A, SELF extends ImListLinkedBase<A, SELF>
     }
 
     @Override
-    public <B> ImList<B, ?> map(Function<A, B> mapper) {
+    public <B> ImList<B> map(Function<A, B> mapper) {
         if (mapper == null) throw new IllegalArgumentException("mapper==null");
         var res = selfConstructor((B) null, null);
         var cur = this;
@@ -184,7 +183,7 @@ public abstract class ImListLinkedBase<A, SELF extends ImListLinkedBase<A, SELF>
     }
 
     @Override
-    public <B> ImList<B, ?> fmap(Function<A, PositionalRead<B>> fmapper) {
+    public <B> ImList<B> fmap(Function<A, PositionalRead<B>> fmapper) {
         if (fmapper == null) throw new IllegalArgumentException("fmapper==null");
         var res = selfConstructor((B) null, null);
         var cur = this;
@@ -199,34 +198,34 @@ public abstract class ImListLinkedBase<A, SELF extends ImListLinkedBase<A, SELF>
 
     @SuppressWarnings("unchecked")
     @Override
-    public SELF append(PositionalRead<A> values) {
+    public ImListLinkedBase<A> append(PositionalRead<A> values) {
         if (values == null) throw new IllegalArgumentException("values==null");
         // todo не эффективная реализация
         Object[] res = new Object[]{this};
         values.each(a -> {
-            var r = (SELF) res[0];
+            var r = (ImListLinkedBase<A>) res[0];
             res[0] = r.append(a);
         });
-        return (SELF) res[0];
+        return (ImListLinkedBase<A>) res[0];
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public SELF prepend(PositionalRead<A> values) {
+    public ImListLinkedBase<A> prepend(PositionalRead<A> values) {
         if (values == null) throw new IllegalArgumentException("values==null");
         Object[] res = new Object[]{this};
         values.each(a -> {
-            var r = (SELF) res[0];
+            var r = (ImListLinkedBase<A>) res[0];
             res[0] = r.prepend(a);
         });
-        return (SELF) res[0];
+        return (ImListLinkedBase<A>) res[0];
     }
 
     public static class ImListLinkedIterator<A> implements Iterator<A> {
-        private ImListLinkedBase<A, ?> imList;
+        private ImListLinkedBase<A> imList;
 
         public ImListLinkedIterator(
-            ImListLinkedBase<A, ?> imList
+            ImListLinkedBase<A> imList
         ) {
             this.imList = imList;
         }

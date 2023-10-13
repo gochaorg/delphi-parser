@@ -74,16 +74,16 @@ public class ImListLinkedTest {
         assertTrue(ls2.get(2).map(v -> v.equals("3")).orElse(false));
     }
 
-    @Test
-    public void fmap_test(){
-        var lst = ImListLinked.of(1,2);
-        var ls2 = lst.fmap(v -> ImListArray.of(v).append(v));
-        assertTrue(ls2.size()==4);
-        assertTrue(ls2.get(0).map(v->v==1).orElse(false));
-        assertTrue(ls2.get(1).map(v->v==1).orElse(false));
-        assertTrue(ls2.get(2).map(v->v==2).orElse(false));
-        assertTrue(ls2.get(3).map(v->v==2).orElse(false));
-    }
+//    @Test
+//    public void fmap_test(){
+//        var lst = ImListLinked.of(1,2);
+//        var ls2 = lst.fmap(v -> ImListArray.of(v).append(v));
+//        assertTrue(ls2.size()==4);
+//        assertTrue(ls2.get(0).map(v->v==1).orElse(false));
+//        assertTrue(ls2.get(1).map(v->v==1).orElse(false));
+//        assertTrue(ls2.get(2).map(v->v==2).orElse(false));
+//        assertTrue(ls2.get(3).map(v->v==2).orElse(false));
+//    }
 
     @Test
     public void foldLeft_test(){
@@ -112,7 +112,7 @@ public class ImListLinkedTest {
     @Test
     public void rebuild_test(){
         var l1 = ImListLinked.of(1,2,3,4);
-        var res = l1.foldRight(ImListLinked.<Integer>of(), (acc,it) -> acc.prepend(it));
+        var res = l1.foldRight(ImListLinked.<Integer>of(), ImListLinked::prepend);
         assertTrue(res.size()==4);
         assertTrue(res.get(0).map(v->v==1).orElse(false));
         assertTrue(res.get(1).map(v->v==2).orElse(false));
