@@ -3,8 +3,8 @@ package xyz.cofe.delphi.tsys.tm;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
-import xyz.cofe.delphi.tsys.json.jakson.FlatStr;
-import xyz.cofe.delphi.tsys.json.jakson.FlatStrSer;
+import xyz.cofe.delphi.tsys.tm.json.jakson.FlatStr;
+import xyz.cofe.delphi.tsys.tm.json.jakson.FlatStrSer;
 
 /**
  * Булево тип

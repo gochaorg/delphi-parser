@@ -1,4 +1,4 @@
-package xyz.cofe.delphi.tsys.json.jakson;
+package xyz.cofe.delphi.tsys.tm.json.jakson;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

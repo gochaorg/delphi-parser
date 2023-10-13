@@ -1,8 +1,8 @@
 package xyz.cofe.delphi.tsys.tm;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import xyz.cofe.delphi.tsys.json.jakson.FlatStr;
-import xyz.cofe.delphi.tsys.json.jakson.FlatStrSer;
+import xyz.cofe.delphi.tsys.tm.json.jakson.FlatStr;
+import xyz.cofe.delphi.tsys.tm.json.jakson.FlatStrSer;
 
 /**
  * Тип Varaint, он же Any

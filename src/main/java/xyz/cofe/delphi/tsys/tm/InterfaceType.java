@@ -10,7 +10,7 @@ import xyz.cofe.delphi.tsys.TypeSysError;
 
 import java.util.Optional;
 
-import static xyz.cofe.delphi.tsys.json.jakson.JsonAttr.JSON_TYPE_FIELD;
+import static xyz.cofe.delphi.tsys.tm.json.jakson.JsonAttr.JSON_TYPE_FIELD;
 
 /**
  * Интерфейс
@@ -158,5 +158,10 @@ public sealed class InterfaceType implements Type, Freeze, PascalUnitItem {
             return name;
         }
         //endregion
+
+        @Override
+        public String toString() {
+            return "InterfaceType.Named(" + name +'}';
+        }
     }
 }

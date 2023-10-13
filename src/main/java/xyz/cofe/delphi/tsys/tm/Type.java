@@ -3,9 +3,9 @@ package xyz.cofe.delphi.tsys.tm;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import xyz.cofe.delphi.ast.PascalFileAst;
 import xyz.cofe.delphi.ast.TypeDeclAst;
-import xyz.cofe.delphi.tsys.json.jakson.FlatStr;
-import xyz.cofe.delphi.tsys.json.jakson.FlatStrSer;
-import xyz.cofe.delphi.tsys.json.jakson.UnitTypeRefSer;
+import xyz.cofe.delphi.tsys.tm.json.jakson.FlatStr;
+import xyz.cofe.delphi.tsys.tm.json.jakson.FlatStrSer;
+import xyz.cofe.delphi.tsys.tm.json.jakson.UnitTypeRefSer;
 
 /**
  * <a href="https://docwiki.embarcadero.com/RADStudio/Alexandria/en/About_Data_Types_(Delphi)">Некий тип данных</a>

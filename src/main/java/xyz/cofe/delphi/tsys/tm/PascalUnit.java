@@ -9,6 +9,7 @@ import xyz.cofe.delphi.tsys.TypeSysError;
 
 import java.util.Optional;
 
+@SuppressWarnings("unused")
 public class PascalUnit implements Freeze {
     //region frozen
     private volatile boolean frozen;

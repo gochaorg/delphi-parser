@@ -1,4 +1,4 @@
-package xyz.cofe.delphi.tsys.json.jakson;
+package xyz.cofe.delphi.tsys.tm.json.jakson;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;

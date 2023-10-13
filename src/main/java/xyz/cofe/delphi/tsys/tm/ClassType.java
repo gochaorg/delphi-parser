@@ -7,7 +7,7 @@ import xyz.cofe.delphi.ast.Comment;
 import xyz.cofe.delphi.ast.SourcePosition;
 import xyz.cofe.delphi.tsys.Freeze;
 import xyz.cofe.delphi.tsys.TypeSysError;
-import xyz.cofe.delphi.tsys.json.jakson.ClassTypeSer;
+import xyz.cofe.delphi.tsys.tm.json.jakson.ClassTypeSer;
 
 import java.util.Optional;
 

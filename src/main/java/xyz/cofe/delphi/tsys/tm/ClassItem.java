@@ -2,7 +2,7 @@ package xyz.cofe.delphi.tsys.tm;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-import static xyz.cofe.delphi.tsys.json.jakson.JsonAttr.JSON_TYPE_FIELD;
+import static xyz.cofe.delphi.tsys.tm.json.jakson.JsonAttr.JSON_TYPE_FIELD;
 
 /**
  * Элемент класса

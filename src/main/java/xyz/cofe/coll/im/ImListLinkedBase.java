@@ -115,11 +115,11 @@ public abstract class ImListLinkedBase<A, SELF extends ImListLinkedBase<A, SELF>
         if (isNil()) return Optional.empty();
         var cur = this;
         while (cur != null) {
-            var nxt = cur.next;
-            if (nxt.isNil()) {
+            if( cur.next==null ) {
+                if( cur.isNil() )return Optional.empty();
                 return Optional.ofNullable(cur.value);
             }
-            cur = nxt;
+            cur = cur.next;
         }
         return Optional.empty();
     }

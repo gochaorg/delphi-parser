@@ -10,6 +10,7 @@ import xyz.cofe.delphi.tsys.tm.TypeName;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static xyz.cofe.delphi.TextResource.textResource;
+import static xyz.cofe.delphi.impl.Indent.indent;
 
 public class TypeResolverTest {
     private static final PascalFileAst sampleFile = PascalFileAst.parse(
@@ -36,10 +37,24 @@ public class TypeResolverTest {
                 ImListLinked.of(Tuple.of(arg.argType(), arg.arg(), ctor, nt.name())) : ImListLinked.of()
         );
 
-        ctorArgsTRefs.find( ctor ->
+        var copyiCtorArg = ctorArgsTRefs.find( ctor ->
             ctor._4().equals(TypeName.of("Map.TStringMap"))
             && ctor._3().getName().equalsIgnoreCase("copyi")
             && ctor._2().getName().equalsIgnoreCase("sample")
         );
+
+        tRefs.each( tref -> {
+            System.out.println("---------------");
+            System.out.println("type ref: ");
+            System.out.println(indent("    ", tref.toString()));
+
+            var resolveOpt = TypeResolver.resolve(tref, ts);
+            resolveOpt.ifPresentOrElse( resolvedType -> {
+                System.out.println("resolved as:");
+                System.out.println(indent("    ", resolvedType.toString()));
+            }, () -> {
+                System.out.println("not resolved");
+            });
+        });
     }
 }
