@@ -37,7 +37,7 @@ public class SimpleTypeImpl {
 
     static {
         var map = new HashMap<TypeName, SimpleType>();
-        simpleNamedTypeList.forEach(st -> {
+        simpleNamedTypeList.each(st -> {
             if (st instanceof NamesOfType names) {
                 for (var name : names.names()) {
                     map.computeIfAbsent(name, n -> st);

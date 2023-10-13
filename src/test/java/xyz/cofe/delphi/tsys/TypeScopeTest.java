@@ -27,7 +27,7 @@ public class TypeScopeTest {
         assertTrue(itfOpt.get() instanceof InterfaceType);
         var itf = (InterfaceType)itfOpt.get();
 
-        itf.getBody().forEach(System.out::println);
+        itf.getBody().each(System.out::println);
     }
 
     @Test
@@ -41,7 +41,7 @@ public class TypeScopeTest {
         assertTrue(clsOpt.get() instanceof ClassType);
         var cls = (ClassType)clsOpt.get();
 
-        cls.getBody().forEach(System.out::println);
+        cls.getBody().each(System.out::println);
 
         var brokens = cls.getBody().fmap(i -> i instanceof ClassItem.Broken b ? ImListLinked.of(b) : ImListLinked.of());
         assertTrue(brokens.size()==0);
@@ -62,6 +62,6 @@ public class TypeScopeTest {
         assertTrue(clsOpt.get() instanceof ClassType);
         var cls = (ClassType)clsOpt.get();
 
-        cls.getBody().forEach(System.out::println);
+        cls.getBody().each(System.out::println);
     }
 }

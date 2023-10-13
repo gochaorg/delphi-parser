@@ -105,10 +105,10 @@ public sealed interface PascalFileAst extends AstNode {
             var sb = new StringBuilder();
 
             sb.append("uses:\n");
-            uses.forEach(n -> sb.append("  ").append(n).append("\n"));
+            uses.each(n -> sb.append("  ").append(n).append("\n"));
 
             sb.append("declarations:\n");
-            declarations.forEach(d -> sb.append(indent("  ",d.toString())).append("\n") );
+            declarations.each(d -> sb.append(indent("  ",d.toString())).append("\n") );
 
             return sb.toString();
         }

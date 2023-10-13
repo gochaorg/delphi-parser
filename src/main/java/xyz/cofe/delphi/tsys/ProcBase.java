@@ -22,7 +22,7 @@ public abstract class ProcBase implements Freeze {
     }
 
     public void freeze(){
-        arguments.forEach(Argument::freeze);
+        arguments.each(Argument::freeze);
         if( returns instanceof Freeze f )f.freeze();
         this.frozen = true;
     }

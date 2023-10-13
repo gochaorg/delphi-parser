@@ -1,9 +1,6 @@
 package xyz.cofe.delphi.tsys;
 
-import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
-import xyz.cofe.coll.im.ImListLinkedBase;
-import xyz.cofe.coll.im.Result;
 import xyz.cofe.delphi.ast.*;
 
 import java.util.*;
@@ -146,7 +143,7 @@ public class TypeScope implements Freeze {
         List<Type> types = new ArrayList<>();
 
         var typeSec = unit.api().declarations().filter( d -> d instanceof TypeSectionAst).map(d -> (TypeSectionAst)d );
-        typeSec.forEach(typeSection -> typeSection.types().forEach(tdecl -> {
+        typeSec.each(typeSection -> typeSection.types().each(tdecl -> {
             var ident = tdecl.typeIdent();
             var decl = tdecl.typeDecl();
             if( decl instanceof TypeDeclAst.Array) {}

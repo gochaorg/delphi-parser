@@ -19,7 +19,7 @@ public final class Property implements Freeze, InterfaceItem, ClassItem {
     public void freeze(){
         this.frozen = true;
         if( type instanceof Freeze f )f.freeze();
-        if( arrayArguments!=null )arrayArguments.forEach(Argument::freeze);
+        if( arrayArguments!=null )arrayArguments.each(Argument::freeze);
     }
     //endregion
 

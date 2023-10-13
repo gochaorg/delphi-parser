@@ -290,14 +290,14 @@ public sealed interface TypeDeclAst
 
             if(parents.size()>0) {
                 sb.append("  parent:\n");
-                parents.forEach(p -> {
+                parents.each(p -> {
                     sb.append(indent("    ", p.toString()));
                 });
             }
 
             if(body.size()>0){
                 sb.append("  body:\n");
-                body.forEach(itm -> {
+                body.each(itm -> {
                     sb.append(indent("    ",itm.toString()));
                 });
             }
@@ -430,13 +430,13 @@ public sealed interface TypeDeclAst
 
             if(parents.size()>0) {
                 sb.append("  parent:\n");
-                parents.forEach(p -> {
+                parents.each(p -> {
                     sb.append(indent("    ", p.toString()));
                 });
             }
 
             if(body.size()>0){
-                body.forEach(itm -> {
+                body.each(itm -> {
                     sb.append(indent("  ",itm.toString()));
                 });
             }

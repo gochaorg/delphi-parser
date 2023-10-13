@@ -14,7 +14,7 @@ public class PascalUnit implements Freeze {
         return frozen;
     }
     public void freeze(){
-        types.forEach(t -> {
+        types.each(t -> {
             if( t instanceof Freeze f ) f.freeze();
         });
         this.frozen = true;

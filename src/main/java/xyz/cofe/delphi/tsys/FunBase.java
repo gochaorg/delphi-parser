@@ -10,7 +10,7 @@ import java.util.Optional;
 /**
  * Базовый класс для имплементации функции
  */
-public abstract class FunBase extends ProcBase implements Freeze {
+public sealed class FunBase extends ProcBase implements Freeze, FunSetReturns permits Function {
     //region returns : Type - тип результата
     /**
      * Указывает тип результата

@@ -37,7 +37,7 @@ public record TypeSectionAst(
     public String toString(){
         var sb = new StringBuilder();
         sb.append("type(section):\n");
-        types.forEach(t -> {
+        types.each(t -> {
             sb.append(indent("  ",t.toString()));
         });
         return sb.toString();

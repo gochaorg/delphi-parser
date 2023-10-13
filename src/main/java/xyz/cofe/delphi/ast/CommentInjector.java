@@ -6,6 +6,10 @@ import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.stream.StreamSupport;
 
+/**
+ * Добавляет комментарии в дерево
+ */
+@SuppressWarnings("rawtypes")
 public class CommentInjector {
     private final Comparator<SourcePosition> sourcePositionComparator = new Comparator<SourcePosition>() {
         @Override
@@ -32,13 +36,13 @@ public class CommentInjector {
         if( breakPointsMap.isEmpty() )return result;
 
         var commentsMap = new TreeMap<SourcePosition,Comment>(sourcePositionComparator);
-        unit.comments().forEach(cmnt -> {
+        unit.comments().each(cmnt -> {
             commentsMap.put(cmnt.position(),cmnt);
         });
 
         BiConsumer<Commented,List<Comment>> prepareInject = result::put;
 
-        if( breakPointsMap.size()>0 ) {
+        if(!breakPointsMap.isEmpty()) {
             var from = breakPointsMap.keySet().iterator().next();
             for (var cmntToPair : breakPointsMap.entrySet()) {
                 var to = cmntToPair.getValue().position();
@@ -60,6 +64,11 @@ public class CommentInjector {
         return result;
     }
 
+    /**
+     * Добавление комментариев в узлы дерева
+     * @param unit AST дерево
+     * @return обновленное AST дерево
+     */
     public PascalFileAst.Unit inject(PascalFileAst.Unit unit){
         if( unit==null ) throw new IllegalArgumentException("unit==null");
 

@@ -46,7 +46,7 @@ public class Indent {
         var i = new int[] { -1 };
         var cnt = source.size();
 
-        source.forEach( s -> {
+        source.each(s -> {
             i[0] = i[0] + 1;
             var ii = i[0];
 

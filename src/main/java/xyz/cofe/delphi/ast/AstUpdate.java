@@ -6,7 +6,18 @@ import xyz.cofe.coll.im.ImListLinked;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Обновление узла AST
+ * @param <SELF> Тип узла AST
+ */
 public interface AstUpdate<SELF> {
+    /**
+     * Обновление списка узлов
+     * @param list список узлов
+     * @param ctx контекст обновления
+     * @return обновленные узлы или none - если небыло обновленных узлов
+     * @param <A> тип узла
+     */
     public static <A extends AstUpdate<A>> Optional<ImList<A,?>> astUpdates(ImList<A, ?> list, UpdateContext ctx) {
         if( list==null ) throw new IllegalArgumentException("list==null");
 
@@ -22,6 +33,9 @@ public interface AstUpdate<SELF> {
         return Optional.empty();
     }
 
+    /**
+     * Контекст обновления
+     */
     interface UpdateContext {
         default  <A extends AstUpdate<A>> Optional<ImList<A,?>> update(ImList<A,?> list) {
             if( list==null ) throw new IllegalArgumentException("list==null");
@@ -39,10 +53,22 @@ public interface AstUpdate<SELF> {
         }
     }
 
+    /**
+     * Комментировние узлов
+     */
     interface CommentingContext extends UpdateContext {
+        /**
+         * Установка комментария для узла
+         * @param a узел
+         * @return узел с комментарием
+         * @param <A> тип узла
+         */
         <A extends Commented<A>> A commenting(A a);
     }
 
+    /**
+     * Контекст комментариев
+     */
     static class Commenting implements CommentingContext {
         @SuppressWarnings("rawtypes")
         private final Map<Commented, ImList<Comment,?>> comments;

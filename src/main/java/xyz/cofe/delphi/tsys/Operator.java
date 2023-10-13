@@ -12,7 +12,7 @@ import static xyz.cofe.delphi.impl.Indent.indent;
 /**
  * Метод интерфейса/класса
  */
-public final class Operator implements Freeze, Fun, ClassItem {
+public final class Operator implements Freeze, Fun, ClassItem, FunSetReturns {
     //region freeze
     private volatile boolean frozen;
 
@@ -21,7 +21,7 @@ public final class Operator implements Freeze, Fun, ClassItem {
     }
 
     public void freeze(){
-        arguments.forEach(Argument::freeze);
+        arguments.each(Argument::freeze);
         if( returns instanceof Freeze f )f.freeze();
         this.frozen = true;
     }

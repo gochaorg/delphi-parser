@@ -54,7 +54,7 @@ public class TypeImporter {
             return Result.<InterfaceItem,String>error("can't map "+itfItm.getClass());
         });
 
-        methods.forEach( m -> itf.setBody( itf.getBody().append(m.map(i -> (InterfaceItem)i).unwrap(InterfaceItem.Broken::new)) ));
+        methods.each(m -> itf.setBody( itf.getBody().append(m.map(i -> (InterfaceItem)i).unwrap(InterfaceItem.Broken::new)) ));
 
         itf.setParents(astItf.parents().map( pAst -> {
             var tn = TypeName.of(pAst.name());
