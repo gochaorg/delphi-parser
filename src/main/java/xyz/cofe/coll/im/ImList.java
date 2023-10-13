@@ -30,7 +30,7 @@ extends
         if( equals==null )throw new IllegalArgumentException("equals==null");
         if( items==null )throw new IllegalArgumentException("items==null");
         int[] cnt = new int[]{ 0 };
-        items.forEach( itm -> {
+        items.each(itm -> {
             foldLeft(0, (acc,it) -> {
                 if( equals.apply(it,itm) ){
                     cnt[0]++;
@@ -93,4 +93,6 @@ extends
     default SELF reverse(){
         return foldLeft(empty(), Prepend::prepend);
     }
+
+
 }

@@ -1,9 +1,6 @@
 package xyz.cofe.coll.im;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -38,7 +35,7 @@ public class ImListArray<A> implements ImList<A,ImListArray<A>> {
         if( values==null )throw new IllegalArgumentException("values == null");
         var list = new ArrayList<A>();
         var res = new ImListArray<A>(list);
-        values.forEach(list::add);
+        values.each(list::add);
         return res;
     }
 
@@ -48,7 +45,7 @@ public class ImListArray<A> implements ImList<A,ImListArray<A>> {
     }
 
     @Override
-    public void forEach(Consumer<A> consumer) {
+    public void each(Consumer<A> consumer) {
         if( consumer==null )throw new IllegalArgumentException("consumer == null");
         list.forEach(consumer);
     }
@@ -73,7 +70,7 @@ public class ImListArray<A> implements ImList<A,ImListArray<A>> {
         var list = new ArrayList<B>();
         for( var a : this.list ){
             var lst = fmapper.apply(a);
-            lst.forEach(list::add);
+            lst.each(list::add);
         }
         return new ImListArray<>(list);
     }
@@ -105,7 +102,7 @@ public class ImListArray<A> implements ImList<A,ImListArray<A>> {
     @Override
     public String toString(){
         var sb = new StringBuilder();
-        forEach(a -> {
+        each(a -> {
             if(sb.length()>0) sb.append(", ");
             sb.append(a!=null ? a.toString() : "null");
         });
@@ -118,7 +115,7 @@ public class ImListArray<A> implements ImList<A,ImListArray<A>> {
     public ImListArray<A> append(PositionalRead<A> values) {
         if( values==null )throw new IllegalArgumentException("values==null");
         var lst = new ArrayList<A>(this.list);
-        values.forEach(lst::add);
+        values.each(lst::add);
         return new ImListArray<>(lst);
     }
 
@@ -128,5 +125,10 @@ public class ImListArray<A> implements ImList<A,ImListArray<A>> {
         var lst = new ArrayList<A>(this.list);
         lst.addAll(0, values.toList());
         return new ImListArray<>(lst);
+    }
+
+    @Override
+    public Iterator<A> iterator() {
+        return this.list.iterator();
     }
 }

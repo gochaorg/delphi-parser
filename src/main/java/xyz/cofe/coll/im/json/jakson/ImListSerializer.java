@@ -19,7 +19,7 @@ public class ImListSerializer extends StdSerializer<ImList> {
     @Override
     public void serialize(ImList imList, JsonGenerator gen, SerializerProvider provider) throws IOException {
         gen.writeStartArray();
-        imList.forEach(obj -> {
+        imList.each(obj -> {
             try {
                 gen.writeObject(obj);
             } catch (IOException e) {

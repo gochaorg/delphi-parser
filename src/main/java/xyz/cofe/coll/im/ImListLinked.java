@@ -40,7 +40,7 @@ public class ImListLinked<A> extends ImListLinkedBase<A,ImListLinked<A>> {
     @Override
     public String toString(){
         var sb = new StringBuilder();
-        forEach(a -> {
+        each(a -> {
             if(sb.length()>0) sb.append(", ");
             sb.append(a!=null ? a.toString() : "null");
         });
