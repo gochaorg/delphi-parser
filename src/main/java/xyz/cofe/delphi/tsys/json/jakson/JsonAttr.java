@@ -1,7 +1,7 @@
 package xyz.cofe.delphi.tsys.json.jakson;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import xyz.cofe.delphi.tsys.ClassType;
+import xyz.cofe.delphi.tsys.tm.ClassType;
 
 import java.util.Optional;
 import java.util.WeakHashMap;

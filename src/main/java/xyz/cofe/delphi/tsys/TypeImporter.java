@@ -5,6 +5,7 @@ import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.coll.im.Result;
 import xyz.cofe.delphi.ast.*;
+import xyz.cofe.delphi.tsys.tm.*;
 
 import java.util.Optional;
 
@@ -277,11 +278,11 @@ public class TypeImporter {
         return Result.error("not implemented");
     }
 
-    protected Result<ImList<Argument,?>,String> argsParse(PascalFileAst.Unit unit, Type self, TypeIdentAst selfName, ImList<xyz.cofe.delphi.ast.Argument,?> arguments) {
+    protected Result<ImList<xyz.cofe.delphi.tsys.tm.Argument,?>,String> argsParse(PascalFileAst.Unit unit, Type self, TypeIdentAst selfName, ImList<xyz.cofe.delphi.ast.Argument,?> arguments) {
         return arguments.foldRight(
-            Result.ok(ImListLinked.<Argument>of(),String.class),
+            Result.ok(ImListLinked.<xyz.cofe.delphi.tsys.tm.Argument>of(),String.class),
             (acc,it) -> acc.fmap(lst -> {
-                var ma = new Argument();
+                var ma = new xyz.cofe.delphi.tsys.tm.Argument();
 
                 if( it.typeDecl().isEmpty() && it.defaultValue().isEmpty() ){
                     return Result.error("arg "+it.name()+" both typeDecl and defaultValue is empty - not implemented");

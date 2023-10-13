@@ -2,6 +2,7 @@ package xyz.cofe.delphi.tsys;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import xyz.cofe.delphi.tsys.tm.TypeName;
 
 public class TypeNameTest {
     @Test

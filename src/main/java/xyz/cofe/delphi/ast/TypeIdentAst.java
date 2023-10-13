@@ -4,7 +4,7 @@ import org.antlr.v4.runtime.RuleContext;
 import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.delphi.parser.DelphiParser;
-import xyz.cofe.delphi.tsys.TypeName;
+import xyz.cofe.delphi.tsys.tm.TypeName;
 
 import java.util.Objects;
 

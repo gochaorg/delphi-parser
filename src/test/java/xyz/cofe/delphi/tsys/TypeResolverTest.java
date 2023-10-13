@@ -4,6 +4,9 @@ import org.junit.jupiter.api.Test;
 import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.coll.im.Tuple;
 import xyz.cofe.delphi.ast.PascalFileAst;
+import xyz.cofe.delphi.tsys.tm.Constructor;
+import xyz.cofe.delphi.tsys.tm.NamedType;
+import xyz.cofe.delphi.tsys.tm.TypeName;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static xyz.cofe.delphi.TextResource.textResource;

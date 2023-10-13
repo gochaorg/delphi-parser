@@ -7,6 +7,10 @@ import org.junit.jupiter.api.Test;
 import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.delphi.ast.PascalFileAst;
 import xyz.cofe.delphi.tsys.*;
+import xyz.cofe.delphi.tsys.tm.ClassType;
+import xyz.cofe.delphi.tsys.tm.Constructor;
+import xyz.cofe.delphi.tsys.tm.InterfaceType;
+import xyz.cofe.delphi.tsys.tm.TypeName;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static xyz.cofe.delphi.TextResource.textResource;
