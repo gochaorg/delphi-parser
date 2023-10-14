@@ -31,11 +31,11 @@ public class TypeResolverTest {
         var unit = ts.unitMap().get(TypeName.of("Map")).get(0);
         assertTrue(unit!=null);
 
-        var tRefs = TypeResolver.typeRefs(unit);
+        var tRefs = TypeRefOwner.typeRefs(unit);
 
         var iStringMapType = ts.getType(TypeName.of("Map","iStringMap")).get();
 
-        var copyiArg = tRefs.fmap(TypeResolver.ArgOfConstructorNamed.class).find(a -> a.fun().getName().equalsIgnoreCase("copyi")).get();
+        var copyiArg = tRefs.fmap(TypeRefOwner.ArgOfConstructorNamed.class).find(a -> a.fun().getName().equalsIgnoreCase("copyi")).get();
         var copyiArgResolved = new AtomicBoolean(false);
 
         tRefs.each( tref -> {

@@ -21,7 +21,7 @@ import static xyz.cofe.delphi.tsys.tm.json.jakson.JsonAttr.JSON_TYPE_FIELD;
     include = JsonTypeInfo.As.PROPERTY,
     property = JSON_TYPE_FIELD
 )
-public sealed class InterfaceType implements Type, Freeze, PascalUnitItem {
+public sealed class InterfaceType implements Type, Freeze, PascalUnitItem, ParentsProperty {
     //region Конструкторы
     public InterfaceType() {
     }

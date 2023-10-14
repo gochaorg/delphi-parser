@@ -16,7 +16,7 @@ import java.util.Optional;
  */
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 @JsonSerialize(using = ClassTypeSer.class)
-public sealed class ClassType implements PascalUnitItem, Type, Freeze
+public sealed class ClassType implements PascalUnitItem, Type, Freeze, ParentsProperty
 {
     public ClassType(){}
     public ClassType(ClassType sample){
