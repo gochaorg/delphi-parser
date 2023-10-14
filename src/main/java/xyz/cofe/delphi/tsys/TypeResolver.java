@@ -7,7 +7,6 @@ import xyz.cofe.delphi.tsys.tm.*;
 
 import java.util.Optional;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 /**
  * Разрешение типов
@@ -21,37 +20,75 @@ public class TypeResolver {
 
     /**
      * Тип аргумента метода класса/интерфейса
-     *
-     * @param argType        Тип аргумента который надо разрешить
-     * @param arg            Аргумент
-     * @param fun            Метод
-     * @param classOrItfType Класс или интерфейс в котором определен метод
-     * @param unit           Модуль в котором определен тип
      */
-    public record ArgOfMethod(Type.UnitTypeRef argType, Argument arg, Fun fun, Type classOrItfType,
-                              PascalUnit unit) implements TypeRefOwner {
+    public sealed interface ArgOfMethod extends TypeRefOwner {
+        /**
+         * Тип аргумента который надо разрешить
+         *
+         * @return Тип аргумента
+         */
+        Type.UnitTypeRef argType();
+
+        /**
+         * Аргумент
+         *
+         * @return Аргумент
+         */
+        Argument arg();
+
+        /**
+         * Метод
+         *
+         * @return Метод
+         */
+        Fun fun();
+
+        /**
+         * Класс или интерфейс в котором определен метод
+         *
+         * @return Класс или интерфейс
+         */
+        Type objType();
+
+        /**
+         * Модуль в котором определен тип
+         *
+         * @return Модуль в котором определен тип
+         */
+        PascalUnit unit();
     }
+
+    public record ArgOfConstructor(Type.UnitTypeRef argType, Argument arg, Constructor fun, ClassType objType, PascalUnit unit) implements ArgOfMethod {}
+    public record ArgOfConstructorNamed(Type.UnitTypeRef argType, Argument arg, Constructor fun, ClassType.Named objType, PascalUnit unit) implements ArgOfMethod {}
+    public record ArgOfDestructor(Type.UnitTypeRef argType, Argument arg, Destructor fun, ClassType objType, PascalUnit unit) implements ArgOfMethod {}
+    public record ArgOfDestructorNamed(Type.UnitTypeRef argType, Argument arg, Destructor fun, ClassType.Named objType, PascalUnit unit) implements ArgOfMethod {}
+    public record ArgOfFunction(Type.UnitTypeRef argType, Argument arg, Function fun, Type objType,PascalUnit unit) implements ArgOfMethod {}
+    public record ArgOfFunctionNamed(Type.UnitTypeRef argType, Argument arg, Function fun, NamedType objType,PascalUnit unit) implements ArgOfMethod {}
+    public record ArgOfProcedure(Type.UnitTypeRef argType, Argument arg, Procedure fun, Type objType,PascalUnit unit) implements ArgOfMethod {}
+    public record ArgOfProcedureNamed(Type.UnitTypeRef argType, Argument arg, Procedure fun, NamedType objType,PascalUnit unit) implements ArgOfMethod {}
+    public record ArgOfOperator(Type.UnitTypeRef argType, Argument arg, Operator fun, ClassType objType,PascalUnit unit) implements ArgOfMethod {}
+    public record ArgOfOperatorNamed(Type.UnitTypeRef argType, Argument arg, Operator fun, ClassType.Named objType,PascalUnit unit) implements ArgOfMethod {}
 
     /**
      * Тип результата метода класса/интерфейса
      *
-     * @param retType        Тип результата метода
-     * @param fun            Метод
-     * @param classOrItfType Класс или интерфейс в котором определен метод
-     * @param unit           Модуль в котором определен тип
+     * @param retType Тип результата метода
+     * @param fun     Метод
+     * @param objType Класс или интерфейс в котором определен метод
+     * @param unit    Модуль в котором определен тип
      */
-    public record ReturnsOfMethod(Type.UnitTypeRef retType, FunSetReturns fun, Type classOrItfType,
+    public record ReturnsOfMethod(Type.UnitTypeRef retType, FunSetReturns fun, Type objType,
                                   PascalUnit unit) implements TypeRefOwner {
     }
 
     /**
      * Тип родительского объекта
      *
-     * @param parent         Тип родителя класса/интерфейса
-     * @param classOrItfType Класс или интерфейс в котором указан родитель
-     * @param unit           Модуль в котором определен тип
+     * @param parent  Тип родителя класса/интерфейса
+     * @param objType Класс или интерфейс в котором указан родитель
+     * @param unit    Модуль в котором определен тип
      */
-    public record Parent(Type.UnitTypeRef parent, Type classOrItfType, PascalUnit unit) implements TypeRefOwner {
+    public record Parent(Type.UnitTypeRef parent, Type objType, PascalUnit unit) implements TypeRefOwner {
     }
 
     //region typeRefs() : ImList<TypeRefOwner,?> - Получение типов которые требуется разрешить
@@ -94,17 +131,33 @@ public class TypeResolver {
             }
         });
 
-        ImList<TypeRefOwner> args = ct.getBody().fmap(clsItm -> {
-            if (clsItm instanceof Fun f) {
-                return ImListLinked.of(f);
-            } else {
-                return ImListLinked.of();
-            }
-        }).fmap(f -> {
+        ImList<TypeRefOwner> args = ct.getBody().fmap(Fun.class).fmap(f -> {
             //noinspection UnnecessaryLocalVariable
             ImList<TypeRefOwner> res = f.getArguments().fmap(arg -> {
                 if (arg.getType() instanceof Type.UnitTypeRef ref) {
-                    return ImListLinked.of(new ArgOfMethod(ref, arg, f, ct, unit));
+                    if (f instanceof Constructor c) {
+                        return ct instanceof ClassType.Named nct ?
+                            ImListLinked.of(new ArgOfConstructorNamed(ref, arg, c, nct, unit)) :
+                            ImListLinked.of(new ArgOfConstructor(ref, arg, c, ct, unit));
+                    } else if (f instanceof Destructor d) {
+                        return ct instanceof ClassType.Named nct ?
+                            ImListLinked.of(new ArgOfDestructorNamed(ref, arg, d, nct, unit)) :
+                            ImListLinked.of(new ArgOfDestructor(ref, arg, d, ct, unit));
+                    } else if (f instanceof Function ff) {
+                        return ct instanceof ClassType.Named nct ?
+                            ImListLinked.of(new ArgOfFunctionNamed(ref, arg, ff, nct, unit)) :
+                            ImListLinked.of(new ArgOfFunction(ref, arg, ff, ct, unit));
+                    } else if (f instanceof Procedure p) {
+                        return ct instanceof ClassType.Named nct ?
+                            ImListLinked.of(new ArgOfProcedureNamed(ref, arg, p, nct, unit)) :
+                            ImListLinked.of(new ArgOfProcedure(ref, arg, p, ct, unit));
+                    } else if (f instanceof Operator op) {
+                        return ct instanceof ClassType.Named nct ?
+                            ImListLinked.of(new ArgOfOperatorNamed(ref, arg, op, nct, unit)) :
+                            ImListLinked.of(new ArgOfOperator(ref, arg, op, ct, unit));
+                    } else {
+                        throw new RuntimeException("bug!");
+                    }
                 } else {
                     return ImListLinked.of();
                 }
@@ -132,17 +185,21 @@ public class TypeResolver {
             }
         });
 
-        ImList<TypeRefOwner> args = ct.getBody().fmap(clsItm -> {
-            if (clsItm instanceof Fun f) {
-                return ImListLinked.of(f);
-            } else {
-                return ImListLinked.of();
-            }
-        }).fmap(f -> {
+        ImList<TypeRefOwner> args = ct.getBody().fmap(Fun.class).fmap(f -> {
             //noinspection UnnecessaryLocalVariable
             ImList<TypeRefOwner> res = f.getArguments().fmap(arg -> {
                 if (arg.getType() instanceof Type.UnitTypeRef ref) {
-                    return ImListLinked.of(new ArgOfMethod(ref, arg, f, ct, unit));
+                    if (f instanceof Function ff) {
+                        return ct instanceof InterfaceType.Named nct ?
+                            ImListLinked.of(new ArgOfFunctionNamed(ref, arg, ff, nct, unit)) :
+                            ImListLinked.of(new ArgOfFunction(ref, arg, ff, ct, unit));
+                    } else if (f instanceof Procedure pp) {
+                        return ct instanceof InterfaceType.Named nct ?
+                            ImListLinked.of(new ArgOfProcedureNamed(ref, arg, pp, nct, unit)) :
+                            ImListLinked.of(new ArgOfProcedure(ref, arg, pp, ct, unit));
+                    } else {
+                        throw new RuntimeException("bug");
+                    }
                 } else {
                     return ImListLinked.of();
                 }
@@ -200,7 +257,7 @@ public class TypeResolver {
     public static Optional<Type> resolve(Parent prnt, TypeScope typeScope) {
         if (prnt == null) throw new IllegalArgumentException("prnt==null");
         if (typeScope == null) throw new IllegalArgumentException("typeScope==null");
-        if( prnt.parent().type() instanceof TypeIdentAst id ){
+        if (prnt.parent().type() instanceof TypeIdentAst id) {
             return resolve(id, prnt.unit(), typeScope);
         }
         return Optional.empty();

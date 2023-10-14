@@ -170,7 +170,7 @@ public sealed class InterfaceType implements Type, Freeze, PascalUnitItem {
 
         @Override
         public String toString() {
-            return "InterfaceType.Named(" + name + '}';
+            return "interface " + name;
         }
     }
 }
