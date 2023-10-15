@@ -17,17 +17,18 @@ import static xyz.cofe.delphi.impl.Indent.indent;
 public sealed interface TypeDeclAst
     extends AstNode
     permits
-        TypeDeclAst.Array,
+    ArrayAst,
         TypeDeclAst.Clazz,
         TypeDeclAst.Interface,
         TypeDeclAst.MetaClass,
         TypeDeclAst.NewTypeId,
         TypeDeclAst.Simple,
         TypeDeclAst.StringType,
-        TypeDeclAst.Structured,
+    StructuredTypeAst,
         TypeDeclAst.TypeAlias,
-        TypeDeclAst.Variant,
-        TypeIdentAst
+    VariantTypeAst,
+        TypeIdentAst,
+        ProcedureTypeAst
 {
     @Override
     TypeDeclAst astUpdate(AstUpdate.UpdateContext ctx);
@@ -35,7 +36,7 @@ public sealed interface TypeDeclAst
     static TypeDeclAst of(DelphiParser.TypeDeclContext ctx) {
         if( ctx.strucType()!=null
         &&  !ctx.strucType().isEmpty()
-        ) return Structured.of(ctx.strucType());
+        ) return StructuredTypeAst.of(ctx.strucType());
 
         if( ctx.typeId()!=null && !ctx.typeId().isEmpty() ){
             boolean typeFlag = ctx.TYPE()!=null
@@ -99,97 +100,29 @@ public sealed interface TypeDeclAst
         }
 
         if( ctx.variantType()!=null && !ctx.variantType().isEmpty() ){
-            return new Variant();
+            return new VariantTypeAst();
         }
 
         if( ctx.stringType()!=null && !ctx.stringType().isEmpty() ){
             return StringType.of(ctx.stringType());
         }
 
+        if( ctx.procedureType()!=null && !ctx.procedureType().isEmpty() ){
+            return ProcedureTypeAst.of(ctx.procedureType());
+        }
+
         throw AstParseError.notImplemented(ctx);
-    }
-
-    /**
-     * Вариант
-     */
-    record Variant() implements TypeDeclAst {
-        @Override
-        public Variant astUpdate(AstUpdate.UpdateContext ctx) {
-            return this;
-        }
-    }
-
-    /**
-     * Структурный тип
-     */
-    sealed interface Structured extends TypeDeclAst {
-        @Override
-        Structured astUpdate(AstUpdate.UpdateContext ctx);
-
-        static Structured of(DelphiParser.StrucTypeContext ctx ){
-            if( ctx.strucTypePart()!=null
-            &&  !ctx.strucTypePart().isEmpty()
-            ) return of(ctx.strucTypePart());
-
-            throw AstParseError.notImplemented(ctx);
-        }
-
-        static Structured of( DelphiParser.StrucTypePartContext ctx ){
-            if( ctx.classDecl()!=null
-            &&  !ctx.classDecl().isEmpty()
-            )return of( ctx.classDecl() );
-            throw AstParseError.notImplemented(ctx);
-        }
-
-        static Structured of( DelphiParser.ClassDeclContext ctx ){
-            if( ctx.interfaceTypeDecl()!=null
-            && !ctx.interfaceTypeDecl().isEmpty()
-            ) return Interface.of(ctx.interfaceTypeDecl());
-
-            if(  ctx.classTypeDecl()!=null
-            &&  !ctx.classTypeDecl().isEmpty()
-            ) return Clazz.of(ctx.classTypeDecl());
-
-            throw AstParseError.notImplemented(ctx);
-        }
     }
 
     ///////////////////////////////
 
-    /**
-     * Массив
-     * @param indexes тип индекса
-     * @param subType тип элемента массива
-     * @param packed флаг packed // TODO разобраться что за packed
-     */
-    record Array(
-        ImList<ArrayIndex> indexes,
-        ArraySubType subType,
-        boolean packed,
-        SourcePosition position
-    ) implements Structured, TypeDeclAst, SrcPos {
-        @Override
-        public Array astUpdate(AstUpdate.UpdateContext updateCtx) {
-            return this;
-        }
-
-        @Override
-        public ImList<? extends AstNode> nestedAstNodes() {
-            return upcast(indexes).append(subType);
-        }
-    }
-
-    sealed interface ArrayIndex extends AstNode {
-        @Override
-        ArrayIndex astUpdate(AstUpdate.UpdateContext ctx);
-    }
-    record ArrayIndexType(ImList<String> typeId) implements ArrayIndex {
+    record ArrayIndexType(ImList<String> typeId) implements ArrayIndexAst {
         @Override
         public ArrayIndexType astUpdate(AstUpdate.UpdateContext ctx) {
             return this;
         }
     }
-    record ArrayIndexRange(ExpressionAst from, ExpressionAst to) implements ArrayIndex {
+    record ArrayIndexRange(ExpressionAst from, ExpressionAst to) implements ArrayIndexAst {
         @Override
         public ArrayIndexRange astUpdate(AstUpdate.UpdateContext ctx) {
             return this;
@@ -227,7 +160,7 @@ public sealed interface TypeDeclAst
 
     // ................
 
-    record MetaClass(ImList<String> typeId) implements TypeDeclAst, Structured {
+    record MetaClass(ImList<String> typeId) implements TypeDeclAst, StructuredTypeAst {
         @Override
         public MetaClass astUpdate(AstUpdate.UpdateContext ctx) {
             return this;
@@ -249,7 +182,7 @@ public sealed interface TypeDeclAst
         ImList<ClassItemAst> body,
         SourcePosition position,
         ImList<Comment> comments
-    ) implements Structured, SrcPos, Commented<Clazz>, TypeDeclAst {
+    ) implements StructuredTypeAst, SrcPos, Commented<Clazz>, TypeDeclAst {
         @Override
         public Clazz astUpdate(AstUpdate.UpdateContext ctx) {
             if( ctx==null ) throw new IllegalArgumentException("ctx==null");
@@ -358,7 +291,7 @@ public sealed interface TypeDeclAst
         ImList<InterfaceItemAst> body,
         SourcePosition position,
         ImList<Comment> comments
-    ) implements Structured, TypeDeclAst, SrcPos, Commented<Interface> {
+    ) implements StructuredTypeAst, TypeDeclAst, SrcPos, Commented<Interface> {
         @Override
         public Interface astUpdate(AstUpdate.UpdateContext ctx) {
             var parents = ctx.update(this.parents);

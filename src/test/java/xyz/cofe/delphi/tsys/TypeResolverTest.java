@@ -48,7 +48,7 @@ public class TypeResolverTest {
                 System.out.println("resolved as:");
                 System.out.println(indent("    ", resolvedType.toString()));
 
-                if(tref==copyiArg && resolvedType==iStringMapType) copyiArgResolved.set(true);
+                if(tref==copyiArg && resolvedType.resolved()==iStringMapType) copyiArgResolved.set(true);
             }, () -> {
                 System.out.println("not resolved");
             });

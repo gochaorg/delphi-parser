@@ -10,20 +10,28 @@ import static xyz.cofe.delphi.ast.AstNode.upcast;
  * @param typeIdent идентификатор типа
  * @param typeDecl описание типа
  * @param position позиция в исходнике
+ * @param comments Комментарий к типу
  */
 public record TypeDeclarationAst(
     TypeIdentAst typeIdent,
     TypeDeclAst typeDecl,
-    SourcePosition position
-) implements AstNode, SrcPos {
+    SourcePosition position,
+    ImList<Comment> comments
+) implements AstNode, SrcPos, Commented<TypeDeclarationAst>, AstUpdate<TypeDeclarationAst> {
     @Override
     public TypeDeclarationAst astUpdate(AstUpdate.UpdateContext ctx) {
         if( ctx==null ) throw new IllegalArgumentException("ctx==null");
         var t1= typeIdent.astUpdate(ctx);
         var t2 = typeDecl.astUpdate(ctx);
+
+        var res = this;
+        if( ctx instanceof AstUpdate.CommentingContext cc ){
+            res = cc.commenting(res);
+        }
+
         //noinspection ConstantConditions
-        if( t1==typeIdent && t2==typeDecl )return this;
-        return new TypeDeclarationAst(t1,t2,position);
+        if( t1==typeIdent && t2==typeDecl && res.comments==this.comments )return this;
+        return new TypeDeclarationAst(t1,t2,position,res.comments);
     }
 
     @Override
@@ -39,7 +47,15 @@ public record TypeDeclarationAst(
         return new TypeDeclarationAst(
             TypeIdentAst.of(dec),
             TypeDeclAst.of(dec.typeDecl()),
-            SourcePosition.of(dec)
+            SourcePosition.of(dec),
+            ImListLinked.of()
+        );
+    }
+
+    @Override
+    public TypeDeclarationAst withComments(ImList<Comment> comments) {
+        return new TypeDeclarationAst(
+            typeIdent, typeDecl, position, comments
         );
     }
 }

@@ -11,7 +11,7 @@ import static xyz.cofe.delphi.TextResource.textResource;
 public class PascalFileParseTest {
 
     @Test
-    public void try_parse(){
+    public void try_parse() {
         System.out.println(
             PascalFileAst.parse(
                 textResource("/samples/Map.pas"),
@@ -20,7 +20,7 @@ public class PascalFileParseTest {
 
 
     @Test
-    public void try_parse_ignore_case(){
+    public void try_parse_ignore_case() {
         System.out.println(
             PascalFileAst.parse(
                 textResource("/samples/MapIC.pas"),
@@ -28,13 +28,13 @@ public class PascalFileParseTest {
     }
 
     @Test
-    public void parse_map(){
+    public void parse_map() {
         var pascal_file = PascalFileAst.parse(
             textResource("/samples/Map.pas"),
             "Map.pas");
 
         assertTrue(pascal_file instanceof PascalFileAst.Unit);
-        var unit = (PascalFileAst.Unit)pascal_file;
+        var unit = (PascalFileAst.Unit) pascal_file;
 
         assertTrue(
             unit.api().uses().containsAll(
@@ -46,12 +46,12 @@ public class PascalFileParseTest {
 
         var types = unit.api().declarations()
             .find(dec -> dec instanceof TypeSectionAst)
-            .map(d -> (TypeSectionAst)d).get().types();
+            .map(d -> (TypeSectionAst) d).get().types();
 
-        var iStringMap = types.fmap( a ->
-            a.typeIdent().equals( TypeIdentAst.of("IStringMap") ) &&
-            a.typeDecl() instanceof TypeDeclAst.Interface itf
-            ? ImListLinked.of(itf) : ImListLinked.of()
+        var iStringMap = types.fmap(a ->
+            a.typeIdent().equals(TypeIdentAst.of("IStringMap")) &&
+                a.typeDecl() instanceof TypeDeclAst.Interface itf
+                ? ImListLinked.of(itf) : ImListLinked.of()
         ).head().get();
 
         var funs = iStringMap.body().fmap(itm ->
@@ -60,44 +60,44 @@ public class PascalFileParseTest {
         );
 
         var countFn = funs.find(c -> c.name().equalsIgnoreCase("count")).get();
-        assertTrue( countFn.result().equals( TypeIdentAst.of("Integer") ) );
+        assertTrue(countFn.result().equals(TypeIdentAst.of("Integer")));
 
         var getFn = funs.find(c -> c.name().equalsIgnoreCase("get")).get();
-        assertTrue( getFn.name().equalsIgnoreCase("get") );
-        assertTrue( getFn.arguments().size()==1 );
-        assertTrue( getFn.arguments().get(0).get().name().equalsIgnoreCase("name") );
-        assertTrue( getFn.arguments().get(0).get().typeDecl().get().equals(
+        assertTrue(getFn.name().equalsIgnoreCase("get"));
+        assertTrue(getFn.arguments().size() == 1);
+        assertTrue(getFn.arguments().get(0).get().name().equalsIgnoreCase("name"));
+        assertTrue(getFn.arguments().get(0).get().typeDecl().get().equals(
             new TypeDeclAst.StringType.StrIng(Optional.empty(), SourcePosition.non(), ImListLinked.of())
         ));
-        assertTrue( getFn.result().equals( new TypeDeclAst.Variant() ) );
+        assertTrue(getFn.result().equals(new VariantTypeAst()));
 
         var existsFn = funs.find(c -> c.name().equalsIgnoreCase("exists")).get();
-        assertTrue( existsFn.result().equals( TypeIdentAst.of("boolean") ) );
+        assertTrue(existsFn.result().equals(TypeIdentAst.of("boolean")));
 
         var keyFn = funs.find(c -> c.name().equalsIgnoreCase("key")).get();
         var putFn = funs.find(c -> c.name().equalsIgnoreCase("put")).get();
         var deleteFn = funs.find(c -> c.name().equalsIgnoreCase("delete")).get();
         var toStringFn = funs.find(c -> c.name().equalsIgnoreCase("toString")).get();
 
-        var tStringMap= types.fmap( a ->
-            a.typeIdent().equals( TypeIdentAst.of("TStringMap") ) &&
+        var tStringMap = types.fmap(a ->
+            a.typeIdent().equals(TypeIdentAst.of("TStringMap")) &&
                 a.typeDecl() instanceof TypeDeclAst.Clazz itf
                 ? ImListLinked.of(itf) : ImListLinked.of()
         ).head().get();
 
         var ctrs = tStringMap.body().fmap(itm ->
             itm instanceof ClassMethodAst.Constructor ctr
-            ? ImListLinked.of(ctr) : ImListLinked.of()
+                ? ImListLinked.of(ctr) : ImListLinked.of()
         );
 
         var createCtr = ctrs.find(c -> c.name().equalsIgnoreCase("Create")).get();
 
         var copyCtr = ctrs.find(c -> c.name().equalsIgnoreCase("Copy")).get();
-        assertTrue(copyCtr.arguments().size()==1);
+        assertTrue(copyCtr.arguments().size() == 1);
         assertTrue(copyCtr.arguments().get(0).get().typeDecl().get().equals(TypeIdentAst.of("TStringMap")));
 
         var copyiCtr = ctrs.find(c -> c.name().equalsIgnoreCase("Copyi")).get();
-        assertTrue(copyiCtr.arguments().size()==1);
+        assertTrue(copyiCtr.arguments().size() == 1);
         assertTrue(copyiCtr.arguments().get(0).get().typeDecl().get().equals(TypeIdentAst.of("IStringMap")));
 
         var destrs = tStringMap.body().fmap(itm ->
@@ -113,5 +113,10 @@ public class PascalFileParseTest {
         );
         countFn = funs.find(c -> c.name().equalsIgnoreCase("count")).get();
         assertTrue(countFn.directives().containsAll(new ClassMethodAst.MethodDirective.Binding.Virtual()));
+    }
+
+    @Test
+    public void parse_config() {
+        var pascal_file = PascalFileAst.parse(textResource("/samples/Config.pas"), "Map.pas");
     }
 }

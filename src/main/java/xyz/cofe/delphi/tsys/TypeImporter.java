@@ -367,7 +367,7 @@ public class TypeImporter {
             return self;
         } else if( typeIdOrName instanceof TypeIdentAst t ) {
             return typeFind.apply(TypeName.of(t.name())).orElse(new Type.UnitTypeRef(unit, typeIdOrName));
-        } else if( typeIdOrName instanceof TypeDeclAst.Variant ) {
+        } else if( typeIdOrName instanceof VariantTypeAst) {
             return typeFind.apply(TypeName.of("Variant")).orElse(new Type.UnitTypeRef(unit, typeIdOrName));
         } else if( typeIdOrName instanceof TypeDeclAst.StringType.StrIng s ){
             if( s.expression().isEmpty() ){

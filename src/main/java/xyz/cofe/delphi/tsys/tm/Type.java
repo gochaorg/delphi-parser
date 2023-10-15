@@ -14,20 +14,17 @@ import xyz.cofe.delphi.tsys.tm.json.jakson.UnitTypeRefSer;
  * Delphi поставляет следующую таксономию типов
  *
  * <ul>
- * <li>simple
- *
+ * <li><b>simple</b> - "Простые" типы, по настоящему не простые
  *      <ul>
- *          <li>ordinal
- *
+ *          <li><b>ordinal</b> - "Последовательные" - выдумка Delphi/Pascal
  *          <ul>
- *              <li>integer
- *              <li>character
- *              <li>Boolean
- *              <li>enumerated
- *              <li>subrange
+ *              <li><b>integer</b> - Целочисленные - вот они простые
+ *              <li><b>character</b> - Символы строки, - они простые
+ *              <li><b>Boolean</b> - Булево - они простые
+ *              <li><b>enumerated</b> - Перечисляемые - уже не простые
+ *              <li><b>subrange</b> - Поддиапазоны - уже не простые
  *          </ul>
- *
- *          <li>real
+ *          <li>real - Числа плавующие - ПРостые
  *      </ul>
  *
  * <li>string
@@ -44,7 +41,7 @@ import xyz.cofe.delphi.tsys.tm.json.jakson.UnitTypeRefSer;
  * </ul>
  *
  * <li>pointer
- * <li>procedural
+ * <li><b>procedural</b>
  * <li>Variant
  * <li>type identifier
  * </ul>

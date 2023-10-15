@@ -23,7 +23,7 @@ permits
     InterfaceDecl astUpdate(AstUpdate.UpdateContext ctx);
 
     static InterfaceDecl of(DelphiParser.InterfaceDeclContext itf){
-        if( !itf.typeSection().isEmpty() ){
+        if( itf.typeSection()!=null && !itf.typeSection().isEmpty() ){
             return
                 new TypeSectionAst(
                     TypeDeclarationAst.of(itf.typeSection().typeDeclaration()),

@@ -147,7 +147,7 @@ public class TypeScope implements Freeze {
         typeSec.each(typeSection -> typeSection.types().each(tdecl -> {
             var ident = tdecl.typeIdent();
             var decl = tdecl.typeDecl();
-            if( decl instanceof TypeDeclAst.Array) {}
+            if( decl instanceof ArrayAst) {}
             if( decl instanceof TypeDeclAst.Interface a ) {
                 var itf = typeImporter.interfaceTypeOf(unit, ident, a);
                 types.add(itf);
@@ -161,9 +161,9 @@ public class TypeScope implements Freeze {
             if( decl instanceof TypeDeclAst.MetaClass ) {}
             if( decl instanceof TypeDeclAst.Simple ) {}
             if( decl instanceof TypeDeclAst.StringType ) {}
-            if( decl instanceof TypeDeclAst.Structured ) {}
+            if( decl instanceof StructuredTypeAst) {}
             if( decl instanceof TypeDeclAst.TypeAlias ) {}
-            if( decl instanceof TypeDeclAst.Variant ) {}
+            if( decl instanceof VariantTypeAst) {}
             if( decl instanceof TypeIdentAst ) {}
         }));
 
