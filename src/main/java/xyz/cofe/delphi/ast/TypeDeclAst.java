@@ -116,50 +116,6 @@ public sealed interface TypeDeclAst
 
     ///////////////////////////////
 
-    record ArrayIndexType(ImList<String> typeId) implements ArrayIndexAst {
-        @Override
-        public ArrayIndexType astUpdate(AstUpdate.UpdateContext ctx) {
-            return this;
-        }
-    }
-    record ArrayIndexRange(ExpressionAst from, ExpressionAst to) implements ArrayIndexAst {
-        @Override
-        public ArrayIndexRange astUpdate(AstUpdate.UpdateContext ctx) {
-            return this;
-        }
-
-        @Override
-        public ImList<? extends AstNode> nestedAstNodes() {
-            return ImListLinked.of(from, to);
-        }
-    }
-
-    sealed interface ArraySubType extends AstNode {
-        @Override
-        ArraySubType astUpdate(AstUpdate.UpdateContext ctx);
-
-        record Const() implements ArraySubType {
-            @Override
-            public Const astUpdate(AstUpdate.UpdateContext ctx) {
-                return this;
-            }
-        }
-
-        record TypeRef( TypeDeclAst decl ) implements ArraySubType {
-            @Override
-            public TypeRef astUpdate(AstUpdate.UpdateContext ctx) {
-                return this;
-            }
-
-            @Override
-            public ImList<? extends AstNode> nestedAstNodes() {
-                return ImListLinked.of(decl);
-            }
-        }
-    }
-
-    // ................
-
     record MetaClass(ImList<String> typeId) implements TypeDeclAst, StructuredTypeAst {
         @Override
         public MetaClass astUpdate(AstUpdate.UpdateContext ctx) {
