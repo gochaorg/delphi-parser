@@ -50,7 +50,7 @@ public class PascalFileParseTest {
 
         var iStringMap = types.fmap(a ->
             a.typeIdent().equals(TypeIdentAst.of("IStringMap")) &&
-                a.typeDecl() instanceof TypeDeclAst.Interface itf
+                a.typeDecl() instanceof InterfaceAst itf
                 ? ImListLinked.of(itf) : ImListLinked.of()
         ).head().get();
 
@@ -67,7 +67,7 @@ public class PascalFileParseTest {
         assertTrue(getFn.arguments().size() == 1);
         assertTrue(getFn.arguments().get(0).get().name().equalsIgnoreCase("name"));
         assertTrue(getFn.arguments().get(0).get().typeDecl().get().equals(
-            new TypeDeclAst.StringType.StrIng(Optional.empty(), SourcePosition.non(), ImListLinked.of())
+            new StringTypeAst.StrIng(Optional.empty(), SourcePosition.non(), ImListLinked.of())
         ));
         assertTrue(getFn.result().equals(new VariantTypeAst()));
 
@@ -81,7 +81,7 @@ public class PascalFileParseTest {
 
         var tStringMap = types.fmap(a ->
             a.typeIdent().equals(TypeIdentAst.of("TStringMap")) &&
-                a.typeDecl() instanceof TypeDeclAst.Clazz itf
+                a.typeDecl() instanceof ClazzTypeAst itf
                 ? ImListLinked.of(itf) : ImListLinked.of()
         ).head().get();
 

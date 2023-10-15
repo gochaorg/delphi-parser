@@ -5,6 +5,7 @@ import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.coll.im.Result;
 import xyz.cofe.delphi.ast.*;
+import xyz.cofe.delphi.ast.ClazzTypeAst;
 import xyz.cofe.delphi.tsys.tm.*;
 
 import java.util.Optional;
@@ -20,7 +21,7 @@ public class TypeImporter {
         this.typeFind = typeFind;
     }
 
-    public InterfaceType interfaceTypeOf(PascalFileAst.Unit unit, TypeIdentAst ident, TypeDeclAst.Interface astItf) {
+    public InterfaceType interfaceTypeOf(PascalFileAst.Unit unit, TypeIdentAst ident, InterfaceAst astItf) {
         if( unit==null ) throw new IllegalArgumentException("unit==null");
         if( ident==null ) throw new IllegalArgumentException("ident==null");
         if( astItf==null ) throw new IllegalArgumentException("astItf==null");
@@ -68,7 +69,7 @@ public class TypeImporter {
     private record ClassAddState(ImListLinked<Result<ClassItem,String>> items, Visibility visibility) {}
 
     @SuppressWarnings("RedundantCast")
-    public ClassType classTypeOf(PascalFileAst.Unit unit, TypeIdentAst ident, TypeDeclAst.Clazz astClass) {
+    public ClassType classTypeOf(PascalFileAst.Unit unit, TypeIdentAst ident, ClazzTypeAst astClass) {
         if( unit==null ) throw new IllegalArgumentException("unit==null");
         if( ident==null ) throw new IllegalArgumentException("ident==null");
         if( astClass==null ) throw new IllegalArgumentException("astClass==null");
@@ -278,7 +279,7 @@ public class TypeImporter {
         return Result.error("not implemented");
     }
 
-    protected Result<ImList<xyz.cofe.delphi.tsys.tm.Argument>,String> argsParse(PascalFileAst.Unit unit, Type self, TypeIdentAst selfName, ImList<xyz.cofe.delphi.ast.Argument> arguments) {
+    protected Result<ImList<xyz.cofe.delphi.tsys.tm.Argument>,String> argsParse(PascalFileAst.Unit unit, Type self, TypeIdentAst selfName, ImList<ArgumentAst> arguments) {
         return arguments.foldRight(
             Result.ok(ImListLinked.<xyz.cofe.delphi.tsys.tm.Argument>of(),String.class),
             (acc,it) -> acc.fmap(lst -> {
@@ -369,7 +370,7 @@ public class TypeImporter {
             return typeFind.apply(TypeName.of(t.name())).orElse(new Type.UnitTypeRef(unit, typeIdOrName));
         } else if( typeIdOrName instanceof VariantTypeAst) {
             return typeFind.apply(TypeName.of("Variant")).orElse(new Type.UnitTypeRef(unit, typeIdOrName));
-        } else if( typeIdOrName instanceof TypeDeclAst.StringType.StrIng s ){
+        } else if( typeIdOrName instanceof StringTypeAst.StrIng s ){
             if( s.expression().isEmpty() ){
                 return StringType.stringWithOutLengthType;
             }

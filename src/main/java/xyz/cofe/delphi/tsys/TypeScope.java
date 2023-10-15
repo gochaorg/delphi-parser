@@ -2,6 +2,7 @@ package xyz.cofe.delphi.tsys;
 
 import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.delphi.ast.*;
+import xyz.cofe.delphi.ast.ClazzTypeAst;
 import xyz.cofe.delphi.tsys.tm.*;
 
 import java.util.*;
@@ -148,21 +149,21 @@ public class TypeScope implements Freeze {
             var ident = tdecl.typeIdent();
             var decl = tdecl.typeDecl();
             if( decl instanceof ArrayAst) {}
-            if( decl instanceof TypeDeclAst.Interface a ) {
+            if( decl instanceof InterfaceAst a ) {
                 var itf = typeImporter.interfaceTypeOf(unit, ident, a);
                 types.add(itf);
                 add(itf);
             }
-            if( decl instanceof TypeDeclAst.Clazz a ) {
+            if( decl instanceof ClazzTypeAst a ) {
                 var cls =  typeImporter.classTypeOf(unit, ident, a);
                 types.add(cls);
                 add((Type) cls);
             }
-            if( decl instanceof TypeDeclAst.MetaClass ) {}
-            if( decl instanceof TypeDeclAst.Simple ) {}
-            if( decl instanceof TypeDeclAst.StringType ) {}
+            if( decl instanceof MetaClassAst) {}
+            if( decl instanceof SimpleTypeAst) {}
+            if( decl instanceof StringTypeAst) {}
             if( decl instanceof StructuredTypeAst) {}
-            if( decl instanceof TypeDeclAst.TypeAlias ) {}
+            if( decl instanceof TypeAliasAst) {}
             if( decl instanceof VariantTypeAst) {}
             if( decl instanceof TypeIdentAst ) {}
         }));

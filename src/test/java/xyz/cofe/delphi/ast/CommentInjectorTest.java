@@ -26,7 +26,7 @@ public class CommentInjectorTest {
 
         var iStringMap = types.fmap( a ->
             a.typeIdent().equals( TypeIdentAst.of("IStringMap") ) &&
-                a.typeDecl() instanceof TypeDeclAst.Interface itf
+                a.typeDecl() instanceof InterfaceAst itf
                 ? ImListLinked.of(itf) : ImListLinked.of()
         ).head().get();
 

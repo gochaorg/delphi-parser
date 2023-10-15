@@ -15,7 +15,7 @@ public sealed interface ClassMethodAst extends InterfaceItemAst, ClassItemAst, S
      * аргументы метода
      * @return аргументы
      */
-    ImList<Argument> arguments();
+    ImList<ArgumentAst> arguments();
 
     @Override
     ClassMethodAst astUpdate(AstUpdate.UpdateContext ctx);
@@ -30,7 +30,7 @@ public sealed interface ClassMethodAst extends InterfaceItemAst, ClassItemAst, S
     record Procedure(
         String name,
         ImList<GenericAst.Param> genericParams,
-        ImList<Argument> arguments,
+        ImList<ArgumentAst> arguments,
         ImList<MethodDirective> directives,
         SourcePosition position,
         ImList<Comment> comments
@@ -82,7 +82,7 @@ public sealed interface ClassMethodAst extends InterfaceItemAst, ClassItemAst, S
     record Constructor(
         String name,
         ImList<GenericAst.Param> genericParams,
-        ImList<Argument> arguments,
+        ImList<ArgumentAst> arguments,
         ImList<MethodDirective> directives,
         SourcePosition position,
         ImList<Comment> comments
@@ -132,7 +132,7 @@ public sealed interface ClassMethodAst extends InterfaceItemAst, ClassItemAst, S
     record Destructor(
         String name,
         ImList<GenericAst.Param> genericParams,
-        ImList<Argument> arguments,
+        ImList<ArgumentAst> arguments,
         ImList<MethodDirective> directives,
         SourcePosition position,
         ImList<Comment> comments
@@ -183,7 +183,7 @@ public sealed interface ClassMethodAst extends InterfaceItemAst, ClassItemAst, S
     record Function(
         String name,
         ImList<GenericAst.Param> genericParams,
-        ImList<Argument> arguments,
+        ImList<ArgumentAst> arguments,
         TypeDeclAst result,
         ImList<MethodDirective> directives,
         SourcePosition position,
@@ -244,7 +244,7 @@ public sealed interface ClassMethodAst extends InterfaceItemAst, ClassItemAst, S
     record Operator(
         String name,
         ImList<GenericAst.Param> genericParams,
-        ImList<Argument> arguments,
+        ImList<ArgumentAst> arguments,
         TypeDeclAst result,
         SourcePosition position,
         ImList<Comment> comments
@@ -399,9 +399,9 @@ public sealed interface ClassMethodAst extends InterfaceItemAst, ClassItemAst, S
             ? GenericAst.of(ctx.genericDefinition())
             : ImListLinked.of();
 
-        ImList<Argument> params =
+        ImList<ArgumentAst> params =
             ctx.formalParameterSection()!=null && !ctx.formalParameterSection().isEmpty() && ctx.formalParameterSection().formalParameterList()!=null ?
-            Argument.of( ctx.formalParameterSection().formalParameterList() ):
+            ArgumentAst.of( ctx.formalParameterSection().formalParameterList() ):
             ImListLinked.of() ;
 
         ImList<MethodDirective> meth_dir =

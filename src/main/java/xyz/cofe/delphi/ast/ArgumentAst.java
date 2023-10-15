@@ -15,15 +15,15 @@ import java.util.Optional;
  * @param typeDecl тип аргумента
  * @param defaultValue значение по молчанию
  */
-public record Argument(
+public record ArgumentAst(
     Optional<Constraint> constraint,
     String name,
     Optional<TypeDeclAst> typeDecl,
     Optional<ExpressionAst> defaultValue
-) implements AstNode, AstUpdate<Argument>
+) implements AstNode, AstUpdate<ArgumentAst>
 {
     @Override
-    public Argument astUpdate(AstUpdate.UpdateContext updateCtx) {
+    public ArgumentAst astUpdate(AstUpdate.UpdateContext updateCtx) {
         return this;
     }
 
@@ -33,18 +33,18 @@ public record Argument(
         Out
     }
 
-    static ImList<Argument> of(List<DelphiParser.FormalParameterContext> lst){
-        var params = ImListLinked.<Argument>of();
+    static ImList<ArgumentAst> of(List<DelphiParser.FormalParameterContext> lst){
+        var params = ImListLinked.<ArgumentAst>of();
         for( var f_param : lst ){
-            var constraint = Optional.<Argument.Constraint>empty();
+            var constraint = Optional.<ArgumentAst.Constraint>empty();
             if( f_param.parmType()!=null
             && !f_param.parmType().isEmpty()
             ){
                 constraint = switch( f_param.parmType().getText().toLowerCase() ){
-                    case "out" -> Optional.of(Argument.Constraint.Out);
-                    case "var" -> Optional.of(Argument.Constraint.Var);
-                    case "const" -> Optional.of(Argument.Constraint.Const);
-                    default -> Optional.<Argument.Constraint>empty();
+                    case "out" -> Optional.of(ArgumentAst.Constraint.Out);
+                    case "var" -> Optional.of(ArgumentAst.Constraint.Var);
+                    case "const" -> Optional.of(ArgumentAst.Constraint.Const);
+                    default -> Optional.<ArgumentAst.Constraint>empty();
                 };
             }else{
                 constraint = Optional.empty();
@@ -64,7 +64,7 @@ public record Argument(
             }
 
             for( var id : id_list ){
-                var arg = new Argument(
+                var arg = new ArgumentAst(
                     constraint,
                     id,
                     arg_type,
@@ -77,7 +77,7 @@ public record Argument(
         return params.reverse();
     }
 
-    static ImList<Argument> of(DelphiParser.FormalParameterListContext lst){
+    static ImList<ArgumentAst> of(DelphiParser.FormalParameterListContext lst){
         return of(lst.formalParameter());
     }
 }

@@ -5,7 +5,7 @@ import xyz.cofe.delphi.parser.DelphiParser;
 /**
  * Структурный тип
  */
-sealed public interface StructuredTypeAst extends TypeDeclAst permits ArrayAst, TypeDeclAst.Clazz, TypeDeclAst.Interface, TypeDeclAst.MetaClass {
+sealed public interface StructuredTypeAst extends TypeDeclAst permits ArrayAst, ClazzTypeAst, InterfaceAst, MetaClassAst {
     @Override
     StructuredTypeAst astUpdate(AstUpdate.UpdateContext ctx);
 
@@ -27,11 +27,11 @@ sealed public interface StructuredTypeAst extends TypeDeclAst permits ArrayAst, 
     static StructuredTypeAst of(DelphiParser.ClassDeclContext ctx) {
         if (ctx.interfaceTypeDecl() != null
             && !ctx.interfaceTypeDecl().isEmpty()
-        ) return Interface.of(ctx.interfaceTypeDecl());
+        ) return InterfaceAst.of(ctx.interfaceTypeDecl());
 
         if (ctx.classTypeDecl() != null
             && !ctx.classTypeDecl().isEmpty()
-        ) return Clazz.of(ctx.classTypeDecl());
+        ) return ClazzTypeAst.of(ctx.classTypeDecl());
 
         throw AstParseError.notImplemented(ctx);
     }

@@ -16,7 +16,7 @@ public sealed interface ClassPropertyAst extends InterfaceItemAst, ClassItemAst,
 
     record Property(
         String name,
-        ImList<Argument> propertyArray,
+        ImList<ArgumentAst> propertyArray,
         Optional<TypeIdentAst> type,
         Optional<ExpressionAst> index,
         ImList<Specifier> specifiers,
@@ -60,13 +60,13 @@ public sealed interface ClassPropertyAst extends InterfaceItemAst, ClassItemAst,
 
             String name = ctx.ident().getText();
 
-            ImList<Argument> propArr = ImListLinked.of();
+            ImList<ArgumentAst> propArr = ImListLinked.of();
             if (ctx.classPropertyArray() != null
                 && !ctx.classPropertyArray().isEmpty()
                 && ctx.classPropertyArray().formalParameterList() != null
                 && !ctx.classPropertyArray().formalParameterList().isEmpty()
             ) {
-                propArr = Argument.of(ctx.classPropertyArray().formalParameterList());
+                propArr = ArgumentAst.of(ctx.classPropertyArray().formalParameterList());
             }
 
             Optional<TypeIdentAst> type = Optional.empty();

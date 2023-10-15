@@ -21,7 +21,7 @@ import java.util.Optional;
  */
 public sealed interface ProcedureTypeAst extends TypeDeclAst {
     record FunctionType(
-        ImList<Argument> arguments,
+        ImList<ArgumentAst> arguments,
         TypeDeclAst result,
         Optional<CallConvention> callConvention,
         SourcePosition position
@@ -42,7 +42,7 @@ public sealed interface ProcedureTypeAst extends TypeDeclAst {
     }
 
     record ProcedureType(
-        ImList<Argument> arguments,
+        ImList<ArgumentAst> arguments,
         Optional<CallConvention> callConvention,
         SourcePosition position
     ) implements ProcedureTypeAst, AstUpdate<ProcedureType>, SrcPos {
@@ -61,7 +61,7 @@ public sealed interface ProcedureTypeAst extends TypeDeclAst {
     }
 
     record ObjFunctionType(
-        ImList<Argument> arguments,
+        ImList<ArgumentAst> arguments,
         TypeDeclAst result,
         SourcePosition position
     ) implements ProcedureTypeAst, AstUpdate<ObjFunctionType>, SrcPos {
@@ -81,7 +81,7 @@ public sealed interface ProcedureTypeAst extends TypeDeclAst {
     }
 
     record ObjProcedureType(
-        ImList<Argument> arguments,
+        ImList<ArgumentAst> arguments,
         SourcePosition position
     ) implements ProcedureTypeAst, AstUpdate<ObjProcedureType>, SrcPos {
         @Override
@@ -99,7 +99,7 @@ public sealed interface ProcedureTypeAst extends TypeDeclAst {
     }
 
     record RefFunctionType(
-        ImList<Argument> arguments,
+        ImList<ArgumentAst> arguments,
         TypeDeclAst result,
         SourcePosition position
     ) implements ProcedureTypeAst, AstUpdate<RefFunctionType>, SrcPos {
@@ -118,7 +118,7 @@ public sealed interface ProcedureTypeAst extends TypeDeclAst {
         }
     }
     record RefProcedureType(
-        ImList<Argument> arguments,
+        ImList<ArgumentAst> arguments,
         SourcePosition position
     ) implements ProcedureTypeAst, AstUpdate<RefProcedureType>, SrcPos {
         @Override
@@ -157,13 +157,13 @@ public sealed interface ProcedureTypeAst extends TypeDeclAst {
 
     private static <R> R of(
         DelphiParser.ProcedureTypeHeadingContext ctx,
-        Fn2<R,ImList<Argument>,TypeDeclAst> funMatch,
-        Fn1<R,ImList<Argument>> procMatch
+        Fn2<R,ImList<ArgumentAst>,TypeDeclAst> funMatch,
+        Fn1<R,ImList<ArgumentAst>> procMatch
     ) {
-        ImList<Argument> args = ctx.formalParameterSection()!=null
+        ImList<ArgumentAst> args = ctx.formalParameterSection()!=null
             && ctx.formalParameterSection().formalParameterList()!=null
             && !ctx.formalParameterSection().formalParameterList().isEmpty() ?
-            Argument.of(ctx.formalParameterSection().formalParameterList()) : ImListLinked.<Argument>of();
+            ArgumentAst.of(ctx.formalParameterSection().formalParameterList()) : ImListLinked.<ArgumentAst>of();
 
         if( ctx.FUNCTION()!=null && ctx.FUNCTION().getText().equalsIgnoreCase("function") ){
             if( ctx.typeDecl()==null )throw new AstParseError("unexpected null ref in ProcedureTypeHeadingContext");

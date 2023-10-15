@@ -15,7 +15,7 @@ import java.util.Optional;
  */
 public record ProcDeclAst(
     String name,
-    ImList<Argument> arguments,
+    ImList<ArgumentAst> arguments,
     Optional<TypeDeclAst> result
 ) implements InterfaceDecl, AstNode {
     @Override
@@ -24,9 +24,9 @@ public record ProcDeclAst(
     }
 
     static ProcDeclAst of(DelphiParser.ProcDeclHeadingContext prc) {
-        var params = ImListLinked.<Argument>of();
+        var params = ImListLinked.<ArgumentAst>of();
         var formal_params =
-            Argument.of(prc.formalParameterSection().formalParameterList());
+            ArgumentAst.of(prc.formalParameterSection().formalParameterList());
 
         var fun_name = prc.ident().getText();
         var fun_res = Optional.<TypeDeclAst>empty();
