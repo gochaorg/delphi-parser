@@ -1,0 +1,37 @@
+unit AutoFrame;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, 
+  Dialogs, StdCtrls, DB, ExtCtrls, Grids, DBGrids, ADODB;
+
+type
+  TAutoController = class(TFrame)
+    topPanel: TPanel;
+    refreshButton: TButton;
+    newButton: TButton;
+    editButton: TButton;
+    deleteButton: TButton;
+    carsDataSource: TDataSource;
+    carsDBGrid: TDBGrid;
+    carsADOQuery: TADOQuery;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+implementation
+
+{$R *.dfm}
+
+procedure TAutoController.activateDataView();
+begin
+  //_ADOTable.Active := true;
+  carsADOQuery.Active := true;
+  dbViewPreparer.prepareGrid(Self.ClassName, _carModelDBGrid);
+end;
+
+
+end.

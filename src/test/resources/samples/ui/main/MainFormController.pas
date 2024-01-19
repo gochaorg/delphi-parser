@@ -1,0 +1,156 @@
+unit MainFormController;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, DB, ADODB, StdCtrls, Menus, ComObj, Grids, DBGrids,
+  ComCtrls, ExtCtrls,
+
+  CarsModelsFrame, CarsFrame, DispatchersFrame, DriversFrame,
+  WaybillsFrame,
+
+  FormConfig,
+  OfficeExport,
+  DBView, DBRows,
+  Config, DBConfForm,
+  Map, Logging, Loggers;
+
+type
+  // Главное окно программы
+  // Содержит 5 вложенных фреймов
+  //   Путевые листы
+  //   Водители
+  //   Диспетчеры
+  //   Машины
+  //   Модели машин
+  TMainForm = class(TForm)
+    MainMenu1: TMainMenu;
+    dbConnectMenu: TMenuItem;
+    connectToDBMenuItem: TMenuItem;
+    PageControl1: TPageControl;
+    waybillsTabSheet: TTabSheet;
+    driversTabSheet: TTabSheet;
+    dispatchersTabSheet: TTabSheet;
+    carsTabSheet: TTabSheet;
+    carsModelTabSheet: TTabSheet;
+    ADOMainConnection: TADOConnection;
+    carsModelsController: TCarsModelsController;
+    carsController: TCarsController;
+    dispatchersController: TDispatchersController;
+    driversController: TDriversController;
+    waybillsController: TwaybillsController;
+    waybillsMenu: TMenuItem;
+    dbConnectConfig: TMenuItem;
+    waybillsExcelExport: TMenuItem;
+    waybillsWordExport: TMenuItem;
+
+    // Устрановка соединения с СУБД
+    procedure connectToDBMenuItemClick(Sender: TObject);
+
+    // Настройка подключения
+    procedure dbConnectConfigClick(Sender: TObject);
+
+    // Экспорт путевыз листов в Excel
+    procedure waybillsExcelExportClick(Sender: TObject);
+
+    // Экспорт путевыз листов в Word
+    procedure waybillsWordExportClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+  public
+  end;
+
+var
+  MainForm: TMainForm;
+
+implementation
+
+var
+  log : ILog;
+
+{$R *.dfm}
+
+
+procedure TMainForm.connectToDBMenuItemClick(Sender: TObject);
+begin
+  log.println('Connect to db');
+  try
+    ADOMainConnection.ConnectionString := applicationConfigItf.dbConnectionString;
+    log.println('Use connection string: '+ADOMainConnection.ConnectionString);
+
+    log.println('ADOMainConnection.Open'+
+      ' user='+applicationConfigItf.dbUsername+
+      ' password=****');
+    ADOMainConnection.Open(
+      applicationConfigItf.dbUsername,
+      applicationConfigItf.dbPassword);
+
+    carsModelsController.ActivateDataView;
+    carsController.ActivateDataView;
+    dispatchersController.ActivateDataView;
+    driversController.ActivateDataView;
+    waybillsController.ActivateDataView;
+
+    waybillsMenu.Enabled := true;
+
+    log.println('Connected');
+  except
+    on e: EOleException do begin
+      log.println('! Ошибка соединения:'+e.Message);
+      ShowMessage('Ошибка соединения:'+e.Message);
+    end;
+  end;
+end;
+
+procedure TMainForm.dbConnectConfigClick(Sender: TObject);
+var
+  conf: TDBConfController;
+begin
+  log.println('dbConnectConfigClick');
+  conf := TDBConfController.Create(self);
+  try
+    conf.edit(applicationConfigItf, applicationConfigSaveItf);
+  finally
+    FreeAndNil(conf);
+  end;
+end;
+
+procedure TMainForm.waybillsExcelExportClick(Sender: TObject);
+begin
+  log.println('waybillsExcelExportClick');
+  try
+    excelExporter.doExport(
+      extend(waybillsController.waybillsDBGrid).GetDBRows
+    );
+  except
+    on e:EOleException do begin
+      log.println('! Ощибка экспорта Excel: '+e.Message);
+      ShowMessage('! Ощибка экспорта Excel: '+e.Message);
+    end;
+  end;
+end;
+
+procedure TMainForm.waybillsWordExportClick(Sender: TObject);
+begin
+  log.println('waybillsWordExportClick');
+  try
+    wordExporter.doExport(
+      extend(waybillsController.waybillsDBGrid).GetDBRows
+    );
+  except
+    on e:EOleException do begin
+      log.println('! Ошибка экспорта Word: '+e.Message);
+      ShowMessage('! Ошибка экспорта Word: '+e.Message);
+    end;
+  end;
+end;
+
+procedure TMainForm.FormShow(Sender: TObject);
+begin
+  FormConfigure(self);
+end;
+
+initialization
+log := logger('MainForm');
+
+end.
