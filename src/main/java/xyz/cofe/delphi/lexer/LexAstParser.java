@@ -233,11 +233,19 @@ public class LexAstParser {
                 var ifdef = IFDEF(token);
                 var ifndef = IFNDEF(token);
                 var If = IF(token);
-                var IfOpt = IF(token);
+                var IfOpt = IFOPT(token);
 
                 if (elseIf.isPresent()) {
                     consumerList = negative;
-                    ret = new ConditionVisitor( this, lexAst -> consumerList.add(lexAst), new LexAst.Condition.If(elseIf.get()), token );
+                    ret = new ConditionVisitor(
+                        parent,
+                        lexAst -> {
+                            consumerList.add(lexAst);
+                            result.accept(new LexAst.ConditionalCompile(condition, new LexAst.Lexs(ImList.of(positive)), new LexAst.Lexs(ImList.of(negative)), begin, token));
+                        },
+                        new LexAst.Condition.If(elseIf.get()),
+                        token
+                    );
                 } else if (ifdef.isPresent()) {
                     ret = new ConditionVisitor(this, lexAst -> consumerList.add(lexAst), new LexAst.Condition.IfDef(ifdef.get()), token);
                 } else if (ifndef.isPresent()) {

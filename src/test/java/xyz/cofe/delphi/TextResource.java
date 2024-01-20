@@ -7,7 +7,7 @@ import java.nio.charset.Charset;
 
 public class TextResource {
     public static String textResource(String name){
-        var url = PascalFileParseTest.class.getResource(name);
+        var url = TextResource.class.getResource(name);
         try( var strm = url.openStream() ) {
             var source = new String( strm.readAllBytes(), Charset.forName("windows-1251") );
             return source;
