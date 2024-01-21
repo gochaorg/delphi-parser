@@ -128,7 +128,7 @@ public class LexAstParser {
     }
 
     @SuppressWarnings("RegExpRedundantEscape")
-    private static final Pattern ELSE_Pattern = Pattern.compile("(?is)\\{\\$ELSE\\s*\\}.*");
+    private static final Pattern ELSE_Pattern = Pattern.compile("(?is)\\{\\$ELSE(\\s+[^\\}]*|\\s*)\\}.*");
 
     private static boolean ELSE(Token token) {
         if (token == null) throw new IllegalArgumentException("token==null");
@@ -139,7 +139,7 @@ public class LexAstParser {
     }
 
     @SuppressWarnings("RegExpRedundantEscape")
-    private static final Pattern ENDIF_Pattern = Pattern.compile("(?is)\\{\\$(ENDIF|IFEND)\\s*\\}.*");
+    private static final Pattern ENDIF_Pattern = Pattern.compile("(?is)\\{\\$(ENDIF|IFEND)(\\s+[^\\}]*|\\s*)\\}.*");
 
     private static boolean ENDIF(Token token) {
         if (token == null) throw new IllegalArgumentException("token==null");

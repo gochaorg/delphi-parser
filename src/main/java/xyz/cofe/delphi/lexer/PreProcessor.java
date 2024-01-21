@@ -1,6 +1,7 @@
 package xyz.cofe.delphi.lexer;
 
 import org.antlr.v4.runtime.Token;
+import xyz.cofe.coll.im.Result;
 
 import java.util.HashSet;
 import java.util.Set;
