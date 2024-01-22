@@ -71,7 +71,7 @@ public record InterfaceTypeAst(
                 Optional.empty() :
                 Optional.of(ctx.interfaceGuid().getText());
 
-        var itype = switch (ctx.interfaceKey().INTERFACE().getText().toLowerCase()) {
+        var itype = switch (ctx.interfaceKey().getText().toLowerCase()) {
             case "interface" -> InterfaceType.Basic;
             case "dispinterface" -> InterfaceType.DispInterface;
             default -> throw AstParseError.unExpected();

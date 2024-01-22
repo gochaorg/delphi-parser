@@ -1,16 +1,10 @@
 package xyz.cofe.delphi.lexer;
 
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Test;
 import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.Result;
-import xyz.cofe.delphi.parser.DelphiLexer;
-import xyz.cofe.io.fs.File;
 
-import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -124,12 +118,12 @@ public class PreProcTest {
             expr -> {
                 EvalCondition.Compute compute = new EvalCondition.Compute() {
                     @Override
-                    public Result<EvalCondition.Value, EvalCondition.EvalError> or(EvalCondition.Value left, EvalCondition.Value right) {
-                        return Result.error(new EvalCondition.EvalError("not impl"));
+                    public Result<EvalCondition.Value, EvalError> or(EvalCondition.Value left, EvalCondition.Value right) {
+                        return Result.error(new EvalError("not impl"));
                     }
 
                     @Override
-                    public Result<EvalCondition.Value, EvalCondition.EvalError> and(EvalCondition.Value left, EvalCondition.Value right) {
+                    public Result<EvalCondition.Value, EvalError> and(EvalCondition.Value left, EvalCondition.Value right) {
                         if( left instanceof EvalCondition.Value.Variable l && right instanceof EvalCondition.Value.Bool r ){
                             var la = l.name().equalsIgnoreCase("debug");
                             var rb = r.value();
@@ -137,62 +131,62 @@ public class PreProcTest {
                                 new EvalCondition.Value.Bool(la && rb)
                             );
                         }
-                        return Result.error(new EvalCondition.EvalError("not impl"));
+                        return Result.error(new EvalError("not impl"));
                     }
 
                     @Override
-                    public Result<EvalCondition.Value, EvalCondition.EvalError> lessOrEquals(EvalCondition.Value left, EvalCondition.Value right) {
-                        return Result.error(new EvalCondition.EvalError("not impl"));
+                    public Result<EvalCondition.Value, EvalError> lessOrEquals(EvalCondition.Value left, EvalCondition.Value right) {
+                        return Result.error(new EvalError("not impl"));
                     }
 
                     @Override
-                    public Result<EvalCondition.Value, EvalCondition.EvalError> moreOrEquals(EvalCondition.Value left, EvalCondition.Value right) {
-                        return Result.error(new EvalCondition.EvalError("not impl"));
+                    public Result<EvalCondition.Value, EvalError> moreOrEquals(EvalCondition.Value left, EvalCondition.Value right) {
+                        return Result.error(new EvalError("not impl"));
                     }
 
                     @Override
-                    public Result<EvalCondition.Value, EvalCondition.EvalError> less(EvalCondition.Value left, EvalCondition.Value right) {
-                        return Result.error(new EvalCondition.EvalError("not impl"));
+                    public Result<EvalCondition.Value, EvalError> less(EvalCondition.Value left, EvalCondition.Value right) {
+                        return Result.error(new EvalError("not impl"));
                     }
 
                     @Override
-                    public Result<EvalCondition.Value, EvalCondition.EvalError> more(EvalCondition.Value left, EvalCondition.Value right) {
-                        return Result.error(new EvalCondition.EvalError("not impl"));
+                    public Result<EvalCondition.Value, EvalError> more(EvalCondition.Value left, EvalCondition.Value right) {
+                        return Result.error(new EvalError("not impl"));
                     }
 
                     @Override
-                    public Result<EvalCondition.Value, EvalCondition.EvalError> equals(EvalCondition.Value left, EvalCondition.Value right) {
-                        return Result.error(new EvalCondition.EvalError("not impl"));
+                    public Result<EvalCondition.Value, EvalError> equals(EvalCondition.Value left, EvalCondition.Value right) {
+                        return Result.error(new EvalError("not impl"));
                     }
 
                     @Override
-                    public Result<EvalCondition.Value, EvalCondition.EvalError> notEquals(EvalCondition.Value left, EvalCondition.Value right) {
-                        return Result.error(new EvalCondition.EvalError("not impl"));
+                    public Result<EvalCondition.Value, EvalError> notEquals(EvalCondition.Value left, EvalCondition.Value right) {
+                        return Result.error(new EvalError("not impl"));
                     }
 
                     @Override
-                    public Result<EvalCondition.Value, EvalCondition.EvalError> invert(EvalCondition.Value value) {
-                        return Result.error(new EvalCondition.EvalError("not impl"));
+                    public Result<EvalCondition.Value, EvalError> invert(EvalCondition.Value value) {
+                        return Result.error(new EvalError("not impl"));
                     }
 
                     @Override
-                    public Result<EvalCondition.Value, EvalCondition.EvalError> plus(EvalCondition.Value value) {
-                        return Result.error(new EvalCondition.EvalError("not impl"));
+                    public Result<EvalCondition.Value, EvalError> plus(EvalCondition.Value value) {
+                        return Result.error(new EvalError("not impl"));
                     }
 
                     @Override
-                    public Result<EvalCondition.Value, EvalCondition.EvalError> minus(EvalCondition.Value value) {
-                        return Result.error(new EvalCondition.EvalError("not impl"));
+                    public Result<EvalCondition.Value, EvalError> minus(EvalCondition.Value value) {
+                        return Result.error(new EvalError("not impl"));
                     }
 
                     @Override
-                    public Result<EvalCondition.Value, EvalCondition.EvalError> call(EvalCondition.Value base, ImList<EvalCondition.Value> args) {
+                    public Result<EvalCondition.Value, EvalError> call(EvalCondition.Value base, ImList<EvalCondition.Value> args) {
                         if( base instanceof EvalCondition.Value.Variable baseName && baseName.name().equalsIgnoreCase("defined") ){
                             if( args.get(0).map( v -> v instanceof EvalCondition.Value.Variable sym && sym.name().equalsIgnoreCase("win") ).orElse(false) ){
                                 return Result.ok(new EvalCondition.Value.Bool(true));
                             }
                         }
-                        return Result.error(new EvalCondition.EvalError("not impl"));
+                        return Result.error(new EvalError("not impl"));
                     }
                 };
                 var eval = new EvalCondition(compute);

@@ -38,10 +38,16 @@ public class PreProcessor {
             if( state==null )throw new IllegalArgumentException("state==null");
             this.state = state.clone();
             this.excludeSet = new HashSet<>();
+            this.evalCondition = new EvalCondition(
+                new ComputeDefault(
+                    this.state
+                )
+            );
         }
 
         public final PreProcState state;
         public final Set<Token> excludeSet;
+        public final EvalCondition evalCondition;
 
         public void eval( LexAst lexAst ){
             if( lexAst==null )throw new IllegalArgumentException("lexAst==null");
@@ -75,11 +81,31 @@ public class PreProcessor {
         }
 
         private boolean eval(LexAst.Condition.If _if){
-            throw new RuntimeException("not impl eval LexAst.Condition.If");
+            var expr = EvalCondition.parse(_if.code(), _if.code());
+            if( expr.getError().isPresent() ){
+                var err = expr.getError().get();
+                throw new LexError(err);
+            }
+
+            //noinspection OptionalGetWithoutIsPresent
+            var res = evalCondition.eval(expr.getOk().get());
+            if( res.getError().isPresent() ){
+                throw new LexError(res.getError().get());
+            }
+
+            //noinspection OptionalGetWithoutIsPresent
+            var r = res.getOk().get();
+            if( r instanceof EvalCondition.Value.Bool bo ){
+                return bo.value();
+            }else{
+                throw new LexError("can't cast "+r.getClass().getSimpleName()+" to boolean");
+            }
         }
 
         private boolean eval(LexAst.Condition.IfOpt ifOpt){
-            throw new RuntimeException("not impl eval LexAst.Condition.IfOpt");
+            //TODO impl
+            System.err.println("not implemented if opt "+ifOpt.name());
+            return false;
         }
 
         private boolean eval(LexAst.Condition.IfDef ifDef){

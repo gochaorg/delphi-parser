@@ -35,23 +35,6 @@ public class EvalCondition {
         }
     }
 
-    public static class EvalError extends Error {
-        public EvalError() {
-        }
-
-        public EvalError(String message) {
-            super(message);
-        }
-
-        public EvalError(String message, Throwable cause) {
-            super(message, cause);
-        }
-
-        public EvalError(Throwable cause) {
-            super(cause);
-        }
-    }
-
     private static EvalError unExpected(ParserRuleContext ctx){
         if( ctx==null )throw new IllegalArgumentException("ctx==null");
         return new EvalError("unExpected");
