@@ -486,6 +486,7 @@ atom    : ( intNum
 // TODO проверить что является переменной, параметром, а что ключевым словом
 identInAtom : RESIDENT
             | DISPID
+            | NODEFAULT
             | ident
             ;
 
