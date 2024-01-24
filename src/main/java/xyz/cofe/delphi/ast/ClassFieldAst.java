@@ -40,11 +40,11 @@ implements ClassItemAst, AstNode, SrcPos, Commented<ClassFieldAst>
         }
 
         if( ctx.identList()!=null
-            && ctx.identList().ident()!=null
+            && ctx.identList().paramName()!=null
             && type.isPresent()
         ){
             var type_f = type.get();
-            result = ImListLinked.of(ctx.identList().ident())
+            result = ImListLinked.of(ctx.identList().paramName())
                 .map(RuleContext::getText)
                 .map(i -> new ClassFieldAst(i,type_f,SourcePosition.of(ctx),ImListLinked.of()));
         }

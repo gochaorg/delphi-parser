@@ -51,7 +51,7 @@ public record ArgumentAst(
             }
 
             var id_list =
-                f_param.identListFlat().ident().stream().map(RuleContext::getText).toList();
+                f_param.identListFlat().paramName().stream().map(RuleContext::getText).toList();
 
             var arg_type = Optional.<TypeDeclAst>empty();
             if( f_param.typeDecl()!=null && !f_param.typeDecl().isEmpty() ){

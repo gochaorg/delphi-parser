@@ -6,18 +6,27 @@ import xyz.cofe.coll.im.Result;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class PreProcessor {
     private final LexAstParser parser = new LexAstParser();
     private final PreProcState state;
+    private final Function<PreProcState,EvalCondition> evalConditionBuilder;
 
     public PreProcessor() {
-        state = new PreProcState();
+        this(new PreProcState());
     }
 
     public PreProcessor(PreProcState initialState) {
+        this(new PreProcState(), state->new EvalCondition(new ComputeDefault(state)));
+    }
+
+    public PreProcessor(PreProcState initialState, Function<PreProcState,EvalCondition> evalConditionBuilder) {
         if( initialState==null )throw new IllegalArgumentException("initialState==null");
+        if( evalConditionBuilder==null )throw new IllegalArgumentException("evalConditionBuilder==null");
         state = initialState;
+        this.evalConditionBuilder = evalConditionBuilder;
     }
 
     public TokenizedFile process(TokenizedFile file) {
@@ -33,16 +42,12 @@ public class PreProcessor {
         );
     }
 
-    private static class ProcessState {
+    private class ProcessState {
         public ProcessState(PreProcState state){
             if( state==null )throw new IllegalArgumentException("state==null");
             this.state = state.clone();
             this.excludeSet = new HashSet<>();
-            this.evalCondition = new EvalCondition(
-                new ComputeDefault(
-                    this.state
-                )
-            );
+            this.evalCondition = evalConditionBuilder.apply(this.state);
         }
 
         public final PreProcState state;

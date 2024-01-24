@@ -130,7 +130,13 @@ varDeclaration               : (customAttribute)? identListFlat ':' typeDecl (va
                              ;
 varValueSpec                 : 'absolute' ident
                              | 'absolute' constExpression
-                             | '=' constExpression
+
+                             | '=' ( '(' ')' | constExpression )
+                             // рабочий пример unit OleCtrls;
+                             // ....
+                             //  var  // init to zero, never written to
+                             //    DispParams: TDispParams = ();
+
                              ;
 exportsSection               : 'exports' ident exportItem (',' ident exportItem)* ';'
                              ;
@@ -239,7 +245,7 @@ classDecl                    : classTypeTypeDecl
 classTypeTypeDecl            : 'class' 'of' typeId 
                              ;
 classTypeDecl                : 'class' (classState)? (classParent)? (classItem)* 'end' 
-                             | 'class' (classParent)? 
+                             | 'class' classParent?
                              ;
 classState                   : 'sealed'
                              | 'abstract'
@@ -307,16 +313,41 @@ recordHelperItem             : visibility
                              | classMethod
                              | classProperty
                              ;
-classMethod                  : (customAttribute)? ('class')? methodKey ident (genericDefinition)? (formalParameterSection)? ';' (methodDirective)* 
-                             | (customAttribute)? ('class')? 'function' ident (genericDefinition)? (formalParameterSection)? ':' (customAttribute)? typeDecl ';' (methodDirective)*
-                             | (customAttribute)? ('class')? 'operator' ident (genericDefinition)? (formalParameterSection)? ':' (customAttribute)? typeDecl ';'
-                             ;                             
+classMethod                  : (customAttribute)? ('class')? methodKey mname=ident (genericDefinition)? (formalParameterSection)? ';'? (methodDirective)*
+                             | (customAttribute)? ('class')? 'function' mname=ident (genericDefinition)? (formalParameterSection)? ':' (customAttribute)? typeDecl ';'? (methodDirective)*
+                             | (customAttribute)? ('class')? 'operator' mname=ident (genericDefinition)? (formalParameterSection)? ':' (customAttribute)? typeDecl ';'
+                             | oleClassMethodAlias
+                             ;
+
+oleClassMethodAlias          : 'function' comItfName=ident '.' comItfMethod=ident '=' implMethod=ident ';' // очень странная форма для реализации конкретного метода Ole/Com/ActiveX
+                             ;
+
 classField                   : (customAttribute)? identList ':' typeDecl ';' (hintingDirective)* 
                              ;
-classProperty                : (customAttribute)? ('class')? 'property' classPropertyName (classPropertyArray)? (':' genericTypeIdent)? (classPropertyIndex)? (classPropertySpecifier)* ';' (classPropertyEndSpecifier)*
-                              // CHANGED added (classPropertySpecifier)* at end for "default;"
-                              // CHANGEDD to genericTypeIdent for "property QueryBuilder : IQueryBuilder<GenericRecord>"
-                             ;
+
+//classProperty                : (customAttribute)? ('class')? 'property' classPropertyName (classPropertyArray)? (':' genericTypeIdent)? (classPropertyIndex)? (classPropertySpecifier)* ';' (classPropertyEndSpecifier)*
+//                              // CHANGED added (classPropertySpecifier)* at end for "default;"
+//                              // CHANGEDD to genericTypeIdent for "property QueryBuilder : IQueryBuilder<GenericRecord>"
+//                             ;
+
+// TODO есть еще spec implements
+classProperty   : (customAttribute)? 'class' ? 'property' classPropertyName classPropertyArray? ( ':' genericTypeIdent ) ? ('index' index=expression)? ( classPropSpec* | classPropDispSpec* ) ';'? ( classPropPostfixSpec+ ';')?
+                ;
+
+classPropSpec   : 'read' ident
+                | 'write' ident
+                ;
+
+classPropPostfixSpec    : 'default' expression ?
+                        | 'nodefault'
+                        | 'stored' expression
+                        ;
+
+classPropDispSpec : 'readonly'
+                  | 'writeonly'
+                  | 'dispid' expression
+                  ;
+
 classPropertyName            : RESIDENT | ident; //TODO Возможно надо добавить не только RESIDENT
 
 classPropertyArray           : '[' formalParameterList ']'
@@ -340,8 +371,8 @@ classPropertyEndSpecifier    : STORED expression ';'    //ADDED used in classPro
 classPropertyReadWrite       : 'read' qualifiedIdent ('[' expression ']')?  // Waarom qualified ident???  //ADDED []
                              | 'write' qualifiedIdent ('[' expression ']')? //ADDED []
                              ;
-classPropertyDispInterface   : 'readonly' ';'
-                             | 'writeonly' ';'
+classPropertyDispInterface   : 'readonly' ('dispid' expression)? ';'
+                             | 'writeonly' ('dispid' expression)? ';'
                              | dispIDDirective
                              ;
 visibility                   : (STRICT)? 'protected' 
@@ -399,8 +430,9 @@ procBody                     : 'forward' ';' (functionDirective)*   // CHECKEN ;
 //****************************
 //section customAttributes
 //****************************
-customAttribute              : 'abekat' //customAttributeList
+customAttribute              : customAttributeDecl //'abekat' //customAttributeList
                              ;
+
 customAttributeList          : (customAttributeDecl)*
                              ;
 customAttributeDecl          : '[' namespacedQualifiedIdent ('(' (expressionList)? ')')? ']'  
@@ -450,7 +482,9 @@ atom    : ( intNum
         ;
 
 // TODO внезапно ключевое слово RESIDENT - валидный идентификатор: что блять происходит!
+// TODO проверить что является переменной, параметром, а что ключевым словом
 identInAtom : RESIDENT
+            | DISPID
             | ident
             ;
 
@@ -708,10 +742,12 @@ usedKeywordsAsNames          : (NAME | READONLY | ADD | AT | MESSAGE | POINTER |
                              | (READ | WRITE | REGISTER | VARIANT | OPERATOR | REMOVE | LOCAL | REFERENCE | CONTAINS | FINAL)
                              | (BREAK | EXIT | STRICT | OUT | OBJECT | EXPORT | ANSISTRING | IMPLEMENTS | STORED)
                              ;                           
-identList                    : ident (',' ident)* 
+identList                    : paramName (',' paramName)*
                              ;
-identListFlat                : ident (',' ident)*    //ADDED used in formalParemeter
-                             ;                                                          
+
+identListFlat                : paramName (',' paramName)*    //ADDED used in formalParemeter
+                             ;
+
 label                        : ( TkIdentifier | TkIntNum | TkHexNum ) | usedKeywordsAsNames 
                              ;
 intNum                       : TkIntNum

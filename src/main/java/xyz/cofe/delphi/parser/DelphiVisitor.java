@@ -557,6 +557,12 @@ public interface DelphiVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitClassMethod(DelphiParser.ClassMethodContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link DelphiParser#oleClassMethodAlias}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOleClassMethodAlias(DelphiParser.OleClassMethodAliasContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link DelphiParser#classField}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -568,6 +574,24 @@ public interface DelphiVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitClassProperty(DelphiParser.ClassPropertyContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link DelphiParser#classPropSpec}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitClassPropSpec(DelphiParser.ClassPropSpecContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link DelphiParser#classPropPostfixSpec}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitClassPropPostfixSpec(DelphiParser.ClassPropPostfixSpecContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link DelphiParser#classPropDispSpec}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitClassPropDispSpec(DelphiParser.ClassPropDispSpecContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link DelphiParser#classPropertyName}.
 	 * @param ctx the parse tree

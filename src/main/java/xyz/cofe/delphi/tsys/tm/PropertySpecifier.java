@@ -6,14 +6,14 @@ import java.util.Optional;
 
 public sealed interface PropertySpecifier {
     record Read(
-        ImList<String> name, // ref to method
-        Optional<String> expression
+        // TODO необходимо resolve на метод/поле
+        String name // ref to method
     ) implements PropertySpecifier {
     }
 
     record Write(
-        ImList<String> name, // ref to method
-        Optional<String> expression
+        // TODO необходимо resolve на метод/поле
+        String name // ref to method
     ) implements PropertySpecifier {
     }
 
@@ -29,10 +29,7 @@ public sealed interface PropertySpecifier {
     record Stored(String expression) implements PropertySpecifier {
     }
 
-    record DefaultExp(String expression) implements PropertySpecifier {
-    }
-
-    record Default() implements PropertySpecifier {
+    record Default(Optional<String> expression) implements PropertySpecifier {
     }
 
     record NoDefault() implements PropertySpecifier {

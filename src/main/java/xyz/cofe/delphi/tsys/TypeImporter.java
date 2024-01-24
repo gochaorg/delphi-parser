@@ -372,14 +372,12 @@ public class TypeImporter {
     protected PropertySpecifier propertySpecifier(PascalFileAst.Unit unit, Type self, TypeIdentAst selfName, ClassPropertyAst.Specifier spec) {
         if( spec instanceof ClassPropertyAst.Read r ){
             return new PropertySpecifier.Read(
-                r.name(),
-                r.expression().map(ExpressionAst::text)
+                r.name()
             );
         }
         if( spec instanceof ClassPropertyAst.Write w ){
             return new PropertySpecifier.Write(
-                w.name(),
-                w.expression().map(ExpressionAst::text)
+                w.name()
             );
         }
         if( spec instanceof ClassPropertyAst.ReadOnly r ){
@@ -394,11 +392,8 @@ public class TypeImporter {
         if( spec instanceof ClassPropertyAst.Stored s ){
             return new PropertySpecifier.Stored(s.expression().text());
         }
-        if( spec instanceof ClassPropertyAst.DefaultExp d ){
-            return new PropertySpecifier.DefaultExp(d.expression().text());
-        }
         if( spec instanceof ClassPropertyAst.Default d ){
-            return new PropertySpecifier.Default();
+            return new PropertySpecifier.Default(d.expression().map(ExpressionAst::text));
         }
         if( spec instanceof ClassPropertyAst.NoDefault n ){
             return new PropertySpecifier.NoDefault();

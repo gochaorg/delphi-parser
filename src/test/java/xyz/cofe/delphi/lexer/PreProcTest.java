@@ -205,4 +205,45 @@ public class PreProcTest {
             }
         );
     }
+
+    @Test
+    public void notDefined(){
+        var src = """
+            procedure TClipboard . SetAsText ( const Value : string ) ;\s
+            {$IF NOT DEFINED(CLR)}\s
+            begin\s
+            SetBuffer ( CTextFormat , PChar ( Value ) ^ , ByteLength ( Value ) + SizeOf ( Char ) ) ;\s
+            {$ELSE}\s
+            var\s
+            Buffer : TBytes ;\s
+            begin\s
+            Buffer := WideBytesOf ( Value + #0 ) ;\s
+            SetBuffer ( CTextFormat , Buffer , Length ( Buffer ) )\s
+            {$ENDIF}\s
+            end ;\s
+            """;
+
+        var tokFileSrc = TokenizedFile.parse(src,"src");
+        var preProc = new PreProcessor(
+            new PreProcState().undef("CLR"),
+            state -> new EvalCondition(
+                new ComputeLog(
+                    new ComputeDefault(state),
+                    msg -> System.out.println("compute "+msg)
+                )
+            )
+        );
+
+        var tokFileRes = preProc.process(tokFileSrc);
+
+        var line = -1;
+        for( var tok : tokFileRes.tokens() ){
+            if( line<tok.getLine() ){
+                System.out.println();
+                line = tok.getLine();
+            }
+
+            System.out.print(tok.getText()+" ");
+        }
+    }
 }

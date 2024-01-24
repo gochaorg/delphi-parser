@@ -37,7 +37,7 @@ public class LexAstParser {
 
     //region Conditional patterns
     @SuppressWarnings("RegExpRedundantEscape")
-    private static final Pattern DEFINE_Pattern = Pattern.compile("(?is)\\{\\$DEFINE\\s+(?<exp>[^\\s]+)\\s*\\}.*");
+    private static final Pattern DEFINE_Pattern = Pattern.compile("(?is)\\{\\$DEFINE\\s+(?<exp>[^\\}]+)\\}.*");
 
     private static Optional<String> DEFINE(Token token) {
         if (token == null) throw new IllegalArgumentException("token==null");
@@ -50,7 +50,7 @@ public class LexAstParser {
     }
 
     @SuppressWarnings("RegExpRedundantEscape")
-    private static final Pattern UNDEF_Pattern = Pattern.compile("(?is)\\{\\$UNDEF\\s+(?<exp>[^\\s]+)\\s*\\}.*");
+    private static final Pattern UNDEF_Pattern = Pattern.compile("(?is)\\{\\$UNDEF\\s+(?<exp>[^\\}]+)\\}.*");
 
     private static Optional<String> UNDEF(Token token) {
         if (token == null) throw new IllegalArgumentException("token==null");
@@ -63,7 +63,7 @@ public class LexAstParser {
     }
 
     @SuppressWarnings("RegExpRedundantEscape")
-    private static final Pattern IFDEF_Pattern = Pattern.compile("(?is)\\{\\$IFDEF\\s+(?<exp>[^\\s]+)\\s*\\}.*");
+    private static final Pattern IFDEF_Pattern = Pattern.compile("(?is)\\{\\$IFDEF\\s+(?<exp>[^\\}]+)\\}.*");
 
     private static Optional<String> IFDEF(Token token) {
         if (token == null) throw new IllegalArgumentException("token==null");
@@ -76,7 +76,7 @@ public class LexAstParser {
     }
 
     @SuppressWarnings("RegExpRedundantEscape")
-    private static final Pattern IFNDEF_Pattern = Pattern.compile("(?is)\\{\\$IFNDEF\\s+(?<exp>[^\\s]+)\\s*\\}.*");
+    private static final Pattern IFNDEF_Pattern = Pattern.compile("(?is)\\{\\$IFNDEF\\s+(?<exp>[^\\}]+)\\}.*");
 
     private static Optional<String> IFNDEF(Token token) {
         if (token == null) throw new IllegalArgumentException("token==null");
@@ -89,7 +89,7 @@ public class LexAstParser {
     }
 
     @SuppressWarnings("RegExpRedundantEscape")
-    private static final Pattern IF_Pattern = Pattern.compile("(?is)\\{\\$IF\\s+(?<exp>[^\\s]+)\\s*\\}.*");
+    private static final Pattern IF_Pattern = Pattern.compile("(?is)\\{\\$IF\\s+(?<exp>[^\\}]+)\\}.*");
 
     private static Optional<String> IF(Token token) {
         if (token == null) throw new IllegalArgumentException("token==null");
@@ -102,7 +102,7 @@ public class LexAstParser {
     }
 
     @SuppressWarnings("RegExpRedundantEscape")
-    private static final Pattern IFOPT_Pattern = Pattern.compile("(?is)\\{\\$IFOPT\\s+(?<exp>[^\\s]+)\\s*\\}.*");
+    private static final Pattern IFOPT_Pattern = Pattern.compile("(?is)\\{\\$IFOPT\\s+(?<exp>[^\\}]+)\\}.*");
 
     private static Optional<String> IFOPT(Token token) {
         if (token == null) throw new IllegalArgumentException("token==null");
@@ -115,7 +115,7 @@ public class LexAstParser {
     }
 
     @SuppressWarnings("RegExpRedundantEscape")
-    private static final Pattern ELSEIF_Pattern = Pattern.compile("(?is)\\{\\$ELSEIF\\s+(?<exp>[^\\s]+)\\s*\\}");
+    private static final Pattern ELSEIF_Pattern = Pattern.compile("(?is)\\{\\$ELSEIF\\s+(?<exp>[^\\}]+)\\}");
 
     private static Optional<String> ELSEIF(Token token) {
         if (token == null) throw new IllegalArgumentException("token==null");

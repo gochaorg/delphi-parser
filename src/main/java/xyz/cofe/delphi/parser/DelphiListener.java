@@ -918,6 +918,16 @@ public interface DelphiListener extends ParseTreeListener {
 	 */
 	void exitClassMethod(DelphiParser.ClassMethodContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link DelphiParser#oleClassMethodAlias}.
+	 * @param ctx the parse tree
+	 */
+	void enterOleClassMethodAlias(DelphiParser.OleClassMethodAliasContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DelphiParser#oleClassMethodAlias}.
+	 * @param ctx the parse tree
+	 */
+	void exitOleClassMethodAlias(DelphiParser.OleClassMethodAliasContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link DelphiParser#classField}.
 	 * @param ctx the parse tree
 	 */
@@ -937,6 +947,36 @@ public interface DelphiListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitClassProperty(DelphiParser.ClassPropertyContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link DelphiParser#classPropSpec}.
+	 * @param ctx the parse tree
+	 */
+	void enterClassPropSpec(DelphiParser.ClassPropSpecContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DelphiParser#classPropSpec}.
+	 * @param ctx the parse tree
+	 */
+	void exitClassPropSpec(DelphiParser.ClassPropSpecContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link DelphiParser#classPropPostfixSpec}.
+	 * @param ctx the parse tree
+	 */
+	void enterClassPropPostfixSpec(DelphiParser.ClassPropPostfixSpecContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DelphiParser#classPropPostfixSpec}.
+	 * @param ctx the parse tree
+	 */
+	void exitClassPropPostfixSpec(DelphiParser.ClassPropPostfixSpecContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link DelphiParser#classPropDispSpec}.
+	 * @param ctx the parse tree
+	 */
+	void enterClassPropDispSpec(DelphiParser.ClassPropDispSpecContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DelphiParser#classPropDispSpec}.
+	 * @param ctx the parse tree
+	 */
+	void exitClassPropDispSpec(DelphiParser.ClassPropDispSpecContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link DelphiParser#classPropertyName}.
 	 * @param ctx the parse tree

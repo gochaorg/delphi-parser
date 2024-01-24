@@ -292,9 +292,49 @@ public sealed interface ClassMethodAst extends InterfaceItemAst, ClassItemAst, S
         }
     }
 
+    record MethodAlias(ImList<String> sourceName, String implName, SourcePosition position,ImList<Comment> comments) implements ClassMethodAst, SrcPos {
+        @Override
+        public ImList<ArgumentAst> arguments() {
+            return ImList.of();
+        }
+
+        @Override
+        public ClassMethodAst astUpdate(AstUpdate.UpdateContext ctx) {
+            var withCmnts = this;
+            if( ctx instanceof AstUpdate.CommentingContext cc ){
+                withCmnts = (MethodAlias) cc.commenting(withCmnts);
+            }
+
+            if( withCmnts.comments==comments )return this;
+
+            return withCmnts;
+        }
+
+        @Override
+        public ClassMethodAst withComments(ImList<Comment> comments) {
+            return new MethodAlias(sourceName, implName, position, comments);
+        }
+
+        public static MethodAlias of(DelphiParser.OleClassMethodAliasContext ctx){
+            if( ctx.comItfMethod==null )throw AstParseError.unExpected(ctx);
+            if( ctx.comItfName==null )throw AstParseError.unExpected(ctx);
+            if( ctx.implMethod==null )throw AstParseError.unExpected(ctx);
+
+            return new MethodAlias(
+                ImList.of(ctx.comItfName.getText(), ctx.comItfMethod.getText()),
+                ctx.implMethod.getText(),
+                SourcePosition.of(ctx),
+                ImList.of()
+            );
+        }
+    }
+
     static ClassMethodAst of(DelphiParser.ClassMethodContext ctx){
-        if( ctx.ident().isEmpty() )throw AstParseError.unExpected();
-        var name = ctx.ident().getText();
+        if( ctx.oleClassMethodAlias()!=null && !ctx.oleClassMethodAlias().isEmpty() )
+            return MethodAlias.of(ctx.oleClassMethodAlias());
+
+        if( ctx.mname==null )throw AstParseError.unExpected();
+        var name = ctx.mname.getText();
 
         ImListLinked<GenericAst.Param> generic_params =
             ctx.genericDefinition()!=null && !ctx.genericDefinition().isEmpty()

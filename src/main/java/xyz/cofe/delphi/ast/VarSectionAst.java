@@ -95,7 +95,7 @@ public sealed interface VarSectionAst
 
             var spec = valueSpec;
 
-            return ImListLinked.of(ctx.identListFlat().ident())
+            return ImListLinked.of(ctx.identListFlat().paramName())
                 .map(RuleContext::getText)
                 .map(name -> new VarDeclaration(name,type,spec,SourcePosition.of(ctx)));
         }

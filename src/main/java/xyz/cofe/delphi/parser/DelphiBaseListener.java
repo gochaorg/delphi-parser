@@ -1109,6 +1109,18 @@ public class DelphiBaseListener implements DelphiListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterOleClassMethodAlias(DelphiParser.OleClassMethodAliasContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOleClassMethodAlias(DelphiParser.OleClassMethodAliasContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterClassField(DelphiParser.ClassFieldContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -1128,6 +1140,42 @@ public class DelphiBaseListener implements DelphiListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitClassProperty(DelphiParser.ClassPropertyContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterClassPropSpec(DelphiParser.ClassPropSpecContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitClassPropSpec(DelphiParser.ClassPropSpecContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterClassPropPostfixSpec(DelphiParser.ClassPropPostfixSpecContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitClassPropPostfixSpec(DelphiParser.ClassPropPostfixSpecContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterClassPropDispSpec(DelphiParser.ClassPropDispSpecContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitClassPropDispSpec(DelphiParser.ClassPropDispSpecContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
