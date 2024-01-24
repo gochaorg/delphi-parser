@@ -114,11 +114,11 @@ constSection                 : constKey (constDeclaration)*  //CHANGED, erased o
 constKey                     : 'const'
                              | 'resourcestring'
                              ;
-constDeclaration             : (customAttribute)? ident (':' typeDecl)? '=' constExpression (hintingDirective)* ';' 
+constDeclaration             : (customAttribute)* ident (':' typeDecl)? '=' constExpression (hintingDirective)* ';'
                              ;
 typeSection                  : 'type' typeDeclaration (typeDeclaration)* 
                              ;
-typeDeclaration              : (customAttribute)? genericTypeIdent '=' typeDecl (hintingDirective)* ';' 
+typeDeclaration              : (customAttribute)* genericTypeIdent '=' typeDecl (hintingDirective)* ';'
                              ;
 varSection                   : varKey varDeclaration*
                              ;
@@ -126,7 +126,7 @@ varKey                       : 'var'
                              | 'threadvar'
                              ;
 // threadvar geen initializations alleen globaal
-varDeclaration               : (customAttribute)? identListFlat ':' typeDecl (varValueSpec)? (hintingDirective)* ';' 
+varDeclaration               : (customAttribute)* identListFlat ':' typeDecl (varValueSpec)? (hintingDirective)* ';'
                              ;
 varValueSpec                 : 'absolute' ident
                              | 'absolute' constExpression
@@ -195,7 +195,7 @@ simpleProcedureType          : procedureTypeHeading ( (';')? callConventionNoSem
                              ;
 procedureReference           : 'reference' 'to' procedureTypeHeading
                              ;
-procedureTypeHeading         : 'function' (formalParameterSection)? ':' (customAttribute)? typeDecl 
+procedureTypeHeading         : 'function' (formalParameterSection)? ':' (customAttribute)* typeDecl
                              | 'procedure' (formalParameterSection)?
                              ;
 variantType                  : 'variant' // SzJ TODO TEMP
@@ -313,16 +313,16 @@ recordHelperItem             : visibility
                              | classMethod
                              | classProperty
                              ;
-classMethod                  : (customAttribute)? ('class')? methodKey mname=ident (genericDefinition)? (formalParameterSection)? ';'? (methodDirective)*
-                             | (customAttribute)? ('class')? 'function' mname=ident (genericDefinition)? (formalParameterSection)? ':' (customAttribute)? typeDecl ';'? (methodDirective)*
-                             | (customAttribute)? ('class')? 'operator' mname=ident (genericDefinition)? (formalParameterSection)? ':' (customAttribute)? typeDecl ';'
+classMethod                  : (customAttribute)* ('class')? methodKey mname=ident (genericDefinition)? (formalParameterSection)? ';'? (methodDirective)*
+                             | (customAttribute)* ('class')? 'function' mname=ident (genericDefinition)? (formalParameterSection)? ':' (customAttribute)* typeDecl ';'? (methodDirective)*
+                             | (customAttribute)* ('class')? 'operator' mname=ident (genericDefinition)? (formalParameterSection)? ':' (customAttribute)* typeDecl ';'
                              | oleClassMethodAlias
                              ;
 
 oleClassMethodAlias          : 'function' comItfName=ident '.' comItfMethod=ident '=' implMethod=ident ';' // очень странная форма для реализации конкретного метода Ole/Com/ActiveX
                              ;
 
-classField                   : (customAttribute)? identList ':' typeDecl ';' (hintingDirective)* 
+classField                   : (customAttribute)* identList ':' typeDecl ';' (hintingDirective)*
                              ;
 
 //classProperty                : (customAttribute)? ('class')? 'property' classPropertyName (classPropertyArray)? (':' genericTypeIdent)? (classPropertyIndex)? (classPropertySpecifier)* ';' (classPropertyEndSpecifier)*
@@ -331,7 +331,7 @@ classField                   : (customAttribute)? identList ':' typeDecl ';' (hi
 //                             ;
 
 // TODO есть еще spec implements
-classProperty   : (customAttribute)? 'class' ? 'property' classPropertyName classPropertyArray? ( ':' genericTypeIdent ) ? ('index' index=expression)? ( classPropSpec* | classPropDispSpec* ) ';'? ( classPropPostfixSpec+ ';')?
+classProperty   : (customAttribute)* 'class' ? 'property' classPropertyName classPropertyArray? ( ':' genericTypeIdent ) ? ('index' index=expression)? ( classPropSpec* | classPropDispSpec* ) ';'? ( classPropPostfixSpec+ ';')?
                 ;
 
 classPropSpec   : 'read' ident
@@ -385,15 +385,16 @@ visibility                   : (STRICT)? 'protected'
 //section procedure
 //****************************
 //TODO Как так procedure имеет возвращаемый тип, а function нет ???
-exportedProcHeading          : 'procedure' ident (formalParameterSection)? ':' (customAttribute)? typeDecl ';' (functionDirective)*
+exportedProcHeading          : 'procedure' ident (formalParameterSection)? ':' (customAttribute)* typeDecl ';' (functionDirective)*
                              | 'function' ident (formalParameterSection)? ';' (functionDirective)*
                              ;
 
-methodDecl                   : methodDeclHeading ';' (methodDirective)* (methodBody)? 
+methodDecl                   : methodDeclHeading ';' (methodDirective)* (methodBody)?
                              ;
-methodDeclHeading            : (customAttribute)? ('class')?  methodKey methodName (formalParameterSection)?
-                             | (customAttribute)? ('class')? 'function' methodName (formalParameterSection)? (':' (customAttribute)? typeDecl)?
-                             | (customAttribute)? 'class' 'operator' methodName (formalParameterSection)? (':' (customAttribute)? typeDecl)?
+
+methodDeclHeading            : (customAttribute)* ('class')?  methodKey methodName (formalParameterSection)?
+                             | (customAttribute)* ('class')? 'function' methodName (formalParameterSection)? (':' (customAttribute)* typeDecl)?
+                             | (customAttribute)* 'class' 'operator' methodName (formalParameterSection)? (':' (customAttribute)* typeDecl)?
                              ;              
 methodKey                    : 'procedure'
                              | 'constructor'
@@ -406,8 +407,8 @@ methodName                   : className=ident (classTArgs=genericDefinition)?
 //procDecl                     : procDeclHeading (functionDirective)* ';' (procBody)?     //CHANGED
 procDecl                     : procDeclHeading ( ';'? funcDirective (';' funcDirective)* )? ';' procBody?
                              ;
-procDeclHeading              : (customAttribute)? 'procedure' ident (formalParameterSection)?             //CHANGED
-                             | (customAttribute)? 'function' ident (formalParameterSection)? ':' typeDecl
+procDeclHeading              : (customAttribute)* 'procedure' ident (formalParameterSection)?             //CHANGED
+                             | (customAttribute)* 'function' ident (formalParameterSection)? ':' typeDecl
                              ;
 formalParameterSection       : '(' (formalParameterList)? ')' 
                              ;

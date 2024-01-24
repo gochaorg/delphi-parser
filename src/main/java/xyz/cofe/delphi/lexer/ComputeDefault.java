@@ -32,6 +32,7 @@ public class ComputeDefault implements EvalCondition.Compute {
             var num = preProcState.get(ident.name());
             if( num.isEmpty() ){
                 return Result.error(new EvalError("variable "+ident.name()+" not defined"));
+                //return Result.ok(new EvalCondition.Value.Bool(false) );
             }
             return Result.ok(num.get());
         }else{
