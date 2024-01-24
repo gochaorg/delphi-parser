@@ -319,7 +319,7 @@ classMethod                  : (customAttribute)* ('class')? methodKey mname=ide
                              | oleClassMethodAlias
                              ;
 
-oleClassMethodAlias          : 'function' comItfName=ident '.' comItfMethod=ident '=' implMethod=ident ';' // очень странная форма для реализации конкретного метода Ole/Com/ActiveX
+oleClassMethodAlias          : ( 'function' | 'procedure' ) comItfName=ident '.' comItfMethod=ident '=' implMethod=ident ';' // очень странная форма для реализации конкретного метода Ole/Com/ActiveX
                              ;
 
 classField                   : (customAttribute)* identList ':' typeDecl ';' (hintingDirective)*
