@@ -334,8 +334,8 @@ classField                   : (customAttribute)* identList ':' typeDecl ';' (hi
 classProperty   : (customAttribute)* 'class' ? 'property' classPropertyName classPropertyArray? ( ':' genericTypeIdent ) ? ('index' index=expression)? ( classPropSpec* | classPropDispSpec* ) ';'? ( classPropPostfixSpec+ ';')?
                 ;
 
-classPropSpec   : 'read' ident
-                | 'write' ident
+classPropSpec   : 'read' ident ('.' ident)*
+                | 'write' ident ('.' ident)*
                 ;
 
 classPropPostfixSpec    : 'default' expression ?
@@ -375,7 +375,7 @@ classPropertyDispInterface   : 'readonly' ('dispid' expression)? ';'
                              | 'writeonly' ('dispid' expression)? ';'
                              | dispIDDirective
                              ;
-visibility                   : (STRICT)? 'protected' 
+visibility                   : (STRICT)? 'protected'
                              | (STRICT)? 'private'
                              | ( 'public'
                              | 'published' 
@@ -487,6 +487,7 @@ atom    : ( intNum
 identInAtom : RESIDENT
             | DISPID
             | NODEFAULT
+            | HELPER
             | ident
             ;
 

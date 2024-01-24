@@ -7,13 +7,13 @@ import java.util.Optional;
 public sealed interface PropertySpecifier {
     record Read(
         // TODO необходимо resolve на метод/поле
-        String name // ref to method
+        ImList<String> name // ref to method
     ) implements PropertySpecifier {
     }
 
     record Write(
         // TODO необходимо resolve на метод/поле
-        String name // ref to method
+        ImList<String> name // ref to method
     ) implements PropertySpecifier {
     }
 

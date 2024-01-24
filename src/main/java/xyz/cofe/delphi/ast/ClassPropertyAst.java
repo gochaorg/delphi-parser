@@ -91,10 +91,10 @@ public sealed interface ClassPropertyAst extends InterfaceItemAst, ClassItemAst,
             if (ctx.classPropSpec() != null && !ctx.classPropSpec().isEmpty()) {
                 spec = spec.append(ImList.of(ctx.classPropSpec()).map(Specifier::of));
             }
-            if( ctx.classPropDispSpec()!=null && !ctx.classPropDispSpec().isEmpty()){
+            if (ctx.classPropDispSpec() != null && !ctx.classPropDispSpec().isEmpty()) {
                 spec = spec.append(ImList.of(ctx.classPropDispSpec()).map(Specifier::of));
             }
-            if( ctx.classPropPostfixSpec()!=null && !ctx.classPropPostfixSpec().isEmpty()){
+            if (ctx.classPropPostfixSpec() != null && !ctx.classPropPostfixSpec().isEmpty()) {
                 spec = spec.append(ImList.of(ctx.classPropPostfixSpec()).map(Specifier::of));
             }
 
@@ -131,43 +131,43 @@ public sealed interface ClassPropertyAst extends InterfaceItemAst, ClassItemAst,
             throw AstParseError.notImplemented();
         }
 
-        static Specifier of(DelphiParser.ClassPropSpecContext ctx){
-            if( ctx.READ()!=null && ctx.ident()!=null ){
-                return new Read(ctx.ident().getText());
-            }else if( ctx.WRITE()!=null && ctx.ident()!=null ){
-                return new Write(ctx.ident().getText());
-            }else{
+        static Specifier of(DelphiParser.ClassPropSpecContext ctx) {
+            if (ctx.READ() != null && ctx.ident() != null && !ctx.ident().isEmpty()) {
+                return new Read(ImList.of(ctx.ident()).map(RuleContext::getText));
+            } else if (ctx.WRITE() != null && ctx.ident() != null && !ctx.ident().isEmpty()) {
+                return new Write(ImList.of(ctx.ident()).map(RuleContext::getText));
+            } else {
                 throw AstParseError.unExpected(ctx);
             }
         }
 
-        static Specifier of(DelphiParser.ClassPropPostfixSpecContext ctx){
-            if( ctx.DEFAULT()!=null ){
-                if( ctx.expression()!=null ){
+        static Specifier of(DelphiParser.ClassPropPostfixSpecContext ctx) {
+            if (ctx.DEFAULT() != null) {
+                if (ctx.expression() != null) {
                     return new Default(
                         Optional.of(ExpressionAst.of(ctx.expression()))
                     );
                 }
                 return new Default(Optional.empty());
-            }else if( ctx.NODEFAULT()!=null ){
+            } else if (ctx.NODEFAULT() != null) {
                 return new NoDefault();
-            }else if( ctx.STORED()!=null && ctx.expression()!=null ){
+            } else if (ctx.STORED() != null && ctx.expression() != null) {
                 return new Stored(ExpressionAst.of(ctx.expression()));
-            }else{
+            } else {
                 throw AstParseError.unExpected(ctx);
             }
         }
 
-        static Specifier of(DelphiParser.ClassPropDispSpecContext ctx){
-            if( ctx.READONLY()!=null )return new ReadOnly();
-            if( ctx.WRITEONLY()!=null )return new WriteOnly();
-            if( ctx.DISPID()!=null && ctx.expression()!=null )return new DispID(ExpressionAst.of(ctx.expression()));
+        static Specifier of(DelphiParser.ClassPropDispSpecContext ctx) {
+            if (ctx.READONLY() != null) return new ReadOnly();
+            if (ctx.WRITEONLY() != null) return new WriteOnly();
+            if (ctx.DISPID() != null && ctx.expression() != null) return new DispID(ExpressionAst.of(ctx.expression()));
             throw AstParseError.unExpected(ctx);
         }
     }
 
     record Read(
-        String name
+        ImList<String> name
     ) implements Specifier {
         @Override
         public Read astUpdate(AstUpdate.UpdateContext ctx) {
@@ -176,7 +176,7 @@ public sealed interface ClassPropertyAst extends InterfaceItemAst, ClassItemAst,
     }
 
     record Write(
-        String name
+        ImList<String> name
     ) implements Specifier {
         @Override
         public Write astUpdate(AstUpdate.UpdateContext ctx) {
