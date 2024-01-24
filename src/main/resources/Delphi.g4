@@ -405,7 +405,7 @@ methodName                   : className=ident (classTArgs=genericDefinition)?
                                '.' methName=ident (methTArgs=genericDefinition)?
                              ;                             
 //procDecl                     : procDeclHeading (functionDirective)* ';' (procBody)?     //CHANGED
-procDecl                     : procDeclHeading ( ';'? funcDirective (';' funcDirective)* )? ';' procBody?
+procDecl                     : procDeclHeading ( ';'? funcDirective (';' funcDirective)* )? ';'? procBody? //TODO блять, точка с запятой - вообще по случайной логике раставляются
                              ;
 procDeclHeading              : (customAttribute)* 'procedure' ident (formalParameterSection)?             //CHANGED
                              | (customAttribute)* 'function' ident (formalParameterSection)? ':' typeDecl
