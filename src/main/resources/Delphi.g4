@@ -594,7 +594,7 @@ caseLabel                    : expression ('..' expression)?
                              ;
 repeatStatement              : 'repeat' statementList 'until' cond=expression
                              ;
-whileStatement               : 'while' cond=expression 'do' ( ';' | statement )
+whileStatement               : 'while' cond=expression 'do' ( ';' | statement ) ?
                              ;
 forStatement                 : 'for' iterValue=atom ':=' start=expression 'to' end=expression 'do' statement
                              | 'for' iterValue=atom ':=' startBig=expression 'downto' endSmall=expression 'do' statement
