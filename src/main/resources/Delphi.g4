@@ -49,7 +49,7 @@ packageE                     : packageHead requiresClause (containsClause)? 'end
                              ;
 packageHead                  : 'package' namespaceName ';'
                              ;
-unit                         : unitHead unitInterface unitImplementation unitBlock '.'
+unit                         : unitHead unitInterface unitImplementation? unitBlock '.'
                              ;
 unitHead                     : 'unit' namespaceName (hintingDirective)* ';' 
                              ;
