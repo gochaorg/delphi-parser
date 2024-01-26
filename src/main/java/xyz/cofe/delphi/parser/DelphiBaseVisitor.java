@@ -998,6 +998,13 @@ public class DelphiBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitGenericCallTypeParams(DelphiParser.GenericCallTypeParamsContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitPreDefinedValues(DelphiParser.PreDefinedValuesContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}

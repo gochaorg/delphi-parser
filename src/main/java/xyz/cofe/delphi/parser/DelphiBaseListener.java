@@ -1697,6 +1697,18 @@ public class DelphiBaseListener implements DelphiListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterGenericCallTypeParams(DelphiParser.GenericCallTypeParamsContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitGenericCallTypeParams(DelphiParser.GenericCallTypeParamsContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterPreDefinedValues(DelphiParser.PreDefinedValuesContext ctx) { }
 	/**
 	 * {@inheritDoc}

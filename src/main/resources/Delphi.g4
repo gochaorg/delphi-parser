@@ -313,7 +313,7 @@ recordHelperItem             : visibility
                              | classMethod
                              | classProperty
                              ;
-classMethod                  : (customAttribute)* ('class')? methodKey mname=ident (genericDefinition)? (formalParameterSection)? ';'? (methodDirective)*
+classMethod                  : (customAttribute)* ('class')? methodKey mname=ident (genericDefinition)? (formalParameterSection)? ';'? ( methodDirective)*
                              | (customAttribute)* ('class')? 'function' mname=ident (genericDefinition)? (formalParameterSection)? ':' (customAttribute)* typeDecl ';'? (methodDirective)*
                              | (customAttribute)* ('class')? 'operator' mname=ident (genericDefinition)? (formalParameterSection)? ':' (customAttribute)* typeDecl ';'
                              | oleClassMethodAlias
@@ -331,11 +331,16 @@ classField                   : (customAttribute)* identList ':' typeDecl ';' (hi
 //                             ;
 
 // TODO есть еще spec implements
-classProperty   : (customAttribute)* 'class' ? 'property' classPropertyName classPropertyArray? ( ':' genericTypeIdent ) ? ('index' index=expression)? ( classPropSpec* | classPropDispSpec* ) ';'? ( classPropPostfixSpec+ ';')?
+classProperty   : (customAttribute)* 'class' ?
+                  'property' classPropertyName
+                        classPropertyArray?
+                   ( ':' genericTypeIdent ) ?
+                   ('index' index=expression)? ( classPropSpec* | classPropDispSpec* ) ';'? ( classPropPostfixSpec+ ';')?
                 ;
 
 classPropSpec   : 'read' ident ('.' ident)*
                 | 'write' ident ('.' ident)*
+                | 'implements' ident (',' ident)*
                 ;
 
 classPropPostfixSpec    : 'default' expression ?
@@ -467,7 +472,7 @@ sumOp   : left=mulOp ( op=( '+' | '-' | 'or' | 'xor' ) right=expression )? ;
 mulOp   : left=unaryOp ( op=( '*' | '/' | 'div' | 'mod' | 'and' | 'shl' | 'shr' | 'as' ) right=expression )? ;
 
 // макс приоритет операторов
-unaryOp : op=('@' | 'not' | '+' | '-' ) exp=expression
+unaryOp : op=('@' | 'not' | '+' | '-' | '^' ) exp=expression
         | atom
         ;
 
@@ -477,6 +482,7 @@ atom    : ( intNum
           | stringFactor
           | preDefinedValues
           | ('inherited')? identInAtom
+          | 'inherited' // TODO внезапно это то же валидный идентификатор!! блять!!
           | setExpression
           | '(' expression ')' // скобочное выражение
           ) postfix*
@@ -498,6 +504,7 @@ postfix : arrayIndexAccess
         | deref
         | calling
         | fieldAccess
+        | genericCallTypeParams
         ;
 
 // получение значение по адресу
@@ -541,6 +548,8 @@ unnamedPassParam : expression;
 arrayIndexAccess  : '[' expression (',' expression)* ']';
 
 fieldAccess : '.' fieldName=paramName;
+
+genericCallTypeParams : '<' genericTypeIdent (',' genericTypeIdent)* '>';
 
 preDefinedValues    : 'nil' | 'true' | 'false';
 

@@ -1408,6 +1408,16 @@ public interface DelphiListener extends ParseTreeListener {
 	 */
 	void exitFieldAccess(DelphiParser.FieldAccessContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link DelphiParser#genericCallTypeParams}.
+	 * @param ctx the parse tree
+	 */
+	void enterGenericCallTypeParams(DelphiParser.GenericCallTypeParamsContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DelphiParser#genericCallTypeParams}.
+	 * @param ctx the parse tree
+	 */
+	void exitGenericCallTypeParams(DelphiParser.GenericCallTypeParamsContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link DelphiParser#preDefinedValues}.
 	 * @param ctx the parse tree
 	 */

@@ -851,6 +851,12 @@ public interface DelphiVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitFieldAccess(DelphiParser.FieldAccessContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link DelphiParser#genericCallTypeParams}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitGenericCallTypeParams(DelphiParser.GenericCallTypeParamsContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link DelphiParser#preDefinedValues}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
