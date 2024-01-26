@@ -353,7 +353,9 @@ classPropDispSpec : 'readonly'
                   | 'dispid' expression
                   ;
 
-classPropertyName            : RESIDENT | ident; //TODO Возможно надо добавить не только RESIDENT
+classPropertyName            : PROTECTED
+                             | RESIDENT
+                             | ident; //TODO Возможно надо добавить не только RESIDENT
 
 classPropertyArray           : '[' formalParameterList ']'
                              ;
@@ -441,8 +443,12 @@ customAttribute              : customAttributeDecl //'abekat' //customAttributeL
 
 customAttributeList          : (customAttributeDecl)*
                              ;
-customAttributeDecl          : '[' namespacedQualifiedIdent ('(' (expressionList)? ')')? ']'  
-                             ;                             
+customAttributeDecl          : '[' customAttributeNamedCall (',' customAttributeNamedCall)* ']'
+                             ;
+
+customAttributeNamedCall     : ( namespacedQualifiedIdent | paramName ) ('(' (expressionList)? ')')?
+                             ;
+
 
 //****************************
 //section expression

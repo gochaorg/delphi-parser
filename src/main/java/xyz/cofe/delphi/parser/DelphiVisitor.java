@@ -737,6 +737,12 @@ public interface DelphiVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitCustomAttributeDecl(DelphiParser.CustomAttributeDeclContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link DelphiParser#customAttributeNamedCall}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCustomAttributeNamedCall(DelphiParser.CustomAttributeNamedCallContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link DelphiParser#expression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

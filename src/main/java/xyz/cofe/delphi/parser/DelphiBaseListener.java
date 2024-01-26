@@ -1469,6 +1469,18 @@ public class DelphiBaseListener implements DelphiListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterCustomAttributeNamedCall(DelphiParser.CustomAttributeNamedCallContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitCustomAttributeNamedCall(DelphiParser.CustomAttributeNamedCallContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterExpression(DelphiParser.ExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}

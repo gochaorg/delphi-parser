@@ -7,8 +7,10 @@ import xyz.cofe.delphi.parser.DelphiLexer;
 import java.io.IOError;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 
 public record TokenizedFile(Source source, ImList<Token> tokens) {
     public static TokenizedFile parse(Source source){
@@ -30,9 +32,13 @@ public record TokenizedFile(Source source, ImList<Token> tokens) {
 
     //TODO кодировка utf-8 bom портит все, надо вырезать первые BOM байты
     public static TokenizedFile parse(Path path, Charset charset) {
+        return parse(path,charset,false);
+    }
+
+    public static TokenizedFile parse(Path path, Charset charset, boolean checkUtf8BOM) {
         if( path==null )throw new IllegalArgumentException("path==null");
         if( charset==null )throw new IllegalArgumentException("charset==null");
-        return parse(new Source.File(path, charset));
+        return parse(new Source.File(path, charset, checkUtf8BOM));
     }
 
     public TokenStream toTokenStream() {
@@ -43,10 +49,34 @@ public record TokenizedFile(Source source, ImList<Token> tokens) {
     public sealed interface Source {
         String sourceName();
         String text();
-        record File(Path path, Charset charset) implements Source {
+        record File(Path path, Charset charset, boolean checkUtf8BOM) implements Source {
             @Override
             public String text() {
                 try {
+                    boolean hasUtf8bom = false;
+
+                    if( checkUtf8BOM ) {
+                        try (var strm = Files.newInputStream(path)) {
+                            byte[] buff = new byte[10];
+                            var reads = strm.read(buff);
+                            if (reads > 2) {
+                                int b0 = buff[0] & 0xFF;
+                                int b1 = buff[1] & 0xFF;
+                                int b2 = buff[2] & 0xFF;
+                                hasUtf8bom = b0 == 0xEF && b1 == 0xBB && b2 == 0xBF;
+                            }
+                        }
+                    }
+
+                    if( checkUtf8BOM && hasUtf8bom ){
+                        var bytes = Files.readAllBytes(path);
+                        if( bytes.length>3 ){
+                            bytes = Arrays.copyOfRange(bytes,3,bytes.length);
+                        }
+
+                        return new String(bytes, StandardCharsets.UTF_8);
+                    }
+
                     return Files.readString(path, charset);
                 } catch (IOException e) {
                     throw new IOError(e);

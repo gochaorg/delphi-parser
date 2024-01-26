@@ -1218,6 +1218,16 @@ public interface DelphiListener extends ParseTreeListener {
 	 */
 	void exitCustomAttributeDecl(DelphiParser.CustomAttributeDeclContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link DelphiParser#customAttributeNamedCall}.
+	 * @param ctx the parse tree
+	 */
+	void enterCustomAttributeNamedCall(DelphiParser.CustomAttributeNamedCallContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DelphiParser#customAttributeNamedCall}.
+	 * @param ctx the parse tree
+	 */
+	void exitCustomAttributeNamedCall(DelphiParser.CustomAttributeNamedCallContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link DelphiParser#expression}.
 	 * @param ctx the parse tree
 	 */
