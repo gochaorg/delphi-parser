@@ -1,4 +1,4 @@
-// Generated from C:/code/other/delphi-parser/src/main/resources/Delphi.g4 by ANTLR 4.13.1
+// Generated from /home/user/code/delphi/delphi-parser/src/main/resources/Delphi.g4 by ANTLR 4.13.1
 package xyz.cofe.delphi.parser;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -724,12 +724,6 @@ public interface DelphiVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitCustomAttribute(DelphiParser.CustomAttributeContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link DelphiParser#customAttributeList}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitCustomAttributeList(DelphiParser.CustomAttributeListContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link DelphiParser#customAttributeDecl}.
 	 * @param ctx the parse tree

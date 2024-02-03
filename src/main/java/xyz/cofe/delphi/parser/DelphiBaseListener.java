@@ -1,4 +1,4 @@
-// Generated from C:/code/other/delphi-parser/src/main/resources/Delphi.g4 by ANTLR 4.13.1
+// Generated from /home/user/code/delphi/delphi-parser/src/main/resources/Delphi.g4 by ANTLR 4.13.1
 package xyz.cofe.delphi.parser;
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -1440,18 +1440,6 @@ public class DelphiBaseListener implements DelphiListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitCustomAttribute(DelphiParser.CustomAttributeContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterCustomAttributeList(DelphiParser.CustomAttributeListContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitCustomAttributeList(DelphiParser.CustomAttributeListContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

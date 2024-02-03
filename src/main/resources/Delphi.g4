@@ -314,8 +314,8 @@ recordHelperItem             : visibility
                              | classProperty
                              ;
 classMethod                  : (customAttribute)* ('class')? methodKey mname=ident (genericDefinition)? (formalParameterSection)? ';'? ( methodDirective)*
-                             | (customAttribute)* ('class')? 'function' mname=ident (genericDefinition)? (formalParameterSection)? ':' (customAttribute)* typeDecl ';'? (methodDirective)*
-                             | (customAttribute)* ('class')? 'operator' mname=ident (genericDefinition)? (formalParameterSection)? ':' (customAttribute)* typeDecl ';'
+                             | (customAttribute)* ('class')? 'function' mname=ident (genericDefinition)? (formalParameterSection)? ':' (retAttr=customAttribute)* typeDecl ';'? (methodDirective)*
+                             | (customAttribute)* ('class')? 'operator' mname=ident (genericDefinition)? (formalParameterSection)? ':' (retAttr=customAttribute)* typeDecl ';'
                              | oleClassMethodAlias
                              ;
 

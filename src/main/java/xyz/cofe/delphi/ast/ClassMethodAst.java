@@ -5,14 +5,19 @@ import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.delphi.parser.DelphiParser;
 
 import java.util.Optional;
+
 import static xyz.cofe.delphi.ast.AstNode.upcast;
 
 /**
  * Методы класса/интерфейса/...
  */
-public sealed interface ClassMethodAst extends InterfaceItemAst, ClassItemAst, SrcPos, Commented<ClassMethodAst> {
+public sealed interface ClassMethodAst extends InterfaceItemAst,
+                                               ClassItemAst,
+                                               SrcPos,
+                                               Commented<ClassMethodAst> {
     /**
      * аргументы метода
+     *
      * @return аргументы
      */
     ImList<ArgumentAst> arguments();
@@ -22,10 +27,11 @@ public sealed interface ClassMethodAst extends InterfaceItemAst, ClassItemAst, S
 
     /**
      * Процедура
-     * @param name имя
+     *
+     * @param name          имя
      * @param genericParams generic параметры
-     * @param arguments аргументы
-     * @param directives директивы компилятора
+     * @param arguments     аргументы
+     * @param directives    директивы компилятора
      */
     record Procedure(
         String name,
@@ -33,20 +39,28 @@ public sealed interface ClassMethodAst extends InterfaceItemAst, ClassItemAst, S
         ImList<ArgumentAst> arguments,
         ImList<MethodDirectiveAst> directives,
         SourcePosition position,
-        ImList<Comment> comments
-    ) implements ClassMethodAst, SrcPos {
+        ImList<Comment> comments,
+        ImList<CustomAttributeAst> attributes
+    ) implements ClassMethodAst,
+                 SrcPos {
         @Override
         public Procedure astUpdate(AstUpdate.UpdateContext ctx) {
             var genericParams = ctx.update(this.genericParams); // AstUpdate.astUpdates(this.genericParams, ctx);
             var arguments = ctx.update(this.arguments);
             var directives = ctx.updateUnsafe(this.directives);
+            var attrs = ctx.update(attributes);
 
             var res = this;
-            if( ctx instanceof AstUpdate.CommentingContext cc ){
+            if (ctx instanceof AstUpdate.CommentingContext cc) {
                 res = (Procedure) cc.commenting(res);
             }
 
-            if( directives.isEmpty() && genericParams.isEmpty() && arguments.isEmpty() && res.comments==this.comments )return this;
+            if (directives.isEmpty()
+                && genericParams.isEmpty()
+                && arguments.isEmpty()
+                && res.comments == this.comments
+                && attrs.isEmpty()
+            ) return this;
 
             //noinspection unchecked,rawtypes
             res = new Procedure(
@@ -55,7 +69,8 @@ public sealed interface ClassMethodAst extends InterfaceItemAst, ClassItemAst, S
                 arguments.orElse(this.arguments),
                 (ImList) directives.orElse((ImList) this.directives), //directives.orElse(this.directives),
                 position,
-                res.comments
+                res.comments,
+                attrs.orElse(attributes)
             );
 
             return res;
@@ -63,22 +78,29 @@ public sealed interface ClassMethodAst extends InterfaceItemAst, ClassItemAst, S
 
         @Override
         public Procedure withComments(ImList<Comment> comments) {
-            if( comments==null ) throw new IllegalArgumentException("comments==null");
-            return new Procedure(name,genericParams,arguments,directives,position,comments);
+            if (comments == null) throw new IllegalArgumentException("comments==null");
+            return new Procedure(
+                name, genericParams, arguments, directives, position, comments,
+                attributes
+            );
         }
 
         @Override
         public ImList<? extends AstNode> nestedAstNodes() {
-            return upcast(genericParams).append(upcast(arguments)).append(upcast(directives));
+            return upcast(genericParams)
+                .append(upcast(arguments))
+                .append(upcast(directives))
+                .append(upcast(attributes));
         }
     }
 
     /**
      * Конструктор
-     * @param name имя
+     *
+     * @param name          имя
      * @param genericParams generic параметры
-     * @param arguments аргументы
-     * @param directives директивы компилятора
+     * @param arguments     аргументы
+     * @param directives    директивы компилятора
      */
     record Constructor(
         String name,
@@ -86,24 +108,32 @@ public sealed interface ClassMethodAst extends InterfaceItemAst, ClassItemAst, S
         ImList<ArgumentAst> arguments,
         ImList<MethodDirectiveAst> directives,
         SourcePosition position,
-        ImList<Comment> comments
-    ) implements ClassMethodAst, SrcPos {
+        ImList<Comment> comments,
+        ImList<CustomAttributeAst> attributes
+    ) implements ClassMethodAst,
+                 SrcPos {
         @Override
         public Constructor withComments(ImList<Comment> comments) {
-            return new Constructor(name,genericParams,arguments,directives,position,comments);
+            return new Constructor(name, genericParams, arguments, directives, position, comments, attributes);
         }
 
         public Constructor astUpdate(AstUpdate.UpdateContext ctx) {
             var genericParams = ctx.update(this.genericParams);
             var arguments = ctx.update(this.arguments);
             var directives = ctx.updateUnsafe(this.directives);
+            var attrs = ctx.update(attributes);
 
             var res = this;
-            if( ctx instanceof AstUpdate.CommentingContext cc ){
+            if (ctx instanceof AstUpdate.CommentingContext cc) {
                 res = (Constructor) cc.commenting(res);
             }
 
-            if( directives.isEmpty() && genericParams.isEmpty() && arguments.isEmpty() && res.comments==this.comments )return this;
+            if (directives.isEmpty()
+                && genericParams.isEmpty()
+                && arguments.isEmpty()
+                && res.comments == this.comments
+                && attrs.isEmpty()
+            ) return this;
 
             //noinspection unchecked,rawtypes
             res = new Constructor(
@@ -112,7 +142,8 @@ public sealed interface ClassMethodAst extends InterfaceItemAst, ClassItemAst, S
                 arguments.orElse(this.arguments),
                 (ImList) directives.orElse((ImList) this.directives),
                 position,
-                res.comments
+                res.comments,
+                attrs.orElse(attributes)
             );
 
             return res;
@@ -120,16 +151,20 @@ public sealed interface ClassMethodAst extends InterfaceItemAst, ClassItemAst, S
 
         @Override
         public ImList<? extends AstNode> nestedAstNodes() {
-            return upcast(genericParams).append(upcast(arguments)).append(upcast(directives));
+            return upcast(genericParams)
+                .append(upcast(arguments))
+                .append(upcast(directives))
+                .append(upcast(attributes));
         }
     }
 
     /**
      * Деструктор
-     * @param name имя
+     *
+     * @param name          имя
      * @param genericParams generic параметры
-     * @param arguments аргументы
-     * @param directives директивы компилятора
+     * @param arguments     аргументы
+     * @param directives    директивы компилятора
      */
     record Destructor(
         String name,
@@ -137,19 +172,27 @@ public sealed interface ClassMethodAst extends InterfaceItemAst, ClassItemAst, S
         ImList<ArgumentAst> arguments,
         ImList<MethodDirectiveAst> directives,
         SourcePosition position,
-        ImList<Comment> comments
-    ) implements ClassMethodAst, SrcPos {
+        ImList<Comment> comments,
+        ImList<CustomAttributeAst> attributes
+    ) implements ClassMethodAst,
+                 SrcPos {
         public Destructor astUpdate(AstUpdate.UpdateContext ctx) {
             var genericParams = ctx.update(this.genericParams);
             var arguments = ctx.update(this.arguments);
             var directives = ctx.updateUnsafe(this.directives);
+            var attrs = ctx.update(attributes);
 
             var res = this;
-            if( ctx instanceof AstUpdate.CommentingContext cc ){
+            if (ctx instanceof AstUpdate.CommentingContext cc) {
                 res = (Destructor) cc.commenting(res);
             }
 
-            if( directives.isEmpty() && genericParams.isEmpty() && arguments.isEmpty() && res.comments==this.comments )return this;
+            if (directives.isEmpty()
+                && genericParams.isEmpty()
+                && arguments.isEmpty()
+                && res.comments == this.comments
+                && attrs.isEmpty()
+            ) return this;
 
             //noinspection unchecked,rawtypes
             res = new Destructor(
@@ -158,7 +201,8 @@ public sealed interface ClassMethodAst extends InterfaceItemAst, ClassItemAst, S
                 arguments.orElse(this.arguments),
                 (ImList) directives.orElse((ImList) this.directives),
                 position,
-                res.comments
+                res.comments,
+                attrs.orElse(attributes)
             );
 
             return res;
@@ -166,22 +210,27 @@ public sealed interface ClassMethodAst extends InterfaceItemAst, ClassItemAst, S
 
         @Override
         public Destructor withComments(ImList<Comment> comments) {
-            return new Destructor(name,genericParams,arguments,directives,position,comments);
+            return new Destructor(name, genericParams, arguments, directives, position, comments, attributes);
         }
 
         @Override
         public ImList<? extends AstNode> nestedAstNodes() {
-            return upcast(genericParams).append(upcast(arguments)).append(upcast(directives));
+            return
+                upcast(genericParams)
+                    .append(upcast(arguments))
+                    .append(upcast(directives))
+                    .append(upcast(attributes));
         }
     }
 
     /**
      * Функция
-     * @param name имя
+     *
+     * @param name          имя
      * @param genericParams generic параметры
-     * @param arguments аргументы
-     * @param result результат вызова
-     * @param directives директивы компилятора
+     * @param arguments     аргументы
+     * @param result        результат вызова
+     * @param directives    директивы компилятора
      */
     record Function(
         String name,
@@ -190,27 +239,34 @@ public sealed interface ClassMethodAst extends InterfaceItemAst, ClassItemAst, S
         TypeDeclAst result,
         ImList<MethodDirectiveAst> directives,
         SourcePosition position,
-        ImList<Comment> comments
-    ) implements ClassMethodAst, SrcPos {
+        ImList<Comment> comments,
+        ImList<CustomAttributeAst> attributes,
+        ImList<CustomAttributeAst> resultAttributes
+    ) implements ClassMethodAst,
+                 SrcPos {
         @Override
         public Function astUpdate(AstUpdate.UpdateContext ctx) {
             var genericParams = ctx.update(this.genericParams); // AstUpdate.astUpdates(this.genericParams, ctx);
             var arguments = ctx.update(this.arguments);
             var directives = ctx.updateUnsafe(this.directives);
             var result = this.result.astUpdate(ctx);
+            var attrs = ctx.update(attributes);
+            var rattrs = ctx.update(resultAttributes);
 
             var res = this;
 
-            if( ctx instanceof AstUpdate.CommentingContext cc ){
+            if (ctx instanceof AstUpdate.CommentingContext cc) {
                 res = (Function) cc.commenting(res);
             }
 
-            if( directives.isEmpty()
-            && genericParams.isEmpty()
-            && arguments.isEmpty()
-            && result==this.result
-            && res.comments==this.comments
-            )return this;
+            if (directives.isEmpty()
+                && genericParams.isEmpty()
+                && arguments.isEmpty()
+                && result == this.result
+                && res.comments == this.comments
+                && attrs.isEmpty()
+                && rattrs.isEmpty()
+            ) return this;
 
             //noinspection unchecked,rawtypes
             res = new Function(
@@ -220,7 +276,9 @@ public sealed interface ClassMethodAst extends InterfaceItemAst, ClassItemAst, S
                 result,
                 (ImList) directives.orElse((ImList) this.directives),
                 position,
-                res.comments
+                res.comments,
+                attrs.orElse(attributes),
+                rattrs.orElse(resultAttributes)
             );
 
             return res;
@@ -228,22 +286,37 @@ public sealed interface ClassMethodAst extends InterfaceItemAst, ClassItemAst, S
 
         @Override
         public Function withComments(ImList<Comment> comments) {
-            if( comments==null ) throw new IllegalArgumentException("comments==null");
-            return new Function(name,genericParams,arguments,result,directives,position,comments);
+            if (comments == null) throw new IllegalArgumentException("comments==null");
+            return new Function(
+                name,
+                genericParams,
+                arguments,
+                result,
+                directives,
+                position,
+                comments,
+                attributes,
+                resultAttributes);
         }
 
         @Override
         public ImList<? extends AstNode> nestedAstNodes() {
-            return upcast(genericParams).append(upcast(arguments)).append(upcast(directives)).append(result);
+            return upcast(genericParams)
+                .append(upcast(arguments))
+                .append(upcast(directives))
+                .append(result)
+                .append(upcast(attributes))
+                .append(resultAttributes);
         }
     }
 
     /**
      * Оператор
-     * @param name имя
+     *
+     * @param name          имя
      * @param genericParams generic параметры
-     * @param arguments аргументы
-     * @param result результат вызова
+     * @param arguments     аргументы
+     * @param result        результат вызова
      */
     record Operator(
         String name,
@@ -251,23 +324,30 @@ public sealed interface ClassMethodAst extends InterfaceItemAst, ClassItemAst, S
         ImList<ArgumentAst> arguments,
         TypeDeclAst result,
         SourcePosition position,
-        ImList<Comment> comments
-    ) implements ClassMethodAst, SrcPos {
+        ImList<Comment> comments,
+        ImList<CustomAttributeAst> attributes,
+        ImList<CustomAttributeAst> resultAttributes
+    ) implements ClassMethodAst,
+                 SrcPos {
         public Operator astUpdate(AstUpdate.UpdateContext ctx) {
             var genericParams = ctx.update(this.genericParams);
             var arguments = ctx.update(this.arguments);
             var result = this.result.astUpdate(ctx);
+            var attrs = ctx.update(attributes);
+            var rattrs = ctx.update(resultAttributes);
 
             var res = this;
-            if( ctx instanceof AstUpdate.CommentingContext cc ){
+            if (ctx instanceof AstUpdate.CommentingContext cc) {
                 res = (Operator) cc.commenting(res);
             }
 
-            if( genericParams.isEmpty()
-            && arguments.isEmpty()
-            && res.comments==this.comments
-            && result==this.result
-            )return this;
+            if (genericParams.isEmpty()
+                && arguments.isEmpty()
+                && res.comments == this.comments
+                && result == this.result
+                && attrs.isEmpty()
+                && rattrs.isEmpty()
+            ) return this;
 
             res = new Operator(
                 name,
@@ -275,7 +355,9 @@ public sealed interface ClassMethodAst extends InterfaceItemAst, ClassItemAst, S
                 arguments.orElse(this.arguments),
                 result,
                 position,
-                res.comments
+                res.comments,
+                attrs.orElse(attributes),
+                rattrs.orElse(resultAttributes)
             );
 
             return res;
@@ -292,7 +374,9 @@ public sealed interface ClassMethodAst extends InterfaceItemAst, ClassItemAst, S
         }
     }
 
-    record MethodAlias(ImList<String> sourceName, String implName, SourcePosition position,ImList<Comment> comments) implements ClassMethodAst, SrcPos {
+    record MethodAlias(ImList<String> sourceName, String implName, SourcePosition position,
+                       ImList<Comment> comments) implements ClassMethodAst,
+                                                            SrcPos {
         @Override
         public ImList<ArgumentAst> arguments() {
             return ImList.of();
@@ -301,11 +385,11 @@ public sealed interface ClassMethodAst extends InterfaceItemAst, ClassItemAst, S
         @Override
         public ClassMethodAst astUpdate(AstUpdate.UpdateContext ctx) {
             var withCmnts = this;
-            if( ctx instanceof AstUpdate.CommentingContext cc ){
+            if (ctx instanceof AstUpdate.CommentingContext cc) {
                 withCmnts = (MethodAlias) cc.commenting(withCmnts);
             }
 
-            if( withCmnts.comments==comments )return this;
+            if (withCmnts.comments == comments) return this;
 
             return withCmnts;
         }
@@ -315,10 +399,10 @@ public sealed interface ClassMethodAst extends InterfaceItemAst, ClassItemAst, S
             return new MethodAlias(sourceName, implName, position, comments);
         }
 
-        public static MethodAlias of(DelphiParser.OleClassMethodAliasContext ctx){
-            if( ctx.comItfMethod==null )throw AstParseError.unExpected(ctx);
-            if( ctx.comItfName==null )throw AstParseError.unExpected(ctx);
-            if( ctx.implMethod==null )throw AstParseError.unExpected(ctx);
+        public static MethodAlias of(DelphiParser.OleClassMethodAliasContext ctx) {
+            if (ctx.comItfMethod == null) throw AstParseError.unExpected(ctx);
+            if (ctx.comItfName == null) throw AstParseError.unExpected(ctx);
+            if (ctx.implMethod == null) throw AstParseError.unExpected(ctx);
 
             return new MethodAlias(
                 ImList.of(ctx.comItfName.getText(), ctx.comItfMethod.getText()),
@@ -329,66 +413,82 @@ public sealed interface ClassMethodAst extends InterfaceItemAst, ClassItemAst, S
         }
     }
 
-    static ClassMethodAst of(DelphiParser.ClassMethodContext ctx){
-        if( ctx.oleClassMethodAlias()!=null && !ctx.oleClassMethodAlias().isEmpty() )
+    static ClassMethodAst of(DelphiParser.ClassMethodContext ctx) {
+        if (ctx.oleClassMethodAlias() != null && !ctx.oleClassMethodAlias().isEmpty())
             return MethodAlias.of(ctx.oleClassMethodAlias());
 
-        if( ctx.mname==null )throw AstParseError.unExpected();
+        if (ctx.mname == null) throw AstParseError.unExpected();
         var name = ctx.mname.getText();
 
         ImListLinked<GenericAst.Param> generic_params =
-            ctx.genericDefinition()!=null && !ctx.genericDefinition().isEmpty()
-            ? GenericAst.of(ctx.genericDefinition())
-            : ImListLinked.of();
+            ctx.genericDefinition() != null && !ctx.genericDefinition().isEmpty()
+                ? GenericAst.of(ctx.genericDefinition())
+                : ImListLinked.of();
 
         ImList<ArgumentAst> params =
-            ctx.formalParameterSection()!=null && !ctx.formalParameterSection().isEmpty() && ctx.formalParameterSection().formalParameterList()!=null ?
-            ArgumentAst.of( ctx.formalParameterSection().formalParameterList() ):
-            ImListLinked.of() ;
+            ctx.formalParameterSection() != null && !ctx.formalParameterSection().isEmpty() && ctx.formalParameterSection().formalParameterList() != null ?
+                ArgumentAst.of(ctx.formalParameterSection().formalParameterList()) :
+                ImListLinked.of();
 
         ImList<MethodDirectiveAst> meth_dir =
-            ctx.methodDirective()!=null ?
-            ImListLinked.of(ctx.methodDirective()).map(MethodDirectiveAst::of) :
-            ImListLinked.of();
+            ctx.methodDirective() != null ?
+                ImListLinked.of(ctx.methodDirective()).map(MethodDirectiveAst::of) :
+                ImListLinked.of();
 
         Optional<TypeDeclAst> result =
-            (ctx.typeDecl()!=null && !ctx.typeDecl().isEmpty()) ?
-                Optional.of( TypeDeclAst.of(ctx.typeDecl()) ) :
+            (ctx.typeDecl() != null && !ctx.typeDecl().isEmpty()) ?
+                Optional.of(TypeDeclAst.of(ctx.typeDecl())) :
                 Optional.empty();
 
         var methKey =
-            ctx.methodKey()==null ||
-            ctx.methodKey().isEmpty() ||
-            ctx.methodKey().getText()==null ?
+            ctx.methodKey() == null ||
+                ctx.methodKey().isEmpty() ||
+                ctx.methodKey().getText() == null ?
                 "" :
                 ctx.methodKey().getText();
 
         //noinspection ConstantConditions
-        if( ctx.OPERATOR()!=null
+        if (ctx.OPERATOR() != null
             && ctx.OPERATOR().getText().toLowerCase().startsWith("opera")
             && result.isPresent()
-        ){
-            return new Operator(name,generic_params,params,result.get(),SourcePosition.of(ctx),ImListLinked.of());
+        ) {
+            return new Operator(
+                name, generic_params, params, result.get(), SourcePosition.of(ctx), ImList.of(),
+                ctx.customAttribute() != null && !ctx.customAttribute().isEmpty() ? ImList.of(ctx.customAttribute()).map(CustomAttributeAst::of) : ImList.of(),
+                ctx.retAttr != null && !ctx.retAttr.isEmpty() ? ImList.of(CustomAttributeAst.of(ctx.retAttr)) : ImList.of()
+            );
         }
 
-        if( methKey.startsWith("pro") ){
-            return new Procedure(name,generic_params,params,meth_dir,SourcePosition.of(ctx),ImListLinked.of());
+        if (methKey.startsWith("pro")) {
+            return new Procedure(
+                name, generic_params, params, meth_dir, SourcePosition.of(ctx), ImListLinked.of(),
+                ctx.customAttribute() != null && !ctx.customAttribute().isEmpty() ? ImList.of(ctx.customAttribute()).map(CustomAttributeAst::of) : ImList.of()
+            );
         }
 
-        if( methKey.startsWith("cons") ){
-            return new Constructor(name,generic_params,params,meth_dir,SourcePosition.of(ctx),ImListLinked.of());
+        if (methKey.startsWith("cons")) {
+            return new Constructor(
+                name, generic_params, params, meth_dir, SourcePosition.of(ctx), ImListLinked.of(),
+                ctx.customAttribute() != null && !ctx.customAttribute().isEmpty() ? ImList.of(ctx.customAttribute()).map(CustomAttributeAst::of) : ImList.of()
+            );
         }
 
-        if( methKey.startsWith("des") ){
-            return new Destructor(name,generic_params,params,meth_dir,SourcePosition.of(ctx),ImListLinked.of());
+        if (methKey.startsWith("des")) {
+            return new Destructor(name, generic_params, params, meth_dir, SourcePosition.of(ctx), ImListLinked.of(),
+                ctx.customAttribute() != null && !ctx.customAttribute().isEmpty() ? ImList.of(ctx.customAttribute()).map(CustomAttributeAst::of) : ImList.of()
+            );
         }
 
-        if( ctx.FUNCTION()!=null
-        && ctx.FUNCTION().getText()!=null
-        && ctx.FUNCTION().getText().length()>0
-        && result!=null
-        && result.isPresent() ){
-            return new Function(name,generic_params,params,result.get(),meth_dir,SourcePosition.of(ctx),ImListLinked.of());
+        if (ctx.FUNCTION() != null
+            && ctx.FUNCTION().getText() != null
+            && ctx.FUNCTION().getText().length() > 0
+            && result != null
+            && result.isPresent()) {
+            return new Function(
+                name, generic_params, params, result.get(), meth_dir, SourcePosition.of(ctx), ImListLinked.of(),
+                ctx.customAttribute() != null && !ctx.customAttribute().isEmpty() ? ImList.of(ctx.customAttribute()).map(CustomAttributeAst::of) : ImList.of(),
+                ctx.retAttr != null && !ctx.retAttr.isEmpty() ? ImList.of(CustomAttributeAst.of(ctx.retAttr)) : ImList.of()
+            );
         }
 
         throw AstParseError.notImplemented(ctx);
