@@ -25,21 +25,72 @@ public sealed interface ClassPropertyAst extends InterfaceItemAst, ClassItemAst,
         ImList<Specifier> specifiers,
         boolean classFlag,
         SourcePosition position,
-        ImList<Comment> comments
-    ) implements ClassPropertyAst, SrcPos, Commented<ClassPropertyAst> {
+        ImList<Comment> comments,
+        ImList<CustomAttributeAst> attributes
+    ) implements ClassPropertyAst, SrcPos, Commented<Property> {
         @Override
         public Property astUpdate(AstUpdate.UpdateContext ctx) {
-            return this;
+            var cmts = this;
+
+            if( ctx instanceof AstUpdate.CommentingContext cc )
+                cmts = cc.commenting(cmts);
+
+            var propArr = ctx.update(propertyArray);
+
+            var typeChanged = new boolean[]{ false };
+            var type = this.type.map( t -> {
+                TypeIdentAst r = (TypeIdentAst) t.astUpdate(ctx);
+                //noinspection ConstantValue
+                typeChanged[0] = r!=t;
+                return r;
+            });
+
+            var idxChanged = new boolean[]{ false };
+            var idx = this.index.map( t -> {
+                var r = t.astUpdate(ctx);
+                idxChanged[0] = r!=t;
+                return r;
+            });
+
+            Optional<ImList<Specifier>> spec = (Optional)ctx.updateUnsafe(specifiers);
+
+            var attr = ctx.update(attributes);
+
+            return new Property(
+                name,
+                propArr.orElse(propertyArray),
+                type,
+                idx,
+                spec.orElse(specifiers),
+                classFlag,
+                position,
+                comments,
+                attr.orElse(attributes)
+            );
         }
 
         @Override
-        public ClassPropertyAst withComments(ImList<Comment> comments) {
-            return this;
+        public Property withComments(ImList<Comment> comments) {
+            return new Property(
+                name,
+                propertyArray,
+                type,
+                index,
+                specifiers,
+                classFlag,
+                position,
+                comments,
+                attributes
+            );
         }
 
         @Override
         public ImList<? extends AstNode> nestedAstNodes() {
-            return upcast(propertyArray).append(upcast(type)).append(upcast(index)).append(upcast(specifiers));
+            return upcast(propertyArray)
+                .append(upcast(type))
+                .append(upcast(index))
+                .append(upcast(specifiers))
+                .append(upcast(attributes));
         }
 
         public Property withClassFlag(boolean value) {
@@ -51,7 +102,8 @@ public sealed interface ClassPropertyAst extends InterfaceItemAst, ClassItemAst,
                 specifiers,
                 value,
                 position,
-                ImListLinked.of()
+                comments,
+                attributes
             );
         }
 
@@ -106,36 +158,24 @@ public sealed interface ClassPropertyAst extends InterfaceItemAst, ClassItemAst,
                 spec,
                 classFlag,
                 SourcePosition.of(ctx),
-                ImListLinked.of()
+                ImList.of(),
+                ctx.customAttribute()!=null && !ctx.customAttribute().isEmpty() ?
+                ImList.of(ctx.customAttribute()).map(CustomAttributeAst::of) : ImList.of()
             );
         }
     }
 
-    sealed interface Specifier extends AstNode {
+    sealed interface Specifier extends AstNode, AstUpdate {
         @Override
         Specifier astUpdate(AstUpdate.UpdateContext ctx);
-
-        static Specifier of(DelphiParser.ClassPropertyDispInterfaceContext ctx) {
-            if (ctx.getText().toLowerCase().startsWith("readonl")) {
-                return new ReadOnly();
-            } else if (ctx.getText().toLowerCase().startsWith("writeonly")) {
-                return new WriteOnly();
-            } else if (
-                ctx.dispIDDirective() != null &&
-                    ctx.dispIDDirective().expression() != null &&
-                    ctx.getText().toLowerCase().startsWith("dispid")
-            ) {
-                return new DispID(ExpressionAst.of(ctx.dispIDDirective().expression()));
-            }
-
-            throw AstParseError.notImplemented();
-        }
 
         static Specifier of(DelphiParser.ClassPropSpecContext ctx) {
             if (ctx.READ() != null && ctx.ident() != null && !ctx.ident().isEmpty()) {
                 return new Read(ImList.of(ctx.ident()).map(RuleContext::getText));
             } else if (ctx.WRITE() != null && ctx.ident() != null && !ctx.ident().isEmpty()) {
                 return new Write(ImList.of(ctx.ident()).map(RuleContext::getText));
+            } else if( ctx.IMPLEMENTS()!=null && ctx.ident()!=null && !ctx.ident().isEmpty() ){
+                return new Implements(ImList.of(ctx.ident()).map(RuleContext::getText));
             } else {
                 throw AstParseError.unExpected(ctx);
             }
@@ -201,7 +241,9 @@ public sealed interface ClassPropertyAst extends InterfaceItemAst, ClassItemAst,
     record DispID(ExpressionAst expression) implements Specifier {
         @Override
         public DispID astUpdate(AstUpdate.UpdateContext ctx) {
-            return this;
+            var exp = expression.astUpdate(ctx);
+            if( exp==expression )return this;
+            return new DispID(expression);
         }
 
         @Override
@@ -213,7 +255,9 @@ public sealed interface ClassPropertyAst extends InterfaceItemAst, ClassItemAst,
     record Stored(ExpressionAst expression) implements Specifier {
         @Override
         public Stored astUpdate(AstUpdate.UpdateContext ctx) {
-            return this;
+            var exp = expression.astUpdate(ctx);
+            if( exp==expression )return this;
+            return new Stored(exp);
         }
 
         @Override
@@ -225,7 +269,9 @@ public sealed interface ClassPropertyAst extends InterfaceItemAst, ClassItemAst,
     record Default(Optional<ExpressionAst> expression) implements Specifier {
         @Override
         public Default astUpdate(AstUpdate.UpdateContext ctx) {
-            return this;
+            var exp = ctx.updateUnsafe(expression);
+            if( exp.isEmpty() )return this;
+            return new Default(exp.orElse(expression));
         }
 
         @Override
@@ -241,7 +287,6 @@ public sealed interface ClassPropertyAst extends InterfaceItemAst, ClassItemAst,
         }
     }
 
-    // TODO not used!
     record Implements(ImList<String> typeId) implements Specifier {
         @Override
         public Implements astUpdate(AstUpdate.UpdateContext ctx) {

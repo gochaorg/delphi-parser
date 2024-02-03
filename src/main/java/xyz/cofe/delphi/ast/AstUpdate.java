@@ -37,6 +37,24 @@ public interface AstUpdate<SELF> {
      * Контекст обновления
      */
     interface UpdateContext {
+        @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+        default <A> Optional<Optional<A>> updateUnsafe(Optional<A> optValue){
+            //noinspection OptionalAssignedToNull
+            if( optValue==null ) throw new IllegalArgumentException("optValue==null");
+            var changed = new boolean[]{ false };
+            var ctx = this;
+            Optional<A> vv = optValue.map( v -> {
+                if( v instanceof AstUpdate<?> a ){
+                    var r = a.astUpdate(ctx);
+                    changed[0] = true;
+                    //noinspection unchecked
+                    return (A)r;
+                }
+                return v;
+            });
+            return changed[0] ? Optional.of(vv) : Optional.empty();
+        }
+
         default  <A extends AstUpdate<A>> Optional<ImList<A>> update(ImList<A> list) {
             if( list==null ) throw new IllegalArgumentException("list==null");
 

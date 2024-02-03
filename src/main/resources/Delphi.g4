@@ -313,15 +313,19 @@ recordHelperItem             : visibility
                              | classMethod
                              | classProperty
                              ;
+
+// implemented
 classMethod                  : (customAttribute)* ('class')? methodKey mname=ident (genericDefinition)? (formalParameterSection)? ';'? ( methodDirective)*
                              | (customAttribute)* ('class')? 'function' mname=ident (genericDefinition)? (formalParameterSection)? ':' (retAttr=customAttribute)* typeDecl ';'? (methodDirective)*
                              | (customAttribute)* ('class')? 'operator' mname=ident (genericDefinition)? (formalParameterSection)? ':' (retAttr=customAttribute)* typeDecl ';'
                              | oleClassMethodAlias
                              ;
 
+// implemented
 oleClassMethodAlias          : ( 'function' | 'procedure' ) comItfName=ident '.' comItfMethod=ident '=' implMethod=ident ';' // очень странная форма для реализации конкретного метода Ole/Com/ActiveX
                              ;
 
+// implemented
 classField                   : (customAttribute)* identList ':' typeDecl ';' (hintingDirective)*
                              ;
 
@@ -330,6 +334,7 @@ classField                   : (customAttribute)* identList ':' typeDecl ';' (hi
 //                              // CHANGEDD to genericTypeIdent for "property QueryBuilder : IQueryBuilder<GenericRecord>"
 //                             ;
 
+// implemented
 // TODO есть еще spec implements
 classProperty   : (customAttribute)* 'class' ?
                   'property' classPropertyName
@@ -338,50 +343,33 @@ classProperty   : (customAttribute)* 'class' ?
                    ('index' index=expression)? ( classPropSpec* | classPropDispSpec* ) ';'? ( classPropPostfixSpec+ ';')?
                 ;
 
+// implemented
 classPropSpec   : 'read' ident ('.' ident)*
                 | 'write' ident ('.' ident)*
                 | 'implements' ident (',' ident)*
                 ;
 
+// implemented
 classPropPostfixSpec    : 'default' expression ?
                         | 'nodefault'
                         | 'stored' expression
                         ;
 
+// implemented
 classPropDispSpec : 'readonly'
                   | 'writeonly'
                   | 'dispid' expression
                   ;
 
+// implemented
 classPropertyName            : PROTECTED
                              | RESIDENT
                              | ident; //TODO Возможно надо добавить не только RESIDENT
 
+// implemented
 classPropertyArray           : '[' formalParameterList ']'
                              ;
-classPropertyIndex           : 'index' expression (';')?  //CHANGED to (';')?
-                             ;
-classPropertySpecifier       : classPropertyReadWrite   //CHANGED removed ';'
-                             | classPropertyDispInterface
-                             | STORED expression
-                             | 'default' expression
-                             | ( 'default'                // for array properties only (1 per class)
-                             | 'nodefault' )
-                             | IMPLEMENTS typeId
-                             ;
-classPropertyEndSpecifier    : STORED expression ';'    //ADDED used in classProperty at end
-                             | 'default' expression ';'
-                             | 'default' ';'             
-                             | 'nodefault' ';'
-                             ;
-
-classPropertyReadWrite       : 'read' qualifiedIdent ('[' expression ']')?  // Waarom qualified ident???  //ADDED []
-                             | 'write' qualifiedIdent ('[' expression ']')? //ADDED []
-                             ;
-classPropertyDispInterface   : 'readonly' ('dispid' expression)? ';'
-                             | 'writeonly' ('dispid' expression)? ';'
-                             | dispIDDirective
-                             ;
+// implemented
 visibility                   : (STRICT)? 'protected'
                              | (STRICT)? 'private'
                              | ( 'public'
