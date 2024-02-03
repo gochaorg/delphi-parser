@@ -13,22 +13,40 @@ import java.util.Optional;
  * @param type тип
  * @param position позиция в исходнике
  */
-public record ClassFieldAst(String name, TypeDeclAst type, SourcePosition position, ImList<Comment> comments)
+public record ClassFieldAst(String name, TypeDeclAst type, SourcePosition position, ImList<Comment> comments,
+                            ImList<CustomAttributeAst> attributes)
 implements ClassItemAst, AstNode, SrcPos, Commented<ClassFieldAst>
 {
     @Override
     public ClassFieldAst astUpdate(AstUpdate.UpdateContext ctx) {
-        return this;
+        var cmts = this;
+        if( ctx instanceof AstUpdate.CommentingContext cc ){
+            cmts = cc.commenting(cmts);
+        }
+
+        var type = this.type.astUpdate(ctx);
+        var attrs = ctx.update(attributes);
+
+        if( cmts.comments==comments && type==this.type && attrs.isEmpty() )
+            return this;
+
+        return new ClassFieldAst(name, type, position, cmts.comments, attrs.orElse(attributes));
     }
 
     @Override
     public ClassFieldAst withComments(ImList<Comment> comments) {
-        return this;
+        return new ClassFieldAst(
+            name,
+            type,
+            position,
+            comments,
+            attributes
+        );
     }
 
     @Override
     public ImList<? extends AstNode> nestedAstNodes() {
-        return ImListLinked.of(type);
+        return ImList.<AstNode>of(type).append(attributes);
     }
 
     static ImList<ClassFieldAst> of(DelphiParser.ClassFieldContext ctx){
@@ -46,7 +64,12 @@ implements ClassItemAst, AstNode, SrcPos, Commented<ClassFieldAst>
             var type_f = type.get();
             result = ImListLinked.of(ctx.identList().paramName())
                 .map(RuleContext::getText)
-                .map(i -> new ClassFieldAst(i,type_f,SourcePosition.of(ctx),ImListLinked.of()));
+                .map(i -> new ClassFieldAst(
+                    i,type_f,SourcePosition.of(ctx),ImListLinked.of(),
+                    ctx.customAttribute()!=null && !ctx.customAttribute().isEmpty() ?
+                        ImList.of(ctx.customAttribute()).map(CustomAttributeAst::of) :
+                        ImList.of()
+                ));
         }
         return result;
     }

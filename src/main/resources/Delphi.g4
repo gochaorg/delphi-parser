@@ -441,8 +441,6 @@ procBody                     : 'forward' ';' (functionDirective)*   // CHECKEN ;
 customAttribute              : customAttributeDecl //'abekat' //customAttributeList
                              ;
 
-customAttributeList          : (customAttributeDecl)*
-                             ;
 customAttributeDecl          : '[' customAttributeNamedCall (',' customAttributeNamedCall)* ']'
                              ;
 
