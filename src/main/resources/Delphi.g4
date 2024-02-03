@@ -168,17 +168,21 @@ strucTypePart                : arrayType
                              | classDecl
                              ;
 
+// implemented
 arrayType                    :  'array' ('[' (arrayIndex)? (',' (arrayIndex)?)* ']')? 'of' arraySubType 
                                      //CHANGED we only need type info
                              ;
 
+// implemented
 arrayIndex                   : typeId
                              | expression '..' expression
                              ;
 
+// implemented
 arraySubType                 : 'const'
                              | typeDecl
                              ;
+
 setType                      : 'set' 'of' typeDecl          //CHANGED we only need type info
                              ;
 // set type alleen ordinal of subrange type
