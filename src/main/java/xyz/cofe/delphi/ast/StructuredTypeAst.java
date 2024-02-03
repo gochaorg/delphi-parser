@@ -7,8 +7,10 @@ import xyz.cofe.delphi.parser.DelphiParser;
  */
 sealed public interface StructuredTypeAst extends TypeDeclAst permits ArrayTypeAst,
                                                                       ClazzTypeAst,
+                                                                      FileTypeAst,
                                                                       InterfaceTypeAst,
-                                                                      MetaClassAst {
+                                                                      MetaClassAst,
+                                                                      SetTypeAst {
     @Override
     StructuredTypeAst astUpdate(AstUpdate.UpdateContext ctx);
 
@@ -25,10 +27,12 @@ sealed public interface StructuredTypeAst extends TypeDeclAst permits ArrayTypeA
     }
 
     static StructuredTypeAst of(DelphiParser.StrucTypePartContext ctx, boolean packed) {
-        if( ctx==null ) throw new IllegalArgumentException("ctx==null");
+        if (ctx == null) throw new IllegalArgumentException("ctx==null");
 
         if (ctx.classDecl() != null && !ctx.classDecl().isEmpty()) return of(ctx.classDecl());
         if (ctx.arrayType() != null && !ctx.arrayType().isEmpty()) return of(ctx.arrayType(), packed);
+        if (ctx.setType() != null && !ctx.setType().isEmpty()) return SetTypeAst.of(ctx.setType());
+        if (ctx.fileType() != null && !ctx.fileType().isEmpty()) return FileTypeAst.of(ctx.fileType());
 
         throw AstParseError.notImplemented(ctx);
     }
@@ -46,8 +50,8 @@ sealed public interface StructuredTypeAst extends TypeDeclAst permits ArrayTypeA
     }
 
     static StructuredTypeAst of(DelphiParser.ArrayTypeContext ctx, boolean packed) {
-        if( ctx==null ) throw new IllegalArgumentException("ctx==null");
+        if (ctx == null) throw new IllegalArgumentException("ctx==null");
 
-        return ArrayTypeAst.of(ctx,packed);
+        return ArrayTypeAst.of(ctx, packed);
     }
 }

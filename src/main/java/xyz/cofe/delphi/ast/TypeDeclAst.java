@@ -13,7 +13,21 @@ import static xyz.cofe.delphi.impl.Indent.indent;
  */
 public sealed interface TypeDeclAst
     extends AstNode
-    permits ArrayTypeAst, ClazzTypeAst, EnumTypeAst, InterfaceTypeAst, MetaClassAst, NewTypeIdAst, ProcedureTypeAst, SimpleTypeAst, StringTypeAst, StructuredTypeAst, TypeAliasAst, TypeIdentAst, VariantTypeAst {
+    permits ArrayTypeAst,
+            ClazzTypeAst,
+            EnumTypeAst,
+            FileTypeAst,
+            InterfaceTypeAst,
+            MetaClassAst,
+            NewTypeIdAst,
+            ProcedureTypeAst,
+            SetTypeAst,
+            SimpleTypeAst,
+            StringTypeAst,
+            StructuredTypeAst,
+            TypeAliasAst,
+            TypeIdentAst,
+            VariantTypeAst {
     @Override
     TypeDeclAst astUpdate(AstUpdate.UpdateContext ctx);
 

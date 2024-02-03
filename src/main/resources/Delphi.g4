@@ -183,9 +183,11 @@ arraySubType                 : 'const'
                              | typeDecl
                              ;
 
+// implemented
 setType                      : 'set' 'of' typeDecl          //CHANGED we only need type info
                              ;
 // set type alleen ordinal of subrange type
+// implemented
 fileType                     : 'file' ('of' typeDecl)?
                              ;
 pointerType                  : '^' typeDecl
