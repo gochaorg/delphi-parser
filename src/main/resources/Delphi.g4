@@ -190,6 +190,8 @@ setType                      : 'set' 'of' typeDecl          //CHANGED we only ne
 // implemented
 fileType                     : 'file' ('of' typeDecl)?
                              ;
+
+// implemented
 pointerType                  : '^' typeDecl
                              | 'pointer'
                              ;

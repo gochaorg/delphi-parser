@@ -20,6 +20,7 @@ public sealed interface TypeDeclAst
             InterfaceTypeAst,
             MetaClassAst,
             NewTypeIdAst,
+            PointerTypeAst,
             ProcedureTypeAst,
             SetTypeAst,
             SimpleTypeAst,
@@ -116,6 +117,9 @@ public sealed interface TypeDeclAst
             }
         }
 
+        if (ctx.pointerType() != null) {
+            return PointerTypeAst.of(ctx.pointerType());
+        }
 
         throw AstParseError.notImplemented(ctx);
     }
