@@ -118,16 +118,23 @@ constDeclaration             : (customAttribute)* ident (':' typeDecl)? '=' cons
                              ;
 typeSection                  : 'type' typeDeclaration (typeDeclaration)* 
                              ;
+
+// implemented
 typeDeclaration              : (customAttribute)* genericTypeIdent '=' typeDecl (hintingDirective)* ';'
                              ;
+
+// implemented
 varSection                   : varKey varDeclaration*
                              ;
+// implemented
 varKey                       : 'var'
                              | 'threadvar'
                              ;
+// implemented
 // threadvar geen initializations alleen globaal
 varDeclaration               : (customAttribute)* identListFlat ':' typeDecl (varValueSpec)? (hintingDirective)* ';'
                              ;
+// implemented
 varValueSpec                 : 'absolute' ident
                              | 'absolute' constExpression
 
@@ -390,7 +397,9 @@ methodDecl                   : methodDeclHeading ';' (methodDirective)* (methodB
 methodDeclHeading            : (customAttribute)* ('class')?  methodKey methodName (formalParameterSection)?
                              | (customAttribute)* ('class')? 'function' methodName (formalParameterSection)? (':' (customAttribute)* typeDecl)?
                              | (customAttribute)* 'class' 'operator' methodName (formalParameterSection)? (':' (customAttribute)* typeDecl)?
-                             ;              
+                             ;
+
+// impl
 methodKey                    : 'procedure'
                              | 'constructor'
                              | 'destructor'

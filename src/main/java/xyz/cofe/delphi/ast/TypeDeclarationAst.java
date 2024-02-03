@@ -16,13 +16,15 @@ public record TypeDeclarationAst(
     TypeIdentAst typeIdent,
     TypeDeclAst typeDecl,
     SourcePosition position,
-    ImList<Comment> comments
+    ImList<Comment> comments,
+    ImList<CustomAttributeAst> attributes
 ) implements AstNode, SrcPos, Commented<TypeDeclarationAst>, AstUpdate<TypeDeclarationAst> {
     @Override
     public TypeDeclarationAst astUpdate(AstUpdate.UpdateContext ctx) {
         if( ctx==null ) throw new IllegalArgumentException("ctx==null");
         var t1= typeIdent.astUpdate(ctx);
         var t2 = typeDecl.astUpdate(ctx);
+        var t3 = ctx.update(attributes);
 
         var res = this;
         if( ctx instanceof AstUpdate.CommentingContext cc ){
@@ -30,8 +32,18 @@ public record TypeDeclarationAst(
         }
 
         //noinspection ConstantConditions
-        if( t1==typeIdent && t2==typeDecl && res.comments==this.comments )return this;
-        return new TypeDeclarationAst(t1,t2,position,res.comments);
+        if( t1==typeIdent
+            && t2==typeDecl
+            && res.comments==this.comments
+            && t3.isEmpty()
+        )return this;
+        return new TypeDeclarationAst(
+            t1,
+            t2,
+            position,
+            res.comments,
+            t3.orElse(attributes)
+        );
     }
 
     @Override
@@ -44,18 +56,23 @@ public record TypeDeclarationAst(
     }
 
     static TypeDeclarationAst of(DelphiParser.TypeDeclarationContext dec) {
+        if( dec==null ) throw new IllegalArgumentException("dec==null");
         return new TypeDeclarationAst(
             TypeIdentAst.of(dec),
             TypeDeclAst.of(dec.typeDecl()),
             SourcePosition.of(dec),
-            ImListLinked.of()
+            ImList.of(),
+            dec.customAttribute()!=null && !dec.customAttribute().isEmpty() ?
+                ImList.of(dec.customAttribute()).map(CustomAttributeAst::of) :
+                ImList.of()
         );
     }
 
     @Override
     public TypeDeclarationAst withComments(ImList<Comment> comments) {
+        if( comments==null ) throw new IllegalArgumentException("comments==null");
         return new TypeDeclarationAst(
-            typeIdent, typeDecl, position, comments
+            typeIdent, typeDecl, position, comments, attributes
         );
     }
 }

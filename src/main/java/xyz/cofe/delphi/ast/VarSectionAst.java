@@ -4,6 +4,7 @@ import org.antlr.v4.runtime.RuleContext;
 import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.delphi.parser.DelphiParser;
+
 import static xyz.cofe.delphi.ast.AstNode.upcast;
 
 import java.util.Optional;
@@ -12,22 +13,32 @@ import java.util.Optional;
  * Секция переменных
  */
 public sealed interface VarSectionAst
-    extends InterfaceDecl, AstNode
-{
+    extends InterfaceDecl,
+            AstNode {
     /**
      * Перечень переменных
-     * @param key некая особенность переменной в отношении потоков
+     *
+     * @param key       некая особенность переменной в отношении потоков
      * @param variables перемень переменных
-     * @param position позиция в исзоднике
+     * @param position  позиция в исзоднике
      */
     record Variables(
         VarKey key,
         ImList<VarDeclaration> variables,
-        SourcePosition position
-    ) implements VarSectionAst, AstNode, SrcPos {
+        SourcePosition position,
+        ImList<Comment> comments
+    ) implements VarSectionAst,
+                 AstNode,
+                 SrcPos,
+                 Commented<Variables>
+    {
         @Override
         public Variables astUpdate(AstUpdate.UpdateContext ctx) {
-            return this;
+            var vars = ctx.update(variables);
+            var cmts = ctx instanceof AstUpdate.CommentingContext cc ?
+                cc.commenting(this) : this;
+            if( cmts==this && vars.isEmpty() )return this;
+            return new Variables(key,variables,position,cmts.comments);
         }
 
         @Override
@@ -35,15 +46,15 @@ public sealed interface VarSectionAst
             return upcast(key).append(upcast(variables));
         }
 
-        static Variables of(DelphiParser.VarSectionContext ctx){
+        static Variables of(DelphiParser.VarSectionContext ctx) {
             var key = VarKey.Var;
 
-            if( ctx.varKey()!=null && ctx.varKey().getText()!=null ){
-                if(ctx.varKey().getText().toLowerCase().startsWith("var")) {
+            if (ctx.varKey() != null && ctx.varKey().getText() != null) {
+                if (ctx.varKey().getText().toLowerCase().startsWith("var")) {
                     key = VarKey.Var;
-                }else if(ctx.varKey().getText().toLowerCase().startsWith("thre")) {
+                } else if (ctx.varKey().getText().toLowerCase().startsWith("thre")) {
                     key = VarKey.ThreadVar;
-                }else {
+                } else {
                     throw AstParseError.unExpected(ctx.varKey());
                 }
             }
@@ -51,7 +62,12 @@ public sealed interface VarSectionAst
             ImList<VarDeclaration> lst = ImListLinked.of(ctx.varDeclaration())
                 .fmap(VarDeclaration::of);
 
-            return new Variables( key, lst, SourcePosition.of(ctx) );
+            return new Variables(key, lst, SourcePosition.of(ctx), ImList.of());
+        }
+
+        @Override
+        public Variables withComments(ImList<Comment> comments) {
+            return new Variables(key,variables,position,comments);
         }
     }
 
@@ -62,32 +78,71 @@ public sealed interface VarSectionAst
 
     /**
      * Определение переменной
-     * @param name имя переменной
-     * @param type тип переменной
+     *
+     * @param name      имя переменной
+     * @param type      тип переменной
      * @param valueSpec Спецификация переменной
-     * @param position Позиция в исходнике
+     * @param position  Позиция в исходнике
      */
     record VarDeclaration(
         String name,
         TypeDeclAst type,
         Optional<VarValueSpec> valueSpec,
-        SourcePosition position
-    ) implements AstNode, SrcPos {
+        SourcePosition position,
+        ImList<CustomAttributeAst> attributes,
+        ImList<Comment> comments
+    ) implements AstNode,
+                 SrcPos,
+                 Commented<VarDeclaration>,
+                 AstUpdate<VarDeclaration>
+    {
         @Override
         public VarDeclaration astUpdate(AstUpdate.UpdateContext ctx) {
-            return this;
+            var cmnt = ctx instanceof AstUpdate.CommentingContext cc ?
+                cc.commenting(this) : this;
+
+            var valSpec = ctx.updateUnsafe(valueSpec);
+            var attr = ctx.update(attributes);
+            var t = type.astUpdate(ctx);
+
+            if (valSpec.isEmpty()
+                && attr.isEmpty()
+                && t == type
+                && cmnt == this
+            ) return this;
+
+            return new VarDeclaration(
+                name,
+                t,
+                valSpec.orElse(valueSpec),
+                position,
+                attr.orElse(attributes),
+                cmnt.comments
+            );
+        }
+
+        @Override
+        public VarDeclaration withComments(ImList<Comment> comments) {
+            return new VarDeclaration(
+                name,
+                type,
+                valueSpec,
+                position,
+                attributes,
+                comments
+            );
         }
 
         @Override
         public ImList<? extends AstNode> nestedAstNodes() {
-            return upcast(type).append(upcast(valueSpec));
+            return upcast(type).append(upcast(valueSpec)).append(upcast(attributes));
         }
 
-        static ImList<VarDeclaration> of(DelphiParser.VarDeclarationContext ctx){
+        static ImList<VarDeclaration> of(DelphiParser.VarDeclarationContext ctx) {
             var type = TypeDeclAst.of(ctx.typeDecl());
             Optional<VarValueSpec> valueSpec = Optional.empty();
 
-            if(ctx.varValueSpec()!=null && !ctx.varValueSpec().isEmpty()){
+            if (ctx.varValueSpec() != null && !ctx.varValueSpec().isEmpty()) {
                 valueSpec = Optional.of(
                     VarValueSpec.of(ctx.varValueSpec())
                 );
@@ -97,7 +152,14 @@ public sealed interface VarSectionAst
 
             return ImListLinked.of(ctx.identListFlat().paramName())
                 .map(RuleContext::getText)
-                .map(name -> new VarDeclaration(name,type,spec,SourcePosition.of(ctx)));
+                .map(name -> new VarDeclaration(
+                        name, type, spec, SourcePosition.of(ctx),
+                        ctx.customAttribute() != null && !ctx.customAttribute().isEmpty() ?
+                            ImList.of(ctx.customAttribute()).map(CustomAttributeAst::of) :
+                            ImList.of(),
+                        ImList.of()
+                    )
+                );
         }
     }
 
@@ -105,18 +167,18 @@ public sealed interface VarSectionAst
         @Override
         VarValueSpec astUpdate(AstUpdate.UpdateContext ctx);
 
-        static VarValueSpec of(DelphiParser.VarValueSpecContext ctx){
-            if(ctx.ABSOLUTE()!=null){
-                if(ctx.ident()!=null && ctx.ident().getText()!=null){
+        static VarValueSpec of(DelphiParser.VarValueSpecContext ctx) {
+            if (ctx.ABSOLUTE() != null) {
+                if (ctx.ident() != null && ctx.ident().getText() != null) {
                     return new AbsoluteId(ctx.ident().getText());
                 }
-                if(ctx.constExpression()!=null && !ctx.constExpression().isEmpty()){
+                if (ctx.constExpression() != null && !ctx.constExpression().isEmpty()) {
                     return new AbsoluteExp(ConstSectionAst.ConstExpression.of(ctx.constExpression()));
                 }
 
                 throw AstParseError.unExpected(ctx);
             }
-            if(ctx.constExpression()!=null && !ctx.constExpression().isEmpty()){
+            if (ctx.constExpression() != null && !ctx.constExpression().isEmpty()) {
                 return new Expr(ConstSectionAst.ConstExpression.of(ctx.constExpression()));
             }
             throw AstParseError.unExpected(ctx);
@@ -130,10 +192,13 @@ public sealed interface VarSectionAst
         }
     }
 
-    record AbsoluteExp(ConstSectionAst.ConstExpression expression) implements VarValueSpec, AstNode {
+    record AbsoluteExp(ConstSectionAst.ConstExpression expression) implements VarValueSpec,
+                                                                              AstNode {
         @Override
         public AbsoluteExp astUpdate(AstUpdate.UpdateContext ctx) {
-            return this;
+            var exp = expression.astUpdate(ctx);
+            if( exp==expression )return this;
+            return new AbsoluteExp(exp);
         }
 
         @Override
@@ -142,10 +207,13 @@ public sealed interface VarSectionAst
         }
     }
 
-    record Expr(ConstSectionAst.ConstExpression expression) implements VarValueSpec, AstNode {
+    record Expr(ConstSectionAst.ConstExpression expression) implements VarValueSpec,
+                                                                       AstNode {
         @Override
         public Expr astUpdate(AstUpdate.UpdateContext ctx) {
-            return this;
+            var expr = expression.astUpdate(ctx);
+            if( expr==expression )return this;
+            return new Expr(expr);
         }
 
         @Override

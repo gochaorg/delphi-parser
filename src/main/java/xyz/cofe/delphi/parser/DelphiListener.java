@@ -998,56 +998,6 @@ public interface DelphiListener extends ParseTreeListener {
 	 */
 	void exitClassPropertyArray(DelphiParser.ClassPropertyArrayContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link DelphiParser#classPropertyIndex}.
-	 * @param ctx the parse tree
-	 */
-	void enterClassPropertyIndex(DelphiParser.ClassPropertyIndexContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DelphiParser#classPropertyIndex}.
-	 * @param ctx the parse tree
-	 */
-	void exitClassPropertyIndex(DelphiParser.ClassPropertyIndexContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link DelphiParser#classPropertySpecifier}.
-	 * @param ctx the parse tree
-	 */
-	void enterClassPropertySpecifier(DelphiParser.ClassPropertySpecifierContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DelphiParser#classPropertySpecifier}.
-	 * @param ctx the parse tree
-	 */
-	void exitClassPropertySpecifier(DelphiParser.ClassPropertySpecifierContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link DelphiParser#classPropertyEndSpecifier}.
-	 * @param ctx the parse tree
-	 */
-	void enterClassPropertyEndSpecifier(DelphiParser.ClassPropertyEndSpecifierContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DelphiParser#classPropertyEndSpecifier}.
-	 * @param ctx the parse tree
-	 */
-	void exitClassPropertyEndSpecifier(DelphiParser.ClassPropertyEndSpecifierContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link DelphiParser#classPropertyReadWrite}.
-	 * @param ctx the parse tree
-	 */
-	void enterClassPropertyReadWrite(DelphiParser.ClassPropertyReadWriteContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DelphiParser#classPropertyReadWrite}.
-	 * @param ctx the parse tree
-	 */
-	void exitClassPropertyReadWrite(DelphiParser.ClassPropertyReadWriteContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link DelphiParser#classPropertyDispInterface}.
-	 * @param ctx the parse tree
-	 */
-	void enterClassPropertyDispInterface(DelphiParser.ClassPropertyDispInterfaceContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DelphiParser#classPropertyDispInterface}.
-	 * @param ctx the parse tree
-	 */
-	void exitClassPropertyDispInterface(DelphiParser.ClassPropertyDispInterfaceContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link DelphiParser#visibility}.
 	 * @param ctx the parse tree
 	 */

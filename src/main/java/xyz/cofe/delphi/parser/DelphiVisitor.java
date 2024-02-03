@@ -605,36 +605,6 @@ public interface DelphiVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitClassPropertyArray(DelphiParser.ClassPropertyArrayContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link DelphiParser#classPropertyIndex}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitClassPropertyIndex(DelphiParser.ClassPropertyIndexContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link DelphiParser#classPropertySpecifier}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitClassPropertySpecifier(DelphiParser.ClassPropertySpecifierContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link DelphiParser#classPropertyEndSpecifier}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitClassPropertyEndSpecifier(DelphiParser.ClassPropertyEndSpecifierContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link DelphiParser#classPropertyReadWrite}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitClassPropertyReadWrite(DelphiParser.ClassPropertyReadWriteContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link DelphiParser#classPropertyDispInterface}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitClassPropertyDispInterface(DelphiParser.ClassPropertyDispInterfaceContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link DelphiParser#visibility}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
