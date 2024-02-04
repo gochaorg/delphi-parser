@@ -14,6 +14,7 @@ import java.util.Optional;
  * <pre>
  *   (parmType)? identListFlat (':' typeDecl)? ('=' expression)?
  * </pre>
+ *
  * @param constraint ограничение
  * @param name имя аргумента
  * @param typeDecl тип аргумента
