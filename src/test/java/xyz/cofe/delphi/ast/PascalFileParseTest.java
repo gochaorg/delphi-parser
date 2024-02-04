@@ -23,10 +23,8 @@ public class PascalFileParseTest {
 
     @Test
     public void try_parse() {
-        System.out.println(
-            PascalFileAst.parse(
-                textResource("/samples/Map.pas"),
-                "Map.pas"));
+        var astRoot = PascalFileAst.parse(textResource("/samples/IntegerList.pas"),"IntegerList.pas");
+        System.out.println(astRoot);
     }
 
 

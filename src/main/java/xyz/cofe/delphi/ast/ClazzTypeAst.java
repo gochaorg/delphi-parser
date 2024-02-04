@@ -65,14 +65,14 @@ public record ClazzTypeAst(
         if (parents.size() > 0) {
             sb.append("  parent:\n");
             parents.each(p -> {
-                sb.append(indent("    ", p.toString()));
+                sb.append(indent("    ", p.toString())).append("\n");
             });
         }
 
         if (body.size() > 0) {
             sb.append("  body:\n");
             body.each(itm -> {
-                sb.append(indent("    ", itm.toString()));
+                sb.append(indent("    ", itm.toString())).append("\n");
             });
         }
 

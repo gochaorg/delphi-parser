@@ -7,6 +7,7 @@ import xyz.cofe.delphi.parser.DelphiParser;
 import java.util.Optional;
 
 import static xyz.cofe.delphi.ast.AstNode.upcast;
+import static xyz.cofe.text.Text.indent;
 
 /**
  * Методы класса/интерфейса/...
@@ -92,6 +93,35 @@ public sealed interface ClassMethodAst extends InterfaceItemAst,
                 .append(upcast(directives))
                 .append(upcast(attributes));
         }
+
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            sb.append(Function.class.getSimpleName()).append(" ").append(name).append("\n");
+            if( genericParams.size()>0 ){
+                sb.append("  genericParams:\n");
+                genericParams.each(p -> sb.append(indent("    ",p.toString())).append("\n"));
+            }
+            if( arguments.size()>0 ){
+                sb.append("  arguments:\n");
+                arguments.each(a -> sb.append(indent("    ",a.toString())).append("\n"));
+            }
+            if( directives.size()>0 ){
+                sb.append("  directives:\n");
+                directives.each(a -> sb.append(indent("    ",a.toString())).append("\n"));
+            }
+            if( attributes.size()>0 ){
+                sb.append("  attributes:\n");
+                attributes.each(a -> sb.append(indent("    ",a.toString())).append("\n"));
+            }
+            if( comments.size()>0 ){
+                sb.append("  comments:\n");
+                comments.each(a -> sb.append(indent("    ",a.toString())).append("\n"));
+            }
+            sb.append("  position: ").append(position).append("\n");
+            return sb.toString();
+        }
     }
 
     /**
@@ -155,6 +185,34 @@ public sealed interface ClassMethodAst extends InterfaceItemAst,
                 .append(upcast(arguments))
                 .append(upcast(directives))
                 .append(upcast(attributes));
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            sb.append(Constructor.class.getSimpleName()).append(" ").append(name).append("\n");
+            if( genericParams.size()>0 ){
+                sb.append("  genericParams:\n");
+                genericParams.each(p -> sb.append(indent("    ",p.toString())).append("\n"));
+            }
+            if( arguments.size()>0 ){
+                sb.append("  arguments:\n");
+                arguments.each(a -> sb.append(indent("    ",a.toString())).append("\n"));
+            }
+            if( directives.size()>0 ){
+                sb.append("  directives:\n");
+                directives.each(a -> sb.append(indent("    ",a.toString())).append("\n"));
+            }
+            if( attributes.size()>0 ){
+                sb.append("  attributes:\n");
+                attributes.each(a -> sb.append(indent("    ",a.toString())).append("\n"));
+            }
+            if( comments.size()>0 ){
+                sb.append("  comments:\n");
+                comments.each(a -> sb.append(indent("    ",a.toString())).append("\n"));
+            }
+            sb.append("  position: "+position+"\n");
+            return sb.toString();
         }
     }
 
@@ -220,6 +278,34 @@ public sealed interface ClassMethodAst extends InterfaceItemAst,
                     .append(upcast(arguments))
                     .append(upcast(directives))
                     .append(upcast(attributes));
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            sb.append(Destructor.class.getSimpleName()+" "+name).append("\n");
+            if( genericParams.size()>0 ){
+                sb.append("  genericParams:\n");
+                genericParams.each(p -> sb.append(indent("    ",p.toString())).append("\n"));
+            }
+            if( arguments.size()>0 ){
+                sb.append("  arguments:\n");
+                arguments.each(a -> sb.append(indent("    ",a.toString())).append("\n"));
+            }
+            if( directives.size()>0 ){
+                sb.append("  directives:\n");
+                directives.each(a -> sb.append(indent("    ",a.toString())).append("\n"));
+            }
+            if( attributes.size()>0 ){
+                sb.append("  attributes:\n");
+                attributes.each(a -> sb.append(indent("    ",a.toString())).append("\n"));
+            }
+            if( comments.size()>0 ){
+                sb.append("  comments:\n");
+                comments.each(a -> sb.append(indent("    ",a.toString())).append("\n"));
+            }
+            sb.append("  position: "+position+"\n");
+            return sb.toString();
         }
     }
 
@@ -308,6 +394,40 @@ public sealed interface ClassMethodAst extends InterfaceItemAst,
                 .append(upcast(attributes))
                 .append(resultAttributes);
         }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            sb.append(Function.class.getSimpleName()).append(" ").append(name).append("\n");
+            if( genericParams.size()>0 ){
+                sb.append("  genericParams:\n");
+                genericParams.each(p -> sb.append(indent("    ",p.toString())).append("\n"));
+            }
+            if( arguments.size()>0 ){
+                sb.append("  arguments:\n");
+                arguments.each(a -> sb.append(indent("    ",a.toString())).append("\n"));
+            }
+            sb.append("  result:\n");
+            sb.append(indent("    ",result.toString()));
+            if( directives.size()>0 ){
+                sb.append("  directives:\n");
+                directives.each(a -> sb.append(indent("    ",a.toString())).append("\n"));
+            }
+            if( attributes.size()>0 ){
+                sb.append("  attributes:\n");
+                attributes.each(a -> sb.append(indent("    ",a.toString())).append("\n"));
+            }
+            if( resultAttributes.size()>0 ){
+                sb.append("  resultAttributes:\n");
+                resultAttributes.each(a -> sb.append(indent("    ",a.toString())).append("\n"));
+            }
+            if( comments.size()>0 ){
+                sb.append("  comments:\n");
+                comments.each(a -> sb.append(indent("    ",a.toString())).append("\n"));
+            }
+            sb.append("  position: ").append(position).append("\n");
+            return sb.toString();
+        }
     }
 
     /**
@@ -371,6 +491,37 @@ public sealed interface ClassMethodAst extends InterfaceItemAst,
         @Override
         public ImList<? extends AstNode> nestedAstNodes() {
             return upcast(genericParams).append(upcast(arguments)).append(result);
+        }
+
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            sb.append(Function.class.getSimpleName()).append(" ").append(name).append("\n");
+            if( genericParams.size()>0 ){
+                sb.append("  genericParams:\n");
+                genericParams.each(p -> sb.append(indent("    ",p.toString())).append("\n"));
+            }
+            if( arguments.size()>0 ){
+                sb.append("  arguments:\n");
+                arguments.each(a -> sb.append(indent("    ",a.toString())).append("\n"));
+            }
+            sb.append("  result:\n");
+            sb.append(indent("    ",result.toString()));
+            if( attributes.size()>0 ){
+                sb.append("  attributes:\n");
+                attributes.each(a -> sb.append(indent("    ",a.toString())).append("\n"));
+            }
+            if( resultAttributes.size()>0 ){
+                sb.append("  resultAttributes:\n");
+                resultAttributes.each(a -> sb.append(indent("    ",a.toString())).append("\n"));
+            }
+            if( comments.size()>0 ){
+                sb.append("  comments:\n");
+                comments.each(a -> sb.append(indent("    ",a.toString())).append("\n"));
+            }
+            sb.append("  position: ").append(position).append("\n");
+            return sb.toString();
         }
     }
 
@@ -481,7 +632,7 @@ public sealed interface ClassMethodAst extends InterfaceItemAst,
 
         if (ctx.FUNCTION() != null
             && ctx.FUNCTION().getText() != null
-            && ctx.FUNCTION().getText().length() > 0
+            && !ctx.FUNCTION().getText().isEmpty()
             && result != null
             && result.isPresent()) {
             return new Function(
