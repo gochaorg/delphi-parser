@@ -41,7 +41,7 @@ public sealed interface ClassMethodAst extends InterfaceItemAst,
         String name,
         ImList<GenericAst.Param> genericParams,
         ImList<ArgumentAst> arguments,
-        ImList<MethodDirectiveAst> directives,
+        ImList<FDirective.MethodDirective> directives,
         SourcePosition position,
         ImList<Comment> comments,
         ImList<CustomAttributeAst> attributes
@@ -142,7 +142,7 @@ public sealed interface ClassMethodAst extends InterfaceItemAst,
         String name,
         ImList<GenericAst.Param> genericParams,
         ImList<ArgumentAst> arguments,
-        ImList<MethodDirectiveAst> directives,
+        ImList<FDirective.MethodDirective> directives,
         SourcePosition position,
         ImList<Comment> comments,
         ImList<CustomAttributeAst> attributes
@@ -237,7 +237,7 @@ public sealed interface ClassMethodAst extends InterfaceItemAst,
         String name,
         ImList<GenericAst.Param> genericParams,
         ImList<ArgumentAst> arguments,
-        ImList<MethodDirectiveAst> directives,
+        ImList<FDirective.MethodDirective> directives,
         SourcePosition position,
         ImList<Comment> comments,
         ImList<CustomAttributeAst> attributes
@@ -336,7 +336,7 @@ public sealed interface ClassMethodAst extends InterfaceItemAst,
         ImList<GenericAst.Param> genericParams,
         ImList<ArgumentAst> arguments,
         TypeDeclAst result,
-        ImList<MethodDirectiveAst> directives,
+        ImList<FDirective.MethodDirective> directives,
         SourcePosition position,
         ImList<Comment> comments,
         ImList<CustomAttributeAst> attributes,
@@ -598,9 +598,9 @@ public sealed interface ClassMethodAst extends InterfaceItemAst,
                 ArgumentAst.of(ctx.formalParameterSection().formalParameterList()) :
                 ImListLinked.of();
 
-        ImList<MethodDirectiveAst> meth_dir =
+        ImList<FDirective.MethodDirective> meth_dir =
             ctx.methodDirective() != null ?
-                ImListLinked.of(ctx.methodDirective()).map(MethodDirectiveAst::of) :
+                ImListLinked.of(ctx.methodDirective()).map(FDirective::of) :
                 ImListLinked.of();
 
         Optional<TypeDeclAst> result =

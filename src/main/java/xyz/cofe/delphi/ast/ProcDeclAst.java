@@ -17,7 +17,7 @@ public record ProcDeclAst(
     String name,
     ImList<ArgumentAst> arguments,
     Optional<TypeDeclAst> result,
-    ImList<FunctionDirectiveAst> directives,
+    ImList<FDirective.FunctionDirective> directives,
     SourcePosition position,
     ImList<Comment> comments
 
@@ -83,8 +83,8 @@ public record ProcDeclAst(
         var fTup3 = of(ctx.procDeclHeading());
         var directives = ctx.funcDirective()!=null && !ctx.funcDirective().isEmpty()
             ? ImListLinked.of(ctx.funcDirective())
-            .map(FunctionDirectiveAst::of)
-            : ImListLinked.<FunctionDirectiveAst>of();
+            .map(FDirective::of)
+            : ImListLinked.<FDirective.FunctionDirective>of();
         return new ProcDeclAst(
             fTup3._1(),
             fTup3._2(),

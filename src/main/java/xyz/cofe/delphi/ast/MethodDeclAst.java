@@ -196,7 +196,7 @@ public sealed interface MethodDeclAst extends InterfaceDecl,
         boolean statik,
         Name name,
         ImList<ArgumentAst> arguments,
-        ImList<MethodDirectiveAst> directives,
+        ImList<FDirective.MethodDirective> directives,
         SourcePosition position,
         ImList<Comment> comments
     ) implements MethodDeclAst, Commented<Constructor> {
@@ -242,7 +242,7 @@ public sealed interface MethodDeclAst extends InterfaceDecl,
         boolean statik,
         Name name,
         ImList<ArgumentAst> arguments,
-        ImList<MethodDirectiveAst> directives,
+        ImList<FDirective.MethodDirective> directives,
         SourcePosition position,
         ImList<Comment> comments
     ) implements MethodDeclAst, Commented<Destructor> {
@@ -280,7 +280,7 @@ public sealed interface MethodDeclAst extends InterfaceDecl,
         boolean statik,
         Name name,
         ImList<ArgumentAst> arguments,
-        ImList<MethodDirectiveAst> directives,
+        ImList<FDirective.MethodDirective> directives,
         SourcePosition position,
         ImList<Comment> comments
     ) implements MethodDeclAst, Commented<Procedure> {
@@ -318,7 +318,7 @@ public sealed interface MethodDeclAst extends InterfaceDecl,
         Name name,
         ImList<ArgumentAst> arguments,
         TypeDeclAst returns,
-        ImList<MethodDirectiveAst> directives,
+        ImList<FDirective.MethodDirective> directives,
         SourcePosition position,
         ImList<Comment> comments
     ) implements MethodDeclAst, Commented<Function> {
@@ -357,7 +357,7 @@ public sealed interface MethodDeclAst extends InterfaceDecl,
         Name name,
         ImList<ArgumentAst> arguments,
         TypeDeclAst returns,
-        ImList<MethodDirectiveAst> directives,
+        ImList<FDirective.MethodDirective> directives,
         SourcePosition position,
         ImList<Comment> comments
     ) implements MethodDeclAst, Commented<Operator> {
@@ -399,8 +399,8 @@ public sealed interface MethodDeclAst extends InterfaceDecl,
 
         var directives =
             ctx.methodDirective()!=null && !ctx.methodDirective().isEmpty()
-            ? ImListLinked.of(ctx.methodDirective()).map(MethodDirectiveAst::of)
-            : ImListLinked.<MethodDirectiveAst>of();
+            ? ImListLinked.of(ctx.methodDirective()).map(FDirective::of)
+            : ImListLinked.<FDirective.MethodDirective>of();
 
         if (ctx.methodDeclHeading().methodKey() != null && !ctx.methodDeclHeading().methodKey().isEmpty()) {
             if( ctx.methodDeclHeading().methodKey().PROCEDURE()!=null ){

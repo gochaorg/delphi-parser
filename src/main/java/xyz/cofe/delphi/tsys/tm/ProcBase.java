@@ -3,7 +3,7 @@ package xyz.cofe.delphi.tsys.tm;
 import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.delphi.ast.Comment;
-import xyz.cofe.delphi.ast.FunctionDirectiveAst;
+import xyz.cofe.delphi.ast.FDirective;
 import xyz.cofe.delphi.ast.SourcePosition;
 import xyz.cofe.delphi.tsys.Freeze;
 import xyz.cofe.delphi.tsys.TypeSysError;
@@ -104,13 +104,13 @@ public sealed abstract class ProcBase implements Freeze permits Function, Proced
 
     //endregion
     //region directives : ImList<FunctionDirectiveAst> - опции/директивы
-    private ImList<FunctionDirectiveAst> directives = ImListLinked.of();
+    private ImList<FDirective.FunctionDirective> directives = ImListLinked.of();
 
     /**
      * Директивы функции/процедуры
      * @return Директивы функции/процедуры
      */
-    public ImList<FunctionDirectiveAst> getDirectives() {
+    public ImList<FDirective.FunctionDirective> getDirectives() {
         return directives;
     }
 
@@ -118,7 +118,7 @@ public sealed abstract class ProcBase implements Freeze permits Function, Proced
      * Директивы функции/процедуры
      * @param directives Директивы функции/процедуры
      */
-    public void setDirectives(ImList<FunctionDirectiveAst> directives) {
+    public void setDirectives(ImList<FDirective.FunctionDirective> directives) {
         if (directives == null) throw new IllegalArgumentException("directives==null");
         if (frozen) throw new TypeSysError.Frozen();
         this.directives = directives;

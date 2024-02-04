@@ -116,14 +116,14 @@ public class PascalFileParseTest {
                 ? ImListLinked.of(ctr) : ImListLinked.of()
         );
         var destr = destrs.find(c -> c.name().equalsIgnoreCase("Destroy")).get();
-        assertTrue(destr.directives().containsAll(new MethodDirectiveAst.Binding.Override()));
+        assertTrue(destr.directives().fmap(FDirective.Override.class).size()>0);
 
         funs = tStringMap.body().fmap(itm ->
             itm instanceof ClassMethodAst.Function fn
                 ? ImListLinked.of(fn) : ImListLinked.of()
         );
         countFn = funs.find(c -> c.name().equalsIgnoreCase("count")).get();
-        assertTrue(countFn.directives().containsAll(new MethodDirectiveAst.Binding.Virtual()));
+        assertTrue(countFn.directives().fmap(FDirective.Virtual.class).size()>0);
     }
 
     @Test

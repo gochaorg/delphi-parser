@@ -1,7 +1,6 @@
 package xyz.cofe.delphi.tsys.tm;
 
-import xyz.cofe.delphi.ast.FunctionDirectiveAst;
-import xyz.cofe.delphi.ast.MethodDirectiveAst;
+import xyz.cofe.delphi.ast.FDirective;
 
 /**
  * Директивы метода
@@ -71,28 +70,28 @@ public sealed interface MethodDirective {
         public String toString() { return "DispID("+expression+")"; }
     }
 
-    public static MethodDirective of(MethodDirectiveAst dir) {
-        if( dir instanceof MethodDirectiveAst.Reintroduce )return new Reintroduce();
-        if( dir instanceof FunctionDirectiveAst.Overload )return new Overload();
-        if( dir instanceof MethodDirectiveAst.Binding.Message m )return new Message(m.expression().text());
-        if( dir instanceof MethodDirectiveAst.Binding.Static )return new Static();
-        if( dir instanceof MethodDirectiveAst.Binding.Dynamic )return new Dynamic();
-        if( dir instanceof MethodDirectiveAst.Binding.Override )return new Override();
-        if( dir instanceof MethodDirectiveAst.Binding.Virtual )return new Virtual();
-        if( dir instanceof MethodDirectiveAst.Abstract )return new Abstract();
-        if( dir instanceof MethodDirectiveAst.Final )return new Final();
-        if( dir instanceof FunctionDirectiveAst.Inline )return new Inline();
-        if( dir instanceof FunctionDirectiveAst.Assembler )return new Assembler();
-        if( dir instanceof FunctionDirectiveAst.Cdecl )return new Cdecl();
-        if( dir instanceof FunctionDirectiveAst.Pascal )return new Pascal();
-        if( dir instanceof FunctionDirectiveAst.Register )return new Register();
-        if( dir instanceof FunctionDirectiveAst.SafeCall )return new SafeCall();
-        if( dir instanceof FunctionDirectiveAst.StdCall )return new StdCall();
-        if( dir instanceof FunctionDirectiveAst.Export )return new Export();
-        if( dir instanceof FunctionDirectiveAst.Far )return new Far();
-        if( dir instanceof FunctionDirectiveAst.Local )return new Local();
-        if( dir instanceof FunctionDirectiveAst.Near )return new Near();
-        if( dir instanceof MethodDirectiveAst.DispID d )return new DispID(d.expression().text());
+    public static MethodDirective of(FDirective.MethodDirective dir) {
+        if( dir instanceof FDirective.Reintroduce )return new Reintroduce();
+        if( dir instanceof FDirective.Overload )return new Overload();
+        if( dir instanceof FDirective.Message m )return new Message(m.expression().text());
+        if( dir instanceof FDirective.Static )return new Static();
+        if( dir instanceof FDirective.Dynamic )return new Dynamic();
+        if( dir instanceof FDirective.Override )return new Override();
+        if( dir instanceof FDirective.Virtual )return new Virtual();
+        if( dir instanceof FDirective.Abstract )return new Abstract();
+        if( dir instanceof FDirective.Final )return new Final();
+        if( dir instanceof FDirective.Inline )return new Inline();
+        if( dir instanceof FDirective.Assembler )return new Assembler();
+        if( dir instanceof FDirective.Cdecl )return new Cdecl();
+        if( dir instanceof FDirective.Pascal )return new Pascal();
+        if( dir instanceof FDirective.Register )return new Register();
+        if( dir instanceof FDirective.SafeCall )return new SafeCall();
+        if( dir instanceof FDirective.StdCall )return new StdCall();
+        if( dir instanceof FDirective.Export )return new Export();
+        if( dir instanceof FDirective.Far )return new Far();
+        if( dir instanceof FDirective.Local )return new Local();
+        if( dir instanceof FDirective.Near )return new Near();
+        if( dir instanceof FDirective.DispID d )return new DispID(d.expression().text());
         return null;
     }
 }
