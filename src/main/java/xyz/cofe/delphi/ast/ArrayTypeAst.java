@@ -14,7 +14,7 @@ import static xyz.cofe.delphi.ast.impl.Ident.identifier;
  * 'array' ('[' (arrayIndex)? (',' (arrayIndex)?)* ']')? 'of' arraySubType
  * </pre>
  *
- * @param indexes  тип индекса
+ * @param indexes  тип индекса, размерность, если 0 - элементов, тогда динамический
  * @param subType  тип элемента массива
  * @param packed   флаг packed // TODO разобраться что за packed
  * @param comments Комментарии
@@ -81,6 +81,9 @@ public record ArrayTypeAst(
         return upcast(indexes).append(subType);
     }
 
+    /**
+     * Тип элемента массива
+     */
     sealed public static interface ArraySubTypeAst extends AstNode,
                                                            AstUpdate<ArraySubTypeAst> {
 
@@ -103,6 +106,10 @@ public record ArrayTypeAst(
         @Override
         ArraySubTypeAst astUpdate(AstUpdate.UpdateContext ctx);
 
+        /**
+         * Константа
+         * @param position позиция в исходниках
+         */
         record Const(SourcePosition position) implements ArraySubTypeAst,
                                                          SrcPos {
             @Override
@@ -111,6 +118,11 @@ public record ArrayTypeAst(
             }
         }
 
+        /**
+         * Ссылка на тип
+         * @param decl тип
+         * @param position позиция в исходниках
+         */
         record TypeRef(TypeDeclAst decl, SourcePosition position) implements ArraySubTypeAst,
                                                                              SrcPos {
             @Override
@@ -127,6 +139,9 @@ public record ArrayTypeAst(
         }
     }
 
+    /**
+     * Тип индекса массива
+     */
     sealed public static interface ArrayIndexAst extends AstNode,
                                                          AstUpdate<ArrayIndexAst>,
                                                          SrcPos {
@@ -151,6 +166,12 @@ public record ArrayTypeAst(
         @Override
         ArrayIndexAst astUpdate(AstUpdate.UpdateContext ctx);
 
+        /**
+         * Элементы массива
+         * @param from с какого элемента
+         * @param to по какой элемент включительно
+         * @param position позиция в исходниках
+         */
         record ArrayIndexRangeAst(ExpressionAst from, ExpressionAst to, SourcePosition position)
             implements ArrayIndexAst,
                        SrcPos {
@@ -168,6 +189,11 @@ public record ArrayTypeAst(
             }
         }
 
+        /**
+         * Ссылка на тип
+         * @param typeId тип
+         * @param position позиция в исходниках
+         */
         record ArrayIndexTypeAst(ImList<String> typeId, SourcePosition position)
             implements ArrayIndexAst,
                        SrcPos {
