@@ -232,9 +232,9 @@ procedureTypeHeading         : 'function' (formalParameterSection)? ':' (customA
                              ;
 variantType                  : 'variant' // SzJ TODO TEMP
                              ;
-simpleType                   : ident
-                             | subRangeType
-                             | enumType
+simpleType                   : ident // не понятный случай
+                             | subRangeType // реаилизовано
+                             | enumType // реализовано, через ж.. subRangeType, см комментарии
                              ;
 
 // implemented
