@@ -14,9 +14,11 @@ import static xyz.cofe.delphi.ast.impl.Ident.identifier;
  * 'array' ('[' (arrayIndex)? (',' (arrayIndex)?)* ']')? 'of' arraySubType
  * </pre>
  *
- * @param indexes тип индекса
- * @param subType тип элемента массива
- * @param packed  флаг packed // TODO разобраться что за packed
+ * @param indexes  тип индекса
+ * @param subType  тип элемента массива
+ * @param packed   флаг packed // TODO разобраться что за packed
+ * @param comments Комментарии
+ * @param position Позиция в исходниках
  */
 public record ArrayTypeAst(
     ImList<ArrayIndexAst> indexes,
@@ -28,11 +30,10 @@ public record ArrayTypeAst(
              TypeDeclAst,
              SrcPos,
              Commented<ArrayTypeAst>,
-             AstUpdate<ArrayTypeAst>
-{
+             AstUpdate<ArrayTypeAst> {
 
-    public static ArrayTypeAst of(DelphiParser.ArrayTypeContext ctx, boolean packed){
-        if( ctx==null ) throw new IllegalArgumentException("ctx==null");
+    public static ArrayTypeAst of(DelphiParser.ArrayTypeContext ctx, boolean packed) {
+        if (ctx == null) throw new IllegalArgumentException("ctx==null");
         var arrIdx = ImList.of(ctx.arrayIndex()).map(ArrayIndexAst::of);
         var arrSt = ArraySubTypeAst.of(ctx.arraySubType());
         return new ArrayTypeAst(
@@ -83,13 +84,13 @@ public record ArrayTypeAst(
     sealed public static interface ArraySubTypeAst extends AstNode,
                                                            AstUpdate<ArraySubTypeAst> {
 
-        public static ArraySubTypeAst of(DelphiParser.ArraySubTypeContext ctx){
-            if( ctx==null ) throw new IllegalArgumentException("ctx==null");
-            if( ctx.CONST()!=null && !ctx.CONST().getText().isBlank() ){
+        public static ArraySubTypeAst of(DelphiParser.ArraySubTypeContext ctx) {
+            if (ctx == null) throw new IllegalArgumentException("ctx==null");
+            if (ctx.CONST() != null && !ctx.CONST().getText().isBlank()) {
                 return new Const(SourcePosition.of(ctx));
             }
 
-            if( ctx.typeDecl()!=null ){
+            if (ctx.typeDecl() != null) {
                 return new TypeRef(
                     TypeDeclAst.of(ctx.typeDecl()),
                     SourcePosition.of(ctx)

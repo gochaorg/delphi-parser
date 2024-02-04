@@ -30,15 +30,14 @@ public sealed interface VarSectionAst
     ) implements VarSectionAst,
                  AstNode,
                  SrcPos,
-                 Commented<Variables>
-    {
+                 Commented<Variables> {
         @Override
         public Variables astUpdate(AstUpdate.UpdateContext ctx) {
             var vars = ctx.update(variables);
             var cmts = ctx instanceof AstUpdate.CommentingContext cc ?
                 cc.commenting(this) : this;
-            if( cmts==this && vars.isEmpty() )return this;
-            return new Variables(key,variables,position,cmts.comments);
+            if (cmts == this && vars.isEmpty()) return this;
+            return new Variables(key, variables, position, cmts.comments);
         }
 
         @Override
@@ -67,7 +66,7 @@ public sealed interface VarSectionAst
 
         @Override
         public Variables withComments(ImList<Comment> comments) {
-            return new Variables(key,variables,position,comments);
+            return new Variables(key, variables, position, comments);
         }
     }
 
@@ -79,10 +78,12 @@ public sealed interface VarSectionAst
     /**
      * Определение переменной
      *
-     * @param name      имя переменной
-     * @param type      тип переменной
-     * @param valueSpec Спецификация переменной
-     * @param position  Позиция в исходнике
+     * @param name       имя переменной
+     * @param type       тип переменной
+     * @param valueSpec  Спецификация переменной
+     * @param position   Позиция в исходнике
+     * @param comments   Комментарии
+     * @param attributes Аттрибуты
      */
     record VarDeclaration(
         String name,
@@ -94,8 +95,7 @@ public sealed interface VarSectionAst
     ) implements AstNode,
                  SrcPos,
                  Commented<VarDeclaration>,
-                 AstUpdate<VarDeclaration>
-    {
+                 AstUpdate<VarDeclaration> {
         @Override
         public VarDeclaration astUpdate(AstUpdate.UpdateContext ctx) {
             var cmnt = ctx instanceof AstUpdate.CommentingContext cc ?
@@ -197,7 +197,7 @@ public sealed interface VarSectionAst
         @Override
         public AbsoluteExp astUpdate(AstUpdate.UpdateContext ctx) {
             var exp = expression.astUpdate(ctx);
-            if( exp==expression )return this;
+            if (exp == expression) return this;
             return new AbsoluteExp(exp);
         }
 
@@ -212,7 +212,7 @@ public sealed interface VarSectionAst
         @Override
         public Expr astUpdate(AstUpdate.UpdateContext ctx) {
             var expr = expression.astUpdate(ctx);
-            if( expr==expression )return this;
+            if (expr == expression) return this;
             return new Expr(expr);
         }
 

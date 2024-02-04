@@ -11,7 +11,7 @@ import java.util.Optional;
 
 /**
  * <a href="https://docwiki.embarcadero.com/RADStudio/Alexandria/en/Procedural_Types_(Delphi)">Процедурный тип</a>
- * <p/>
+ * <p>
  *
  * Может быть
  * <ul>

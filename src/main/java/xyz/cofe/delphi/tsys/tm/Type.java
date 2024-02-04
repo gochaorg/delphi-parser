@@ -10,7 +10,7 @@ import xyz.cofe.delphi.tsys.tm.json.jakson.UnitTypeRefSer;
 /**
  * <a href="https://docwiki.embarcadero.com/RADStudio/Alexandria/en/About_Data_Types_(Delphi)">Некий тип данных</a>
  *
- * <p/>
+ * <p>
  * Delphi поставляет следующую таксономию типов
  *
  * <ul>

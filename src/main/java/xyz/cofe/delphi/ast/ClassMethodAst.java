@@ -33,6 +33,9 @@ public sealed interface ClassMethodAst extends InterfaceItemAst,
      * @param genericParams generic параметры
      * @param arguments     аргументы
      * @param directives    директивы компилятора
+     * @param position      Позиция в исходниках
+     * @param comments      Комментарии
+     * @param attributes    Аттрибуты
      */
     record Procedure(
         String name,
@@ -99,25 +102,25 @@ public sealed interface ClassMethodAst extends InterfaceItemAst,
         public String toString() {
             StringBuilder sb = new StringBuilder();
             sb.append(Function.class.getSimpleName()).append(" ").append(name).append("\n");
-            if( genericParams.size()>0 ){
+            if (genericParams.size() > 0) {
                 sb.append("  genericParams:\n");
-                genericParams.each(p -> sb.append(indent("    ",p.toString())).append("\n"));
+                genericParams.each(p -> sb.append(indent("    ", p.toString())).append("\n"));
             }
-            if( arguments.size()>0 ){
+            if (arguments.size() > 0) {
                 sb.append("  arguments:\n");
-                arguments.each(a -> sb.append(indent("    ",a.toString())).append("\n"));
+                arguments.each(a -> sb.append(indent("    ", a.toString())).append("\n"));
             }
-            if( directives.size()>0 ){
+            if (directives.size() > 0) {
                 sb.append("  directives:\n");
-                directives.each(a -> sb.append(indent("    ",a.toString())).append("\n"));
+                directives.each(a -> sb.append(indent("    ", a.toString())).append("\n"));
             }
-            if( attributes.size()>0 ){
+            if (attributes.size() > 0) {
                 sb.append("  attributes:\n");
-                attributes.each(a -> sb.append(indent("    ",a.toString())).append("\n"));
+                attributes.each(a -> sb.append(indent("    ", a.toString())).append("\n"));
             }
-            if( comments.size()>0 ){
+            if (comments.size() > 0) {
                 sb.append("  comments:\n");
-                comments.each(a -> sb.append(indent("    ",a.toString())).append("\n"));
+                comments.each(a -> sb.append(indent("    ", a.toString())).append("\n"));
             }
             sb.append("  position: ").append(position).append("\n");
             return sb.toString();
@@ -131,6 +134,9 @@ public sealed interface ClassMethodAst extends InterfaceItemAst,
      * @param genericParams generic параметры
      * @param arguments     аргументы
      * @param directives    директивы компилятора
+     * @param attributes    Атрибуты
+     * @param comments      Комментарии
+     * @param position      Позиция в исходниках
      */
     record Constructor(
         String name,
@@ -191,27 +197,27 @@ public sealed interface ClassMethodAst extends InterfaceItemAst,
         public String toString() {
             StringBuilder sb = new StringBuilder();
             sb.append(Constructor.class.getSimpleName()).append(" ").append(name).append("\n");
-            if( genericParams.size()>0 ){
+            if (genericParams.size() > 0) {
                 sb.append("  genericParams:\n");
-                genericParams.each(p -> sb.append(indent("    ",p.toString())).append("\n"));
+                genericParams.each(p -> sb.append(indent("    ", p.toString())).append("\n"));
             }
-            if( arguments.size()>0 ){
+            if (arguments.size() > 0) {
                 sb.append("  arguments:\n");
-                arguments.each(a -> sb.append(indent("    ",a.toString())).append("\n"));
+                arguments.each(a -> sb.append(indent("    ", a.toString())).append("\n"));
             }
-            if( directives.size()>0 ){
+            if (directives.size() > 0) {
                 sb.append("  directives:\n");
-                directives.each(a -> sb.append(indent("    ",a.toString())).append("\n"));
+                directives.each(a -> sb.append(indent("    ", a.toString())).append("\n"));
             }
-            if( attributes.size()>0 ){
+            if (attributes.size() > 0) {
                 sb.append("  attributes:\n");
-                attributes.each(a -> sb.append(indent("    ",a.toString())).append("\n"));
+                attributes.each(a -> sb.append(indent("    ", a.toString())).append("\n"));
             }
-            if( comments.size()>0 ){
+            if (comments.size() > 0) {
                 sb.append("  comments:\n");
-                comments.each(a -> sb.append(indent("    ",a.toString())).append("\n"));
+                comments.each(a -> sb.append(indent("    ", a.toString())).append("\n"));
             }
-            sb.append("  position: "+position+"\n");
+            sb.append("  position: " + position + "\n");
             return sb.toString();
         }
     }
@@ -223,6 +229,9 @@ public sealed interface ClassMethodAst extends InterfaceItemAst,
      * @param genericParams generic параметры
      * @param arguments     аргументы
      * @param directives    директивы компилятора
+     * @param position      Позиция в исходниках
+     * @param comments      Комментарии
+     * @param attributes    Атрибуты
      */
     record Destructor(
         String name,
@@ -283,28 +292,28 @@ public sealed interface ClassMethodAst extends InterfaceItemAst,
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder();
-            sb.append(Destructor.class.getSimpleName()+" "+name).append("\n");
-            if( genericParams.size()>0 ){
+            sb.append(Destructor.class.getSimpleName() + " " + name).append("\n");
+            if (genericParams.size() > 0) {
                 sb.append("  genericParams:\n");
-                genericParams.each(p -> sb.append(indent("    ",p.toString())).append("\n"));
+                genericParams.each(p -> sb.append(indent("    ", p.toString())).append("\n"));
             }
-            if( arguments.size()>0 ){
+            if (arguments.size() > 0) {
                 sb.append("  arguments:\n");
-                arguments.each(a -> sb.append(indent("    ",a.toString())).append("\n"));
+                arguments.each(a -> sb.append(indent("    ", a.toString())).append("\n"));
             }
-            if( directives.size()>0 ){
+            if (directives.size() > 0) {
                 sb.append("  directives:\n");
-                directives.each(a -> sb.append(indent("    ",a.toString())).append("\n"));
+                directives.each(a -> sb.append(indent("    ", a.toString())).append("\n"));
             }
-            if( attributes.size()>0 ){
+            if (attributes.size() > 0) {
                 sb.append("  attributes:\n");
-                attributes.each(a -> sb.append(indent("    ",a.toString())).append("\n"));
+                attributes.each(a -> sb.append(indent("    ", a.toString())).append("\n"));
             }
-            if( comments.size()>0 ){
+            if (comments.size() > 0) {
                 sb.append("  comments:\n");
-                comments.each(a -> sb.append(indent("    ",a.toString())).append("\n"));
+                comments.each(a -> sb.append(indent("    ", a.toString())).append("\n"));
             }
-            sb.append("  position: "+position+"\n");
+            sb.append("  position: " + position + "\n");
             return sb.toString();
         }
     }
@@ -312,11 +321,15 @@ public sealed interface ClassMethodAst extends InterfaceItemAst,
     /**
      * Функция
      *
-     * @param name          имя
-     * @param genericParams generic параметры
-     * @param arguments     аргументы
-     * @param result        результат вызова
-     * @param directives    директивы компилятора
+     * @param name             имя
+     * @param genericParams    generic параметры
+     * @param arguments        аргументы
+     * @param result           результат вызова
+     * @param directives       директивы компилятора
+     * @param position         Позиция в исходниках
+     * @param attributes       Аттрибуты
+     * @param comments         Комментарии
+     * @param resultAttributes Атрибуты результата
      */
     record Function(
         String name,
@@ -399,31 +412,31 @@ public sealed interface ClassMethodAst extends InterfaceItemAst,
         public String toString() {
             StringBuilder sb = new StringBuilder();
             sb.append(Function.class.getSimpleName()).append(" ").append(name).append("\n");
-            if( genericParams.size()>0 ){
+            if (genericParams.size() > 0) {
                 sb.append("  genericParams:\n");
-                genericParams.each(p -> sb.append(indent("    ",p.toString())).append("\n"));
+                genericParams.each(p -> sb.append(indent("    ", p.toString())).append("\n"));
             }
-            if( arguments.size()>0 ){
+            if (arguments.size() > 0) {
                 sb.append("  arguments:\n");
-                arguments.each(a -> sb.append(indent("    ",a.toString())).append("\n"));
+                arguments.each(a -> sb.append(indent("    ", a.toString())).append("\n"));
             }
             sb.append("  result:\n");
-            sb.append(indent("    ",result.toString()));
-            if( directives.size()>0 ){
+            sb.append(indent("    ", result.toString()));
+            if (directives.size() > 0) {
                 sb.append("  directives:\n");
-                directives.each(a -> sb.append(indent("    ",a.toString())).append("\n"));
+                directives.each(a -> sb.append(indent("    ", a.toString())).append("\n"));
             }
-            if( attributes.size()>0 ){
+            if (attributes.size() > 0) {
                 sb.append("  attributes:\n");
-                attributes.each(a -> sb.append(indent("    ",a.toString())).append("\n"));
+                attributes.each(a -> sb.append(indent("    ", a.toString())).append("\n"));
             }
-            if( resultAttributes.size()>0 ){
+            if (resultAttributes.size() > 0) {
                 sb.append("  resultAttributes:\n");
-                resultAttributes.each(a -> sb.append(indent("    ",a.toString())).append("\n"));
+                resultAttributes.each(a -> sb.append(indent("    ", a.toString())).append("\n"));
             }
-            if( comments.size()>0 ){
+            if (comments.size() > 0) {
                 sb.append("  comments:\n");
-                comments.each(a -> sb.append(indent("    ",a.toString())).append("\n"));
+                comments.each(a -> sb.append(indent("    ", a.toString())).append("\n"));
             }
             sb.append("  position: ").append(position).append("\n");
             return sb.toString();
@@ -433,10 +446,14 @@ public sealed interface ClassMethodAst extends InterfaceItemAst,
     /**
      * Оператор
      *
-     * @param name          имя
-     * @param genericParams generic параметры
-     * @param arguments     аргументы
-     * @param result        результат вызова
+     * @param name             имя
+     * @param genericParams    generic параметры
+     * @param arguments        аргументы
+     * @param result           результат вызова
+     * @param position         Позиция в исходниках
+     * @param comments         Комментарии
+     * @param attributes       Атрибуты
+     * @param resultAttributes Атрибуты связанные с результатом
      */
     record Operator(
         String name,
@@ -498,27 +515,27 @@ public sealed interface ClassMethodAst extends InterfaceItemAst,
         public String toString() {
             StringBuilder sb = new StringBuilder();
             sb.append(Function.class.getSimpleName()).append(" ").append(name).append("\n");
-            if( genericParams.size()>0 ){
+            if (genericParams.size() > 0) {
                 sb.append("  genericParams:\n");
-                genericParams.each(p -> sb.append(indent("    ",p.toString())).append("\n"));
+                genericParams.each(p -> sb.append(indent("    ", p.toString())).append("\n"));
             }
-            if( arguments.size()>0 ){
+            if (arguments.size() > 0) {
                 sb.append("  arguments:\n");
-                arguments.each(a -> sb.append(indent("    ",a.toString())).append("\n"));
+                arguments.each(a -> sb.append(indent("    ", a.toString())).append("\n"));
             }
             sb.append("  result:\n");
-            sb.append(indent("    ",result.toString()));
-            if( attributes.size()>0 ){
+            sb.append(indent("    ", result.toString()));
+            if (attributes.size() > 0) {
                 sb.append("  attributes:\n");
-                attributes.each(a -> sb.append(indent("    ",a.toString())).append("\n"));
+                attributes.each(a -> sb.append(indent("    ", a.toString())).append("\n"));
             }
-            if( resultAttributes.size()>0 ){
+            if (resultAttributes.size() > 0) {
                 sb.append("  resultAttributes:\n");
-                resultAttributes.each(a -> sb.append(indent("    ",a.toString())).append("\n"));
+                resultAttributes.each(a -> sb.append(indent("    ", a.toString())).append("\n"));
             }
-            if( comments.size()>0 ){
+            if (comments.size() > 0) {
                 sb.append("  comments:\n");
-                comments.each(a -> sb.append(indent("    ",a.toString())).append("\n"));
+                comments.each(a -> sb.append(indent("    ", a.toString())).append("\n"));
             }
             sb.append("  position: ").append(position).append("\n");
             return sb.toString();

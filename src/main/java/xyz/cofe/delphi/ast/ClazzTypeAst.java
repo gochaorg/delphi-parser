@@ -16,6 +16,7 @@ import static xyz.cofe.delphi.impl.Indent.indent;
  * @param parents  родительские классы/интерфейсы
  * @param body     содержание
  * @param position позиция в исходном коде
+ * @param comments комментарии
  */
 public record ClazzTypeAst(
     Optional<ClassState> state,

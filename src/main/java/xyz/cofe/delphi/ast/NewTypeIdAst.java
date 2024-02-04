@@ -36,6 +36,8 @@ import xyz.cofe.coll.im.ImList;
  *
  * @param name          имя типа
  * @param genericParams параметры типа
+ * @param comments Комментарии
+ * @param position Позиция в исходниках
  */
 public record NewTypeIdAst(
     ImList<String> name,

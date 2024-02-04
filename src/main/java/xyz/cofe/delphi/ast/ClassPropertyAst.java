@@ -238,6 +238,10 @@ public sealed interface ClassPropertyAst extends InterfaceItemAst, ClassItemAst,
         }
     }
 
+    /**
+     * Идентификатор IDispatch
+     * @param expression По идее константа
+     */
     record DispID(ExpressionAst expression) implements Specifier {
         @Override
         public DispID astUpdate(AstUpdate.UpdateContext ctx) {
@@ -252,6 +256,10 @@ public sealed interface ClassPropertyAst extends InterfaceItemAst, ClassItemAst,
         }
     }
 
+    /**
+     * Параметр для IDE не помню зачем
+     * @param expression значение, по идее константа
+     */
     record Stored(ExpressionAst expression) implements Specifier {
         @Override
         public Stored astUpdate(AstUpdate.UpdateContext ctx) {

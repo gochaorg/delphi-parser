@@ -9,9 +9,12 @@ import java.util.Optional;
 
 /**
  * Перечисляемый тип
- * <p/>
+ * <p>
  *
  * Пример: <code>type TAccess = <b>(Deny, View, All, None)</b>;</code>
+ *
+ * @param entries элементы перечисления
+ * @param position позиция в исходниках
  */
 public record EnumTypeAst(ImList<EnumEntry> entries, SourcePosition position) implements SrcPos, TypeDeclAst {
     @Override
@@ -20,7 +23,11 @@ public record EnumTypeAst(ImList<EnumEntry> entries, SourcePosition position) im
     }
 
     public sealed interface EnumEntry {
-        /** именная константа, без указанного значения <code>type TAccess = (<b>Deny</b>, View, All, None)</code> */
+        /**
+         * Именная константа, без указанного значения <code>type TAccess = (<b>Deny</b>, View, All, None)</code>
+         *
+         * @param name Просто именованный элемент
+         */
         record Named( String name ) implements EnumEntry {
             public static Optional<Named> parse(DelphiParser.ConstExpressionContext cexp){
                 if( cexp==null )throw new IllegalArgumentException("cexp==null");
@@ -28,7 +35,12 @@ public record EnumTypeAst(ImList<EnumEntry> entries, SourcePosition position) im
             }
         }
 
-        /** именная константа, с указанием значения <code>type TAccess = (<b>Deny=1</b>, View='abc', All, None)</code> */
+        /**
+         * Именная константа, с указанием значения <code>type TAccess = (<b>Deny=1</b>, View='abc', All, None)</code>
+         *
+         * @param name Имя константы
+         * @param number число ассоциированное с константой
+         */
         record Numeric( String name, int number ) implements EnumEntry {
             public static Optional<Numeric> parse(DelphiParser.ConstExpressionContext cexp){
                 if( cexp==null )throw new IllegalArgumentException("cexp==null");

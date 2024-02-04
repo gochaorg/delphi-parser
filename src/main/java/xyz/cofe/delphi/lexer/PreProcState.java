@@ -5,7 +5,7 @@ import java.util.*;
 /**
 https://docwiki.embarcadero.com/RADStudio/Alexandria/en/Compiler_Versions
 
- <table>
+ <table summary="Версии компилятора Delphi">
  <tr><td>Delphi conditional VER&lt;nnn&gt;</td> <td>	Product</td>	<td>Product Version</td>	<td>Package Version	</td><td>CompilerVersion</td></tr>
  <tr><td>VER350</td>	<td>Delphi 11.0 Alexandria / C++Builder 11.0 Alexandria	</td> <td>28</td>	<td>280</td>	<td>35.0</td></tr>
  <tr><td>VER340</td>	<td>Delphi 10.4 Sydney / C++Builder 10.4 Sydney	        </td> <td>27</td>	<td>270</td>	<td>34.0</td></tr>

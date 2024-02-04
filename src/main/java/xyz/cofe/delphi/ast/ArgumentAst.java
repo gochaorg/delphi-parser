@@ -10,6 +10,10 @@ import java.util.Optional;
 
 /**
  * Аргумент функции/метода
+ *
+ * <pre>
+ *   (parmType)? identListFlat (':' typeDecl)? ('=' expression)?
+ * </pre>
  * @param constraint ограничение
  * @param name имя аргумента
  * @param typeDecl тип аргумента
@@ -27,6 +31,9 @@ public record ArgumentAst(
         return this;
     }
 
+    /**
+     * Указывает направление аргумента out | var | const
+     */
     public static enum Constraint {
         Const,
         Var,

@@ -11,12 +11,30 @@ import xyz.cofe.delphi.tsys.tm.json.jakson.FlatStrSer;
  */
 @SuppressWarnings("UnnecessaryModifier")
 public sealed interface CharType extends NamedType, SimpleType {
+    /** Символ, возможно unicode */
     public static final Char charType = new Char();
+
+    /** Символ 1 байт */
     public static final AnsiChar ansiCharType = new AnsiChar();
+
+    /**
+     * Символ 2 байта, наверно unicode
+     */
     public static final WideChar wideCharType = new WideChar();
+
+    /**
+     * Символ 2 байта
+     */
     public static final UCS2Char ucs2CharType = new UCS2Char();
+
+    /**
+     * Символ 4 байта
+     */
     public static final UCS4Char ucs4CharType = new UCS4Char();
 
+    /**
+     * Какие могут быть символы (типы)
+     */
     public static ImList<CharType> values = ImListLinked.of(
         charType,
         ansiCharType,
