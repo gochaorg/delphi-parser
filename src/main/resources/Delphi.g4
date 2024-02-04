@@ -160,8 +160,12 @@ typeDecl                     : strucType
                              | ('type')? typeId (genericPostfix)?
                              | simpleType
                              ;
+
+// implemented
 strucType                    : ('packed')? strucTypePart 
                              ;
+
+// implemented
 strucTypePart                : arrayType
                              | setType
                              | fileType
@@ -195,21 +199,34 @@ fileType                     : 'file' ('of' typeDecl)?
 pointerType                  : '^' typeDecl
                              | 'pointer'
                              ;
+
+// implemented
 stringType                   : 'string' ('[' expression ']')?
                              | ('type')? ANSISTRING (codePageNumber)?
                              ;
+
+// implemented
 codePageNumber               : '(' intNum ')'
                              ;
+
+// implemented
 procedureType                : methodType
                              | simpleProcedureType
                              | procedureReference
                              ;
+
+// implemented
 methodType                   : procedureTypeHeading 'of' 'object'
                              ;
+
+// implemented
 simpleProcedureType          : procedureTypeHeading ( (';')? callConventionNoSemi)?
                              ;
+
+// implemented
 procedureReference           : 'reference' 'to' procedureTypeHeading
                              ;
+
 procedureTypeHeading         : 'function' (formalParameterSection)? ':' (customAttribute)* typeDecl
                              | 'procedure' (formalParameterSection)?
                              ;
@@ -219,8 +236,11 @@ simpleType                   : ident
                              | subRangeType
                              | enumType
                              ;
+
+// implemented
 subRangeType                 : constExpression ('..' constExpression)?
                              ;
+
 enumType                     : '(' ident ('=' expression)? (',' ident ('=' expression)? )* ')' // TODO не работает, вместо этого захват - subRangeType
                              ;
 typeId                       : namespacedQualifiedIdent

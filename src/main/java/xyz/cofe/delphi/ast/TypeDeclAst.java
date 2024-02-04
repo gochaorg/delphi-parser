@@ -26,6 +26,7 @@ public sealed interface TypeDeclAst
             SimpleTypeAst,
             StringTypeAst,
             StructuredTypeAst,
+            SubRangeTypeAst,
             TypeAliasAst,
             TypeIdentAst,
             VariantTypeAst {
@@ -115,6 +116,8 @@ public sealed interface TypeDeclAst
             if (enumTypeOpt.isPresent()) {
                 return enumTypeOpt.get();
             }
+
+            return SubRangeTypeAst.of(ctx.simpleType().subRangeType());
         }
 
         if (ctx.pointerType() != null) {
