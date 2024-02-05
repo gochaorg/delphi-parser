@@ -19,6 +19,7 @@ public sealed interface TypeDeclAst
             FileTypeAst,
             InterfaceTypeAst,
             MetaClassAst,
+            MetaClassTypeAst,
             NewTypeIdAst,
             PointerTypeAst,
             ProcedureTypeAst,

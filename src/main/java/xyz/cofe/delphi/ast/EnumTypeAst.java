@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 /**
- * Перечисляемый тип
+ * Перечисляемый тип: <span style="font-family:mono">(Deny, View, All, None)</span>
  * <p>
  *
  * Пример: <code>type TAccess = <b>(Deny, View, All, None)</b>;</code>

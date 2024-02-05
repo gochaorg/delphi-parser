@@ -9,10 +9,9 @@ import static xyz.cofe.delphi.ast.impl.Ident.identifier;
 
 /**
  * Массив
- *
- * <pre>
+ * <span style="color: blue; font-family:mono">
  * 'array' ('[' (arrayIndex)? (',' (arrayIndex)?)* ']')? 'of' arraySubType
- * </pre>
+ * </span>
  *
  * @param indexes  тип индекса, размерность, если 0 - элементов, тогда динамический
  * @param subType  тип элемента массива

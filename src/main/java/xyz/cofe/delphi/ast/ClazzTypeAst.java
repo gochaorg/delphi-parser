@@ -10,7 +10,7 @@ import static xyz.cofe.delphi.ast.AstNode.upcast;
 import static xyz.cofe.delphi.impl.Indent.indent;
 
 /**
- * Описание класса
+ * Описание класса: <span style="font-family:mono">class(parent) ... end;</span>
  *
  * @param state    абстрактный/запечатанный
  * @param parents  родительские классы/интерфейсы
