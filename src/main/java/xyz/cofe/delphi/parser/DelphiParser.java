@@ -11162,6 +11162,9 @@ public class DelphiParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class SetExpressionContext extends ParserRuleContext {
+		public ExpressionContext head;
+		public Token delim;
+		public ExpressionContext tail;
 		public TerminalNode LBRACK() { return getToken(DelphiParser.LBRACK, 0); }
 		public TerminalNode RBRACK() { return getToken(DelphiParser.RBRACK, 0); }
 		public List<ExpressionContext> expression() {
@@ -11212,7 +11215,7 @@ public class DelphiParser extends Parser {
 			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & -9104861931928270808L) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & 1153414247685297397L) != 0) || ((((_la - 128)) & ~0x3f) == 0 && ((1L << (_la - 128)) & 999799119527018617L) != 0)) {
 				{
 				setState(1724);
-				expression();
+				((SetExpressionContext)_localctx).head = expression();
 				setState(1729);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
@@ -11220,9 +11223,10 @@ public class DelphiParser extends Parser {
 					{
 					{
 					setState(1725);
+					((SetExpressionContext)_localctx).delim = _input.LT(1);
 					_la = _input.LA(1);
 					if ( !(_la==COMMA || _la==DOTDOT) ) {
-					_errHandler.recoverInline(this);
+						((SetExpressionContext)_localctx).delim = (Token)_errHandler.recoverInline(this);
 					}
 					else {
 						if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
@@ -11230,7 +11234,7 @@ public class DelphiParser extends Parser {
 						consume();
 					}
 					setState(1726);
-					expression();
+					((SetExpressionContext)_localctx).tail = expression();
 					}
 					}
 					setState(1731);

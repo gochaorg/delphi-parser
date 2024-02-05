@@ -279,14 +279,22 @@ classDecl                    : classTypeTypeDecl
                              ;
 classTypeTypeDecl            : 'class' 'of' typeId 
                              ;
+
+// implemented
 classTypeDecl                : 'class' (classState)? (classParent)? (classItem)* 'end' 
                              | 'class' classParent?
                              ;
+
+// implemented
 classState                   : 'sealed'
                              | 'abstract'
                              ;
+
+// implemented
 classParent                  : '(' genericTypeIdent (',' genericTypeIdent)* ')'    //CHANGEd from typeId to classParentId
                              ;
+
+// implemented
 classItem                    : visibility
                              | classMethod
                              | classField
@@ -432,6 +440,8 @@ methodKey                    : 'procedure'
                              | 'constructor'
                              | 'destructor'
                              ;
+
+// impl
 methodName                   : className=ident (classTArgs=genericDefinition)?
                                ('.' nestedName=ident (nestedTArgs=genericDefinition)?)?
                                '.' methName=ident (methTArgs=genericDefinition)?
@@ -442,14 +452,20 @@ procDecl                     : procDeclHeading ( ';'? funcDirective (';' funcDir
 procDeclHeading              : (customAttribute)* 'procedure' ident (formalParameterSection)?             //CHANGED
                              | (customAttribute)* 'function' ident (formalParameterSection)? ':' typeDecl
                              ;
-formalParameterSection       : '(' (formalParameterList)? ')' 
+
+// impl
+formalParameterSection       : '(' (formalParameterList)? ')'
                              ;
-formalParameterList          : formalParameter (';' formalParameter)* 
+
+// impl
+formalParameterList          : formalParameter (';' formalParameter)*
                              ;
 formalParameter              : //(customAttribute)? 
                                (parmType)? identListFlat (':' typeDecl)? ('=' expression)? 
                //expressions was cut out, beacause we dont have to know default variable values; they were causing troubles with DelphiCodeAnalyser
                              ;
+
+// impl
 parmType                     : 'const'
                              | 'var'
                              | 'out'
@@ -526,7 +542,7 @@ identInAtom : RESIDENT
             | ident
             ;
 
-setExpression   : '[' (expression ((','|'..') expression)*)? ']' ;
+setExpression   : '[' (head=expression (delim=(','|'..') tail=expression)*)? ']' ;
 
 // цепь вызовов
 postfix : arrayIndexAccess

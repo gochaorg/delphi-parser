@@ -18,8 +18,6 @@ public interface ExpressionAst extends AstNode, SrcPos {
         }
     }
 
-
-
     @Override
     ExpressionAst astUpdate(AstUpdate.UpdateContext ctx);
 
