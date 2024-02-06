@@ -13,7 +13,7 @@ import static xyz.cofe.delphi.ast.AstNode.upcast;
 /**
  * Свойство класса/интерфейса
  */
-public sealed interface ClassPropertyAst extends InterfaceItemAst, ClassItemAst, AstNode {
+public sealed interface ClassPropertyAst extends InterfaceItemAst, ClassItemAst, AstNode, RecordItemAst {
     @Override
     ClassPropertyAst astUpdate(AstUpdate.UpdateContext ctx);
 

@@ -16,10 +16,26 @@ public sealed interface ConstSectionAst extends InterfaceDecl, AstNode {
      * @param constants константы
      * @param key тип констант // TODO выяснить что за Resource string
      */
-    record Constants(ImList<Const> constants, ConstKey key) implements ConstSectionAst, ClassItemAst, AstNode {
+    record Constants(
+        ImList<Const> constants,
+        ConstKey key,
+        SourcePosition position,
+        ImList<Comment> comments
+    ) implements ConstSectionAst, ClassItemAst, AstNode, RecordItemAst, SrcPos, Commented<Constants>
+    {
         @Override
         public Constants astUpdate(AstUpdate.UpdateContext ctx) {
-            return this;
+            var cns = ctx.update(constants);
+            var k = (ConstKey) key.astUpdate(ctx);
+            var cmts = ctx instanceof AstUpdate.CommentingContext cc ?
+                cc.commenting(this) : this;
+            if( cmts==this  && k==key && cns.isEmpty() )return this;
+            return new Constants(cns.orElse(constants), k, position, cmts.comments);
+        }
+
+        @Override
+        public Constants withComments(ImList<Comment> comments) {
+            return new Constants(constants,key,position,comments);
         }
 
         @Override
@@ -29,6 +45,7 @@ public sealed interface ConstSectionAst extends InterfaceDecl, AstNode {
 
         static Constants of(DelphiParser.ConstSectionContext ctx){
             var key = ConstKey.Const;
+
             if( ctx.constKey()!=null
                 && !ctx.constKey().isEmpty()
                 && ctx.constKey().getText()!=null
@@ -36,14 +53,13 @@ public sealed interface ConstSectionAst extends InterfaceDecl, AstNode {
                 key = ConstKey.ResourceString;
             }
 
-            if(ctx.constDeclaration()!=null && !ctx.constDeclaration().isEmpty())
-                return new Constants(
-                    ImListLinked.of(ctx.constDeclaration())
-                        .map(Const::of),
-                    key
-                );
-
-            return new Constants(ImListLinked.of(), key);
+            return new Constants(
+                ctx.constDeclaration()!=null && !ctx.constDeclaration().isEmpty() ?
+                    ImList.of(ctx.constDeclaration()).map(Const::of) : ImList.of(),
+                key,
+                SourcePosition.of(ctx),
+                ImList.of()
+            );
         }
     }
 
@@ -52,25 +68,59 @@ public sealed interface ConstSectionAst extends InterfaceDecl, AstNode {
         ResourceString
     }
 
-    record Const(String name, Optional<TypeDeclAst> type, ConstExpression expression ) implements AstNode // TODO comment!
+    record Const(
+        String name,
+        Optional<TypeDeclAst> type,
+        ConstExpression expression,
+        ImList<CustomAttributeAst> attributes,
+        ImList<Comment> comments,
+        SourcePosition position
+    ) implements AstNode, AstUpdate<Const>, Commented<Const>
     {
         @Override
         public Const astUpdate(AstUpdate.UpdateContext ctx) {
-            return this;
+            if( ctx==null )throw new IllegalArgumentException("ctx==null");
+            var cmts = ctx instanceof AstUpdate.CommentingContext cc ?
+                cc.commenting(this) : this;
+            var type1 = ctx.updateUnsafe(type);
+            var expr = expression.astUpdate(ctx);
+            var attr = ctx.update(attributes);
+            if( cmts==this && type1.isEmpty() && expr==expression && attr.isEmpty() )return this;
+            return new Const(
+                name,
+                type1.orElse(type),
+                expr,
+                attr.orElse(attributes),
+                cmts.comments,
+                position
+            );
+        }
+
+        @Override
+        public Const withComments(ImList<Comment> comments) {
+            if( comments==null )throw new IllegalArgumentException("comments==null");
+            return new Const(
+                name, type, expression, attributes, comments, position
+            );
         }
 
         @Override
         public ImList<? extends AstNode> nestedAstNodes() {
-            return upcast(type).append(expression);
+            return upcast(type).append(expression).append(upcast(attributes));
         }
 
         static Const of(DelphiParser.ConstDeclarationContext ctx){
+            if( ctx==null )throw new IllegalArgumentException("ctx==null");
             return new Const(
                 ctx.ident().getText(),
                 ctx.typeDecl()!=null && !ctx.typeDecl().isEmpty() ?
                     Optional.of(TypeDeclAst.of(ctx.typeDecl())) :
                     Optional.empty(),
-                ConstExpression.of(ctx.constExpression())
+                ConstExpression.of(ctx.constExpression()),
+                ctx.customAttribute()!=null && !ctx.customAttribute().isEmpty() ?
+                    ImList.of(ctx.customAttribute()).map(CustomAttributeAst::of) : ImList.of(),
+                ImList.of(),
+                SourcePosition.of(ctx)
             );
         }
     }

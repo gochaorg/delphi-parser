@@ -23,6 +23,7 @@ public sealed interface TypeDeclAst
             NewTypeIdAst,
             PointerTypeAst,
             ProcedureTypeAst,
+            RecordAst,
             SetTypeAst,
             SimpleTypeAst,
             StringTypeAst,

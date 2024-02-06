@@ -15,6 +15,10 @@ import java.util.Optional;
 public sealed interface VarSectionAst
     extends InterfaceDecl,
             AstNode {
+
+    @Override
+    VarSectionAst astUpdate(AstUpdate.UpdateContext ctx);
+
     /**
      * Перечень переменных
      *

@@ -15,6 +15,7 @@ public sealed interface FDirective extends AstNode {
     sealed interface CallConvention {}
     sealed interface Binding {}
     sealed interface Abstr {}
+    sealed interface Hinting {}
 
     record Message(ExpressionAst expression, SourcePosition position) implements FDirective, MethodDirective, Binding, SrcPos {}
     record Static(SourcePosition position) implements FDirective, MethodDirective, Binding, SrcPos {}
@@ -29,9 +30,9 @@ public sealed interface FDirective extends AstNode {
     record Inline(SourcePosition position) implements FDirective, FunctionDirective, MethodDirective, SrcPos {}
     record Assembler(SourcePosition position) implements FDirective, FunctionDirective, MethodDirective, SrcPos {}
     record Cdecl(SourcePosition position) implements FDirective, FunctionDirective, CallConvention, MethodDirective, SrcPos {}
-    record Library(SourcePosition position) implements FDirective, FunctionDirective, SrcPos {}
-    record Platform(SourcePosition position) implements FDirective, FunctionDirective, SrcPos {}
-    record Experimental(SourcePosition position) implements FDirective, FunctionDirective, SrcPos {}
+    record Library(SourcePosition position) implements FDirective, FunctionDirective, SrcPos, Hinting {}
+    record Platform(SourcePosition position) implements FDirective, FunctionDirective, SrcPos, Hinting {}
+    record Experimental(SourcePosition position) implements FDirective, FunctionDirective, SrcPos, Hinting {}
     record Unsafe(SourcePosition position) implements FDirective, FunctionDirective, SrcPos {}
     record VarArgs(SourcePosition position) implements FDirective, FunctionDirective, SrcPos {}
     record Near(SourcePosition position) implements FDirective, FunctionDirective, CallConvention, MethodDirective, SrcPos {}
@@ -42,7 +43,7 @@ public sealed interface FDirective extends AstNode {
     record SafeCall(SourcePosition position) implements FDirective, FunctionDirective, CallConvention, MethodDirective, SrcPos {}
     record Register(SourcePosition position) implements FDirective, FunctionDirective, CallConvention, MethodDirective, SrcPos {}
     record Pascal(SourcePosition position) implements FDirective, FunctionDirective, CallConvention, MethodDirective, SrcPos {}
-    record Depricated(Optional<String> message,SourcePosition position) implements FDirective, FunctionDirective, SrcPos {}
+    record Depricated(Optional<String> message,SourcePosition position) implements FDirective, FunctionDirective, SrcPos, Hinting {}
     record External(
         Optional<ConstSectionAst.ConstExpression> constExpression,
         ImList<Specifier> specifiers,
@@ -69,6 +70,23 @@ public sealed interface FDirective extends AstNode {
         }
     }
     record DispID(ExpressionAst expression, SourcePosition position) implements FDirective, MethodDirective {}
+
+    static Hinting of(DelphiParser.HintingDirectiveContext ctx){
+        if( ctx==null )throw new IllegalArgumentException("ctx==null");
+        if( ctx.DEPRECATED()!=null && !ctx.DEPRECATED().getText().isEmpty() ){
+            var str = ctx.stringFactor()!=null && !ctx.stringFactor().isEmpty()
+                ? Optional.of(ctx.stringFactor().getText())
+                : Optional.<String>empty();
+            return new Depricated(str,SourcePosition.of(ctx));
+        }
+        if( ctx.EXPERIMENTAL()!=null && !ctx.EXPERIMENTAL().getText().isEmpty() )
+            return new Experimental(SourcePosition.of(ctx));
+        if( ctx.PLATFORM()!=null && !ctx.PLATFORM().getText().isEmpty() )
+            return new Platform(SourcePosition.of(ctx));
+        if( ctx.LIBRARY()!=null && !ctx.LIBRARY().getText().isEmpty() )
+            return new Library(SourcePosition.of(ctx));
+        throw AstParseError.unExpected(ctx);
+    }
 
     static FunctionDirective of(DelphiParser.FuncDirectiveContext ctx){
         if( ctx==null ) throw new IllegalArgumentException("ctx==null");

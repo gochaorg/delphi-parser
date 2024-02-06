@@ -14,7 +14,7 @@ import static xyz.cofe.delphi.impl.Indent.indent;
 public record TypeSectionAst(
     ImList<TypeDeclarationAst> types,
     SourcePosition position
-) implements InterfaceDecl, ClassItemAst, SrcPos
+) implements InterfaceDecl, ClassItemAst, SrcPos, RecordItemAst
 {
     @Override
     public TypeSectionAst astUpdate(AstUpdate.UpdateContext ctx) {

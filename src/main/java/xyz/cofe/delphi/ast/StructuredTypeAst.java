@@ -10,6 +10,7 @@ sealed public interface StructuredTypeAst extends TypeDeclAst permits ArrayTypeA
                                                                       FileTypeAst,
                                                                       InterfaceTypeAst,
                                                                       MetaClassAst,
+                                                                      RecordAst,
                                                                       SetTypeAst {
     @Override
     StructuredTypeAst astUpdate(AstUpdate.UpdateContext ctx);
@@ -45,6 +46,12 @@ sealed public interface StructuredTypeAst extends TypeDeclAst permits ArrayTypeA
         if (ctx.classTypeDecl() != null
             && !ctx.classTypeDecl().isEmpty()
         ) return ClazzTypeAst.of(ctx.classTypeDecl());
+
+        if (ctx.recordDecl()!=null && !ctx.recordDecl().isEmpty()){
+            if( ctx.recordDecl().simpleRecord()!=null ){
+                return RecordAst.of(ctx.recordDecl().simpleRecord());
+            }
+        }
 
         throw AstParseError.notImplemented(ctx);
     }

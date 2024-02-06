@@ -161,6 +161,19 @@ typeDecl                     : strucType
                              | simpleType
                              ;
 
+// about packed:
+//   https://docwiki.embarcadero.com/RADStudio/Alexandria/en/Structured_Types_(Delphi)
+//   specify byte alignment by including the reserved word packed when you declare a structured type
+//   The packed word specifies compressed data storage
+//
+//  https://docwiki.embarcadero.com/RADStudio/Alexandria/en/Internal_Data_Formats_(Delphi)#Implicit_Packing_of_Fields_with_a_Common_Type_Specification
+//    Earlier versions of the Delphi compiler, such as Delphi 7 and earlier,
+//    implicitly applied packed alignment to fields that were declared together, that is,
+//    fields that have a common type specification. Newer compilers can reproduce the behavior
+//    if you specify the directive {$OLDTYPELAYOUT ON}.
+//
+//    This directive byte-aligns (packs) the fields that have a common type specification, even
+//    if the declaration does not include the packed modifier and the record type is not declared in the {$A-} state.
 // implemented
 strucType                    : ('packed')? strucTypePart 
                              ;
@@ -330,10 +343,14 @@ objectItem                   : visibility
 recordDecl                   : simpleRecord
                              | variantRecord
                              ;
+
+// implemented
 simpleRecord                 : 'record' (recordField)* (recordItem)* 'end' 
                              ;
 variantRecord                : 'record' (recordField)* recordVariantSection 'end' 
                              ;
+
+// implemented
 recordItem                   : visibility     //ADDED
                              | classMethod
                              | classProperty
@@ -342,6 +359,8 @@ recordItem                   : visibility     //ADDED
                              | recordField
                              | ('class')? varSection
                              ;
+
+// implemented
 recordField                  : identList ':' typeDecl (hintingDirective)* (';')?  //CHANGED not needed ; at the end
                              ;
 recordVariantField           : identList ':' typeDecl (hintingDirective)* (';') ?

@@ -80,7 +80,7 @@ public record CustomAttributeAst(ImList<Attribute> attributes, SourcePosition po
 
     public static CustomAttributeAst of(DelphiParser.CustomAttributeContext ctx) {
         if (ctx == null) throw new IllegalArgumentException("ctx==null");
-        if (ctx.customAttributeDecl() == null || !ctx.customAttributeDecl().isEmpty()) {
+        if (ctx.customAttributeDecl() == null || ctx.customAttributeDecl().isEmpty()) {
             throw AstParseError.unExpected(ctx);
         }
 
@@ -88,7 +88,7 @@ public record CustomAttributeAst(ImList<Attribute> attributes, SourcePosition po
             throw AstParseError.unExpected(ctx);
         }
 
-        if (!ctx.customAttributeDecl().customAttributeNamedCall().isEmpty()) {
+        if (ctx.customAttributeDecl().customAttributeNamedCall().isEmpty()) {
             throw AstParseError.unExpected(ctx);
         }
 

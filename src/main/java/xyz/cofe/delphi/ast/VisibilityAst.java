@@ -5,7 +5,7 @@ import xyz.cofe.delphi.parser.DelphiParser;
 /**
  * Уровень видимости
  */
-public enum VisibilityAst implements ClassItemAst {
+public enum VisibilityAst implements ClassItemAst, RecordItemAst {
     StrictProtected,
     Protected,
     StrictPrivate,

@@ -15,7 +15,8 @@ import static xyz.cofe.text.Text.indent;
 public sealed interface ClassMethodAst extends InterfaceItemAst,
                                                ClassItemAst,
                                                SrcPos,
-                                               Commented<ClassMethodAst> {
+                                               Commented<ClassMethodAst>,
+                                               RecordItemAst {
     /**
      * аргументы метода
      *
@@ -627,21 +628,21 @@ public sealed interface ClassMethodAst extends InterfaceItemAst,
             );
         }
 
-        if (methKey.startsWith("pro")) {
+        if (methKey.toLowerCase().startsWith("pro")) {
             return new Procedure(
                 name, generic_params, params, meth_dir, SourcePosition.of(ctx), ImListLinked.of(),
                 ctx.customAttribute() != null && !ctx.customAttribute().isEmpty() ? ImList.of(ctx.customAttribute()).map(CustomAttributeAst::of) : ImList.of()
             );
         }
 
-        if (methKey.startsWith("cons")) {
+        if (methKey.toLowerCase().startsWith("cons")) {
             return new Constructor(
                 name, generic_params, params, meth_dir, SourcePosition.of(ctx), ImListLinked.of(),
                 ctx.customAttribute() != null && !ctx.customAttribute().isEmpty() ? ImList.of(ctx.customAttribute()).map(CustomAttributeAst::of) : ImList.of()
             );
         }
 
-        if (methKey.startsWith("des")) {
+        if (methKey.toLowerCase().startsWith("des")) {
             return new Destructor(name, generic_params, params, meth_dir, SourcePosition.of(ctx), ImListLinked.of(),
                 ctx.customAttribute() != null && !ctx.customAttribute().isEmpty() ? ImList.of(ctx.customAttribute()).map(CustomAttributeAst::of) : ImList.of()
             );
