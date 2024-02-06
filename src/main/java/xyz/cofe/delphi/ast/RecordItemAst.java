@@ -8,6 +8,7 @@ public sealed interface RecordItemAst permits ClassMethodAst,
                                               ConstSectionAst.Constants,
                                               RecordFieldAst,
                                               RecordItemAst.Vars,
+                                              RecordVariantSectionAst,
                                               TypeSectionAst,
                                               VisibilityAst {
     record Vars(boolean klass, VarSectionAst varSection, SourcePosition position, ImList<Comment> comments)

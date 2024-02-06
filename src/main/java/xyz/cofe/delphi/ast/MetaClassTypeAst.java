@@ -10,10 +10,30 @@ import static xyz.cofe.delphi.ast.impl.Ident.identifier;
  *
  * @param type ссылка на тип
  */
-public record MetaClassTypeAst(ImList<String> type, SourcePosition position) implements TypeDeclAst, SrcPos {
+public record MetaClassTypeAst(ImList<String> type, SourcePosition position, ImList<Comment> comments)
+    implements TypeDeclAst, SrcPos, AstUpdate<MetaClassTypeAst>, Commented<MetaClassTypeAst>, StructuredTypeAst
+{
     @Override
-    public TypeDeclAst astUpdate(AstUpdate.UpdateContext ctx) {
-        return this;
+    public MetaClassTypeAst withComments(ImList<Comment> comments) {
+        if( comments==null )throw new IllegalArgumentException("comments==null");
+        return new MetaClassTypeAst(
+            type,
+            position,
+            comments
+        );
+    }
+
+    @Override
+    public MetaClassTypeAst astUpdate(AstUpdate.UpdateContext ctx) {
+        if( ctx==null )throw new IllegalArgumentException("ctx==null");
+        var cmts = ctx instanceof AstUpdate.CommentingContext cc
+            ?  cc.commenting(this) : this;
+        if( cmts==this )return this;
+        return new MetaClassTypeAst(
+            type,
+            position,
+            cmts.comments
+        );
     }
 
     public static MetaClassTypeAst of(DelphiParser.ClassTypeTypeDeclContext ctx){
@@ -21,7 +41,8 @@ public record MetaClassTypeAst(ImList<String> type, SourcePosition position) imp
         if( ctx.typeId()==null || ctx.typeId().isEmpty() )throw AstParseError.unExpected(ctx);
         return new MetaClassTypeAst(
             identifier(ctx.typeId()),
-            SourcePosition.of(ctx)
+            SourcePosition.of(ctx),
+            ImList.of()
         );
     }
 }

@@ -340,6 +340,8 @@ objectItem                   : visibility
                              | classMethod
                              | classField
                              ;
+
+// implemented
 recordDecl                   : simpleRecord
                              | variantRecord
                              ;
@@ -347,7 +349,9 @@ recordDecl                   : simpleRecord
 // implemented
 simpleRecord                 : 'record' (recordField)* (recordItem)* 'end' 
                              ;
-variantRecord                : 'record' (recordField)* recordVariantSection 'end' 
+
+// implemented
+variantRecord                : 'record' (recordField)* recordVariantSection 'end'
                              ;
 
 // implemented

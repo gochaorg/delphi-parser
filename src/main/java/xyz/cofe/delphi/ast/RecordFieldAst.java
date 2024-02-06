@@ -56,7 +56,7 @@ public record RecordFieldAst(
             new RecordFieldAst(name,typeDecl,directives,SourcePosition.of(ctx),ImList.of()));
     }
 
-    public static ImList<RecordItemAst> of(DelphiParser.RecordVariantFieldContext ctx){
+    public static ImList<RecordFieldAst> of(DelphiParser.RecordVariantFieldContext ctx){
         if( ctx==null )throw new IllegalArgumentException("ctx==null");
         if( ctx.identList()==null )throw AstParseError.unExpected(ctx);
         if( ctx.identList().paramName()==null )throw AstParseError.unExpected(ctx);

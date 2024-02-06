@@ -124,7 +124,7 @@ public sealed interface ConstSectionAst extends InterfaceDecl, AstNode {
             );
         }
     }
-    sealed interface ConstExpression extends AstNode {
+    sealed interface ConstExpression extends AstNode, AstUpdate<ConstExpression> {
         @Override
         default ConstExpression astUpdate(AstUpdate.UpdateContext ctx) {
             return this;

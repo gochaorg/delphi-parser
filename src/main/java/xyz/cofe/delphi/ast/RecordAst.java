@@ -80,4 +80,32 @@ public record RecordAst(
             ImList.of()
         );
     }
+
+    public static RecordAst of(DelphiParser.VariantRecordContext ctx){
+        if( ctx==null )throw new IllegalArgumentException("ctx==null");
+        if( ctx.recordVariantSection()==null || ctx.recordVariantSection().isEmpty() )
+            throw AstParseError.unExpected(ctx);
+
+        ImList<RecordItemAst> fields =
+            ctx.recordField()!=null && !ctx.recordField().isEmpty()
+                ? ImList.of(ctx.recordField()).fmap(RecordFieldAst::of)
+                : ImList.of();
+
+        var vsec = RecordVariantSectionAst.of(ctx.recordVariantSection());
+
+        return new RecordAst(
+            fields.append(vsec),
+            SourcePosition.of(ctx),
+            ImList.of()
+        );
+    }
+
+    public static RecordAst of(DelphiParser.RecordDeclContext ctx){
+        if( ctx==null )throw new IllegalArgumentException("ctx==null");
+        if( ctx.simpleRecord()!=null && !ctx.simpleRecord().isEmpty() )
+            return of(ctx.simpleRecord());
+        if( ctx.variantRecord()!=null && !ctx.variantRecord().isEmpty() )
+            return of(ctx.variantRecord());
+        throw AstParseError.unExpected(ctx);
+    }
 }

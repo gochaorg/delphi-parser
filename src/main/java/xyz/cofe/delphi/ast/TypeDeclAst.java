@@ -18,7 +18,6 @@ public sealed interface TypeDeclAst
             EnumTypeAst,
             FileTypeAst,
             InterfaceTypeAst,
-            MetaClassAst,
             MetaClassTypeAst,
             NewTypeIdAst,
             PointerTypeAst,

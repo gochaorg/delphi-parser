@@ -9,7 +9,7 @@ sealed public interface StructuredTypeAst extends TypeDeclAst permits ArrayTypeA
                                                                       ClazzTypeAst,
                                                                       FileTypeAst,
                                                                       InterfaceTypeAst,
-                                                                      MetaClassAst,
+                                                                      MetaClassTypeAst,
                                                                       RecordAst,
                                                                       SetTypeAst {
     @Override
@@ -48,9 +48,11 @@ sealed public interface StructuredTypeAst extends TypeDeclAst permits ArrayTypeA
         ) return ClazzTypeAst.of(ctx.classTypeDecl());
 
         if (ctx.recordDecl()!=null && !ctx.recordDecl().isEmpty()){
-            if( ctx.recordDecl().simpleRecord()!=null ){
-                return RecordAst.of(ctx.recordDecl().simpleRecord());
-            }
+            return RecordAst.of(ctx.recordDecl());
+        }
+
+        if( ctx.classTypeTypeDecl()!=null && !ctx.classTypeTypeDecl().isEmpty() ){
+            return MetaClassTypeAst.of(ctx.classTypeTypeDecl());
         }
 
         throw AstParseError.notImplemented(ctx);
