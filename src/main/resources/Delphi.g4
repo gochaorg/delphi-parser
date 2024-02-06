@@ -394,7 +394,7 @@ oleClassMethodAlias          : ( 'function' | 'procedure' ) comItfName=ident '.'
                              ;
 
 // implemented
-classField                   : (customAttribute)* identList ':' typeDecl ';' (hintingDirective)*
+classField                   : (customAttribute)* identList ':' typeDecl (hintingDirective)* ';' (hintingDirective)*
                              ;
 
 //classProperty                : (customAttribute)? ('class')? 'property' classPropertyName (classPropertyArray)? (':' genericTypeIdent)? (classPropertyIndex)? (classPropertySpecifier)* ';' (classPropertyEndSpecifier)*
@@ -564,6 +564,7 @@ identInAtom : RESIDENT
             | DISPID
             | NODEFAULT
             | HELPER
+            | FORWARD
             | ident
             ;
 
@@ -609,6 +610,7 @@ paramName   : TYPE | ABSOLUTE | ABSTRACT | ADD | AND | ANSISTRING | ARRAY | AS |
             | WHILE | WITH | WRITE | WRITEONLY | XOR
             | FALSE | TRUE
             | TkClass | TkNewType
+            | DELAYED
             | ident
             ;
 
@@ -731,6 +733,7 @@ assemblerStatement           : 'asm' ~('end')* 'end'    //ADDED we don't realy c
 //****************************
 //section directive
 //****************************
+// implemented FDirective
 methodDirective              : reintroduceDirective         // 1
                              | overloadDirective            // 2
                              | bindingDirective             // 3
@@ -742,6 +745,7 @@ methodDirective              : reintroduceDirective         // 1
                              | dispIDDirective
                              ;
 
+// implemented FDirective
 //TODO Кандидат на удаление
 functionDirective            : overloadDirective          // 1
                              | inlineDirective            // 1
@@ -750,8 +754,10 @@ functionDirective            : overloadDirective          // 1
                              | hintingDirective ';'      // 1
                              | (callConventionNoSemi)? externalDirective          // 1
                              | 'unsafe' ';'              // 1 .net?
+                             | 'delayed' ';'
                              ;
 
+// implemented FDirective
 funcDirective   : 'overload'
                 | 'inline' | 'assembler'
                 // соглашение о вызовах, возможен один вариант из
@@ -763,24 +769,37 @@ funcDirective   : 'overload'
                 // укакие-то external
                     | 'varargs' | 'external' constExpression externalSpecifier* | 'external'
                     | 'unsafe'
+                    | 'delayed'
                 ;
 
+
+// implemented FDirective
 reintroduceDirective         : 'reintroduce' ';'
                              ;
+
+// implemented FDirective
 overloadDirective            : 'overload' (';')?    //CHANGE ; not needed
                              ;
+
+// implemented FDirective
 bindingDirective             : 'message' expression ';'
                              | 'static' ';'
                              | 'dynamic' ';'
                              | 'override' ';'
                              | 'virtual' ';'
                              ;
+
+// implemented FDirective
 abstractDirective            : 'abstract' ';'
                              | 'final' ';'
                              ;
+
+// implemented FDirective
 inlineDirective              : 'inline' ';'
                              | 'assembler' ';' // deprecated
                              ;
+
+// implemented FDirective
 callConvention               : 'cdecl' ';'    //
                              | 'pascal' ';'   //
                              | 'register' ';' //
@@ -788,6 +807,8 @@ callConvention               : 'cdecl' ';'    //
                              | 'stdcall' ';'  //
                              | 'export' ';'   // deprecated
                              ;
+
+// implemented FDirective
 callConventionNoSemi         : 'cdecl'    //    //ADDED for procedureType error fixing, without ';' at the end
                              | 'pascal'   //
                              | 'register' //
@@ -795,22 +816,32 @@ callConventionNoSemi         : 'cdecl'    //    //ADDED for procedureType error 
                              | 'stdcall'  //
                              | 'export'   // deprecated
                              ;
+
+// implemented FDirective
 oldCallConventionDirective   : 'far' ';'      // deprecated
                              | 'local' ';'    // niet in windows maakt functie niet exporteerbaar
                              | 'near' ';'     // deprecated
                              ;
+
+// implemented FDirective
 hintingDirective             : 'deprecated' (stringFactor)?
                              | ( 'experimental'  // added 2006
                              | 'platform'
                              | 'library' )
                              ;
+
+// implemented FDirective
 externalDirective            : 'varargs' ';'   // alleen bij external cdecl
                              | 'external' ';'
                              | 'external' constExpression (externalSpecifier)* ';' // expression : dll name
                              ;
+
+// implemented FDirective
 externalSpecifier            : 'name' constExpression
                              | 'index' constExpression   // specific to a platform
                              ;
+
+// implemented FDirective
 dispIDDirective              : 'dispid' expression ';'
                              ;
 //****************************
@@ -822,7 +853,7 @@ ident                        : TkIdentifier
                              ;                 
 usedKeywordsAsNames          : (NAME | READONLY | ADD | AT | MESSAGE | POINTER | INDEX | DEFAULT | STRING | CONTINUE)
                              | (READ | WRITE | REGISTER | VARIANT | OPERATOR | REMOVE | LOCAL | REFERENCE | CONTAINS | FINAL)
-                             | (BREAK | EXIT | STRICT | OUT | OBJECT | EXPORT | ANSISTRING | IMPLEMENTS | STORED)
+                             | (BREAK | EXIT | STRICT | OUT | OBJECT | EXPORT | ANSISTRING | IMPLEMENTS | STORED | DELAYED)
                              ;                           
 identList                    : paramName (',' paramName)*
                              ;
@@ -869,6 +900,7 @@ CONTINUE          : 'continue'       ;
 DEFAULT           : 'default'        ;
 DEPRECATED        : 'deprecated'     ;
 DESTRUCTOR        : 'destructor'     ;
+DELAYED           : 'delayed'        ;
 DISPID            : 'dispid'         ;
 DISPINTERFACE     : 'dispinterface'  ;
 DIV               : 'div'            ;

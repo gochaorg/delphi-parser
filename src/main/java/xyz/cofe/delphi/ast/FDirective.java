@@ -187,6 +187,12 @@ public sealed interface FDirective extends AstNode {
                                                       SrcPos {
     }
 
+    record Delayed(SourcePosition position) implements FDirective,
+                                                       FunctionDirective,
+                                                       MethodDirective,
+                                                       SrcPos {
+    }
+
     record Depricated(Optional<String> message, SourcePosition position) implements FDirective,
                                                                                     FunctionDirective,
                                                                                     SrcPos,
@@ -248,6 +254,7 @@ public sealed interface FDirective extends AstNode {
         if (ctx == null) throw new IllegalArgumentException("ctx==null");
 
         if (ctx.UNSAFE() != null) return new Unsafe(SourcePosition.of(ctx));
+        if (ctx.DELAYED() != null) return new Delayed(SourcePosition.of(ctx));
         if (ctx.OVERLOAD() != null) return new Overload(SourcePosition.of(ctx));
         if (ctx.INLINE() != null) return new Inline(SourcePosition.of(ctx));
         if (ctx.ASSEMBLER() != null) return new Assembler(SourcePosition.of(ctx));
