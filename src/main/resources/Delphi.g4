@@ -290,7 +290,9 @@ classDecl                    : classTypeTypeDecl
                              | recordDecl 
                              | recordHelperDecl 
                              ;
-classTypeTypeDecl            : 'class' 'of' typeId 
+
+// implemented MetaClassTypeAst
+classTypeTypeDecl            : 'class' 'of' typeId
                              ;
 
 // implemented
