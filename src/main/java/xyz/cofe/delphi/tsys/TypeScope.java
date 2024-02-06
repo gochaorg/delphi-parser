@@ -160,7 +160,6 @@ public class TypeScope implements Freeze {
                 types.add(cls);
                 add((Type) cls);
             }
-            if( decl instanceof MetaClassAst) {}
             if( decl instanceof SimpleTypeAst) {}
             if( decl instanceof StringTypeAst) {}
             if( decl instanceof StructuredTypeAst) {}
