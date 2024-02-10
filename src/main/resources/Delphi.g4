@@ -547,6 +547,7 @@ unaryOp : op=('@' | 'not' | '+' | '-' | '^' ) exp=expression
         ;
 
 // атом
+// implemented
 atom    : ( intNum
           | realNum
           | stringFactor
@@ -574,6 +575,7 @@ identInAtom : RESIDENT
 setExpression   : '[' (head=expression (delim=(','|'..') tail=expression)*)? ']' ;
 
 // цепь вызовов
+// implemented
 postfix : arrayIndexAccess
         | deref
         | calling
@@ -582,15 +584,19 @@ postfix : arrayIndexAccess
         ;
 
 // получение значение по адресу
+// implemented
 deref : '^' ;
 
 // вызов функции/процедуры/метода
+// implemented
 calling     : '(' ( callParam ( ',' callParam )* )? ')' ;
 
 // способ передачи параметра
+// implemented
 callParam   : namedPassParam | unnamedPassParam;
 
 // передача параметров по имени - работает для Ole | IDispatch
+// implemented
 namedPassParam : paramName ':=' expression;
 paramName   : TYPE | ABSOLUTE | ABSTRACT | ADD | AND | ANSISTRING | ARRAY | AS | ASM
             | ASSEMBLER | ASSEMBLY | AT | AUTOMATED | BEGIN | BREAK | CASE | CDECL | CLASS
@@ -618,12 +624,16 @@ paramName   : TYPE | ABSOLUTE | ABSTRACT | ADD | AND | ANSISTRING | ARRAY | AS |
             ;
 
 // передача параметров позиционно
+// implemented
 unnamedPassParam : expression;
 
+// implemented
 arrayIndexAccess  : '[' expression (',' expression)* ']';
 
+// implemented
 fieldAccess : '.' fieldName=paramName;
 
+// implemented
 genericCallTypeParams : '<' genericTypeIdent (',' genericTypeIdent)* '>';
 
 // implemented

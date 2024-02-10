@@ -20,41 +20,58 @@ sealed public interface AtomAst permits AtomAst.BoolValue,
                                         AtomAst.IntNumber,
                                         AtomAst.NestedExpression,
                                         AtomAst.NilValue,
-                                        AtomAst.StringValue
-                                         {
-    public static AtomAst of(DelphiParser.AtomContext ctx){
-        if( ctx==null ) throw new IllegalArgumentException("ctx==null");
-        if( ctx.intNum()!=null && !ctx.intNum().isEmpty() )return IntNumber.of(ctx.intNum());
-        if( ctx.realNum()!=null && !ctx.realNum().isEmpty() )return FloatNumber.of(ctx.realNum());
-        if( ctx.stringFactor()!=null && !ctx.stringFactor().isEmpty() ) return StringValue.of(ctx.stringFactor());
-        if( ctx.preDefinedValues()!=null && !ctx.preDefinedValues().isEmpty() ){
+                                        AtomAst.StringValue,
+                                        PostfixAst {
+    public static AtomAst of(DelphiParser.AtomContext ctx) {
+        if (ctx == null) throw new IllegalArgumentException("ctx==null");
+
+        AtomAst base = null;
+        if (ctx.intNum() != null && !ctx.intNum().isEmpty()) {
+            base = IntNumber.of(ctx.intNum());
+        } else if (ctx.realNum() != null && !ctx.realNum().isEmpty()) {
+            base = FloatNumber.of(ctx.realNum());
+        }
+        if (ctx.stringFactor() != null && !ctx.stringFactor().isEmpty()) {
+            base = StringValue.of(ctx.stringFactor());
+        }
+        if (ctx.preDefinedValues() != null && !ctx.preDefinedValues().isEmpty()) {
             var txt = ctx.preDefinedValues().getText().toLowerCase();
-            return switch (txt){
+            base = switch (txt) {
                 case "nil" -> new NilValue(SourcePosition.of(ctx));
-                case "true" -> new BoolValue(true,SourcePosition.of(ctx));
-                case "false" -> new BoolValue(false,SourcePosition.of(ctx));
+                case "true" -> new BoolValue(true, SourcePosition.of(ctx));
+                case "false" -> new BoolValue(false, SourcePosition.of(ctx));
                 default -> throw AstParseError.unExpected(ctx);
             };
         }
-        if( ctx.INHERITED()!=null && !ctx.INHERITED().getText().isEmpty() ){
-            if( ctx.identInAtom()!=null && !ctx.identInAtom().isEmpty() ){
+        if (ctx.INHERITED() != null && !ctx.INHERITED().getText().isEmpty()) {
+            if (ctx.identInAtom() != null && !ctx.identInAtom().isEmpty()) {
                 return new InheritedIdent(ctx.identInAtom().getText(), SourcePosition.of(ctx));
             }
-            return new InheritedContext(SourcePosition.of(ctx));
+            base = new InheritedContext(SourcePosition.of(ctx));
         }
-        if( ctx.expression()!=null ){
-            return new NestedExpression(
+        if (ctx.expression() != null) {
+            base = new NestedExpression(
                 ExpressionAst.of(ctx.expression()),
                 SourcePosition.of(ctx)
             );
         }
-        if( ctx.setExpression()!=null && !ctx.setExpression().isEmpty() ){
-            return DelphiSet.of(ctx.setExpression());
+        if (ctx.setExpression() != null && !ctx.setExpression().isEmpty()) {
+            base = DelphiSet.of(ctx.setExpression());
         }
-        throw AstParseError.notImplemented(ctx);
+
+        if (base == null) throw AstParseError.notImplemented(ctx);
+        if (ctx.postfix() == null || ctx.postfix().isEmpty()) return base;
+
+        for (var postfix : ctx.postfix()) {
+            base = PostfixAst.build(postfix, base);
+        }
+
+        return base;
     }
 
-    record NestedExpression(ExpressionAst expression, SourcePosition position) implements AtomAst, SrcPos, AstNode {
+    record NestedExpression(ExpressionAst expression, SourcePosition position) implements AtomAst,
+                                                                                          SrcPos,
+                                                                                          AstNode {
         @Override
         public ImList<? extends AstNode> nestedAstNodes() {
             return ImList.of(expression);
@@ -72,18 +89,17 @@ sealed public interface AtomAst permits AtomAst.BoolValue,
         SourcePosition position
     ) implements AtomAst,
                  SrcPos,
-                 AstNode
-    {
-        public static IntNumber of(DelphiParser.IntNumContext ctx){
-            if( ctx==null ) throw new IllegalArgumentException("ctx==null");
-            if( ctx.TkIntNum()!=null && !ctx.TkIntNum().getText().isBlank() ){
+                 AstNode {
+        public static IntNumber of(DelphiParser.IntNumContext ctx) {
+            if (ctx == null) throw new IllegalArgumentException("ctx==null");
+            if (ctx.TkIntNum() != null && !ctx.TkIntNum().getText().isBlank()) {
                 return new IntNumber(Long.parseLong(ctx.TkIntNum().getText()), SourcePosition.of(ctx));
             }
-            if( ctx.TkHexNum()!=null && !ctx.TkHexNum().getText().isBlank() ){
+            if (ctx.TkHexNum() != null && !ctx.TkHexNum().getText().isBlank()) {
                 return new IntNumber(Long.parseLong(
-                    Text.trimStart(ctx.getText(),"$"),
+                    Text.trimStart(ctx.getText(), "$"),
                     16
-                ),SourcePosition.of(ctx));
+                ), SourcePosition.of(ctx));
             }
             throw AstParseError.unExpected(ctx);
         }
@@ -100,10 +116,9 @@ sealed public interface AtomAst permits AtomAst.BoolValue,
         SourcePosition position
     ) implements AtomAst,
                  SrcPos,
-                 AstNode
-    {
-        public static FloatNumber of(DelphiParser.RealNumContext ctx){
-            if( ctx==null ) throw new IllegalArgumentException("ctx==null");
+                 AstNode {
+        public static FloatNumber of(DelphiParser.RealNumContext ctx) {
+            if (ctx == null) throw new IllegalArgumentException("ctx==null");
             return new FloatNumber(
                 Double.parseDouble(ctx.getText()),
                 SourcePosition.of(ctx)
@@ -122,36 +137,36 @@ sealed public interface AtomAst permits AtomAst.BoolValue,
         SourcePosition position
     ) implements AtomAst,
                  SrcPos,
-                 AstNode
-    {
+                 AstNode {
         private static final String hex = "0123456789abcdefABCDEF";
         private static final String dec = "0123456789";
 
-        private static boolean isDigit(String src,int off,int base){
-            if( off>=src.length() )return false;
-            if( off<0 )return false;
+        private static boolean isDigit(String src, int off, int base) {
+            if (off >= src.length()) return false;
+            if (off < 0) return false;
             char c = src.charAt(off);
-            if( base==16 ){
+            if (base == 16) {
                 return hex.indexOf(c) >= 0;
             }
             return dec.indexOf(c) >= 0;
         }
-        private static boolean isQuote(String src,int off){
-            if( off>=src.length() )return false;
-            if( off<0 )return false;
+
+        private static boolean isQuote(String src, int off) {
+            if (off >= src.length()) return false;
+            if (off < 0) return false;
             char c = src.charAt(off);
             return c == '\'';
         }
 
-        public static Optional<String> decode(String src){
-            if( src==null ) throw new IllegalArgumentException("src==null");
+        public static Optional<String> decode(String src) {
+            if (src == null) throw new IllegalArgumentException("src==null");
 
             StringBuilder sb = new StringBuilder();
             StringBuilder digits = new StringBuilder();
 
             String state = "start";
 
-            for( var i=0;i<src.length();i++ ){
+            for (var i = 0; i < src.length(); i++) {
                 char chr = src.charAt(i);
                 switch (state) {
                     case "start" -> {
@@ -163,7 +178,8 @@ sealed public interface AtomAst permits AtomAst.BoolValue,
                             case '\'' -> {
                                 state = "str";
                             }
-                            case ' ', '\n', '\r', '\t' -> {}
+                            case ' ', '\n', '\r', '\t' -> {
+                            }
                             default -> state = "err";
                         }
                     }
@@ -176,7 +192,8 @@ sealed public interface AtomAst permits AtomAst.BoolValue,
                             case '\'' -> {
                                 state = "str";
                             }
-                            case ' ', '\n', '\r', '\t' -> {}
+                            case ' ', '\n', '\r', '\t' -> {
+                            }
                             default -> state = "stop";
                         }
                     }
@@ -192,35 +209,35 @@ sealed public interface AtomAst permits AtomAst.BoolValue,
                         }
                     }
                     case "#$" -> {
-                        if( isDigit(src,i,16)) {
+                        if (isDigit(src, i, 16)) {
                             digits.append(chr);
-                            if( !isDigit(src,i+1,16)){
+                            if (!isDigit(src, i + 1, 16)) {
                                 state = "";
-                                int num = Integer.parseInt(digits.toString(),16);
+                                int num = Integer.parseInt(digits.toString(), 16);
                                 sb.append((char) num);
                             }
-                        }else {
+                        } else {
                             state = "err";
                         }
                     }
                     case "#d" -> {
-                        if( isDigit(src,i,10)){
+                        if (isDigit(src, i, 10)) {
                             digits.append(chr);
-                            if( !isDigit(src,i+1,10)){
+                            if (!isDigit(src, i + 1, 10)) {
                                 state = "";
-                                int num = Integer.parseInt(digits.toString(),10);
+                                int num = Integer.parseInt(digits.toString(), 10);
                                 sb.append((char) num);
                             }
-                        }else{
+                        } else {
                             state = "err";
                         }
                     }
                     case "str" -> {
                         switch (chr) {
                             case '\'' -> {
-                                if( isQuote(src,i+1) ) {
+                                if (isQuote(src, i + 1)) {
                                     state = "qstr";
-                                }else{
+                                } else {
                                     state = "";
                                 }
                             }
@@ -233,26 +250,27 @@ sealed public interface AtomAst permits AtomAst.BoolValue,
                         sb.append("'");
                         state = "str";
                     }
-                    case "err" -> {}
+                    case "err" -> {
+                    }
                 }
             }
 
             return
                 state == "err" ?
                     Optional.empty() :
-                Optional.of(sb.toString());
+                    Optional.of(sb.toString());
         }
 
-        public static StringValue of(DelphiParser.StringFactorContext ctx){
-            if( ctx==null ) throw new IllegalArgumentException("ctx==null");
+        public static StringValue of(DelphiParser.StringFactorContext ctx) {
+            if (ctx == null) throw new IllegalArgumentException("ctx==null");
 
             var src = new StringBuilder();
-            for( var i=0;i<ctx.getChildCount();i++ ){
+            for (var i = 0; i < ctx.getChildCount(); i++) {
                 src.append(ctx.getChild(i).getText());
             }
 
             var str = decode(src.toString());
-            if( str.isEmpty() )throw AstParseError.notImplemented(ctx);
+            if (str.isEmpty()) throw AstParseError.notImplemented(ctx);
 
             return new StringValue(
                 str.get(),
@@ -268,8 +286,7 @@ sealed public interface AtomAst permits AtomAst.BoolValue,
      */
     record InheritedContext(SourcePosition position) implements AtomAst,
                                                                 SrcPos,
-                                                                AstNode
-    {
+                                                                AstNode {
     }
 
     /**
@@ -278,8 +295,7 @@ sealed public interface AtomAst permits AtomAst.BoolValue,
      */
     record InheritedIdent(String id, SourcePosition position) implements AtomAst,
                                                                          SrcPos,
-                                                                         AstNode
-    {
+                                                                         AstNode {
     }
 
     /**
@@ -290,8 +306,7 @@ sealed public interface AtomAst permits AtomAst.BoolValue,
      */
     record IdentRef(String id, SourcePosition position) implements AtomAst,
                                                                    SrcPos,
-                                                                   AstNode
-    {
+                                                                   AstNode {
     }
 
     /**
@@ -301,8 +316,7 @@ sealed public interface AtomAst permits AtomAst.BoolValue,
      */
     record NilValue(SourcePosition position) implements AtomAst,
                                                         SrcPos,
-                                                        AstNode
-    {
+                                                        AstNode {
     }
 
     /**
@@ -310,11 +324,10 @@ sealed public interface AtomAst permits AtomAst.BoolValue,
      *
      * @param position позиция в исходниках
      */
-    record BoolValue(boolean value,SourcePosition position) implements
-                                                            AtomAst,
-                                                            SrcPos,
-                                                            AstNode
-    {
+    record BoolValue(boolean value, SourcePosition position) implements
+                                                             AtomAst,
+                                                             SrcPos,
+                                                             AstNode {
     }
 
     /**
@@ -322,8 +335,7 @@ sealed public interface AtomAst permits AtomAst.BoolValue,
      */
     sealed interface DelphiSet extends SrcPos,
                                        AtomAst,
-                                       AstNode
-    {
+                                       AstNode {
         record One(ExpressionAst expression, SourcePosition position) implements DelphiSet {
             @Override
             public ImList<? extends AstNode> nestedAstNodes() {
@@ -334,7 +346,7 @@ sealed public interface AtomAst permits AtomAst.BoolValue,
         record FromTo(ExpressionAst from, ExpressionAst to, SourcePosition position) implements DelphiSet {
             @Override
             public ImList<? extends AstNode> nestedAstNodes() {
-                return ImList.of(from,to);
+                return ImList.of(from, to);
             }
         }
 
@@ -345,8 +357,8 @@ sealed public interface AtomAst permits AtomAst.BoolValue,
             }
         }
 
-        public static DelphiSet of(DelphiParser.SetExpressionContext ctx){
-            if( ctx==null ) throw new IllegalArgumentException("ctx==null");
+        public static DelphiSet of(DelphiParser.SetExpressionContext ctx) {
+            if (ctx == null) throw new IllegalArgumentException("ctx==null");
 
             var state = "";
             var itms = ImList.<DelphiSet>of();
@@ -354,51 +366,51 @@ sealed public interface AtomAst permits AtomAst.BoolValue,
             ExpressionAst expr = null;
             SourcePosition exprStart = null;
 
-            for( var ci=0; ci<ctx.getChildCount(); ci++ ){
+            for (var ci = 0; ci < ctx.getChildCount(); ci++) {
                 var ch = ctx.getChild(ci);
-                switch (state){
+                switch (state) {
                     case "" -> {
-                        if( ch instanceof TerminalNode tok && tok.getText().equals("[") ){
+                        if (ch instanceof TerminalNode tok && tok.getText().equals("[")) {
                             state = "[";
-                        }else {
+                        } else {
                             throw AstParseError.unExpected(ctx);
                         }
                     }
                     case "[" -> {
-                        if( ch instanceof DelphiParser.ExpressionContext e) {
+                        if (ch instanceof DelphiParser.ExpressionContext e) {
                             state = "[e";
                             expr = ExpressionAst.of(e);
                             exprStart = SourcePosition.of(e);
-                        }else if( ch instanceof TerminalNode tok && tok.getText().equals(",") ){
+                        } else if (ch instanceof TerminalNode tok && tok.getText().equals(",")) {
                             state = "[";
-                        }else if( ch instanceof TerminalNode tok && tok.getText().equals("]") ){
+                        } else if (ch instanceof TerminalNode tok && tok.getText().equals("]")) {
                             break;
-                        }else{
+                        } else {
                             throw AstParseError.unExpected(ctx);
                         }
                     }
                     case "[e" -> {
-                        if( ch instanceof TerminalNode tok && tok.getText().equals("..") ){
+                        if (ch instanceof TerminalNode tok && tok.getText().equals("..")) {
                             state = "[e..";
-                        }else if( ch instanceof TerminalNode tok && tok.getText().equals(",") ){
+                        } else if (ch instanceof TerminalNode tok && tok.getText().equals(",")) {
                             state = "[";
                             itms = itms.prepend(
                                 new DelphiSet.One(expr, exprStart)
                             );
                             expr = null;
-                        }else if( ch instanceof TerminalNode tok && tok.getText().equals("]") ){
+                        } else if (ch instanceof TerminalNode tok && tok.getText().equals("]")) {
                             //noinspection ConstantValue
-                            if( expr!=null && exprStart!=null ){
+                            if (expr != null && exprStart != null) {
                                 itms = itms.prepend(
                                     new DelphiSet.One(expr, exprStart)
                                 );
                             }
-                        }else{
+                        } else {
                             throw AstParseError.unExpected(ctx);
                         }
                     }
                     case "[e.." -> {
-                        if( ch instanceof DelphiParser.ExpressionContext e) {
+                        if (ch instanceof DelphiParser.ExpressionContext e) {
                             itms = itms.prepend(
                                 new FromTo(
                                     expr,
@@ -411,11 +423,12 @@ sealed public interface AtomAst permits AtomAst.BoolValue,
                             );
                             state = "[";
                             expr = null;
-                        }else{
+                        } else {
                             throw AstParseError.unExpected(ctx);
                         }
                     }
-                    default -> {}
+                    default -> {
+                    }
                 }
             }
 
