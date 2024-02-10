@@ -560,6 +560,8 @@ atom    : ( intNum
 
 // TODO внезапно ключевое слово RESIDENT - валидный идентификатор: что блять происходит!
 // TODO проверить что является переменной, параметром, а что ключевым словом
+
+// implemented
 identInAtom : RESIDENT
             | DISPID
             | NODEFAULT
@@ -568,6 +570,7 @@ identInAtom : RESIDENT
             | ident
             ;
 
+// implemented
 setExpression   : '[' (head=expression (delim=(','|'..') tail=expression)*)? ']' ;
 
 // цепь вызовов
@@ -623,12 +626,15 @@ fieldAccess : '.' fieldName=paramName;
 
 genericCallTypeParams : '<' genericTypeIdent (',' genericTypeIdent)* '>';
 
+// implemented
 preDefinedValues    : 'nil' | 'true' | 'false';
 
+// implemented
 stringFactor                 : ControlString (QuotedString ControlString)* (QuotedString)?
                              | QuotedString (ControlString QuotedString)* (ControlString)?
                              ;
 
+// implemented
 setSection                   : '[' (expression ((',' | '..') expression)*)? ']'
                              ;
 
@@ -861,11 +867,15 @@ identList                    : paramName (',' paramName)*
 identListFlat                : paramName (',' paramName)*    //ADDED used in formalParemeter
                              ;
 
-label                        : ( TkIdentifier | TkIntNum | TkHexNum ) | usedKeywordsAsNames 
+label                        : ( TkIdentifier | TkIntNum | TkHexNum ) | usedKeywordsAsNames
                              ;
+
+// implemented
 intNum                       : TkIntNum
                              | TkHexNum
-                             ;                             
+                             ;
+
+// implemented
 realNum                      : TkRealNum
                              ;                             
 namespacedQualifiedIdent     : (namespaceName '.')? qualifiedIdent

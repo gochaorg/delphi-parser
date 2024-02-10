@@ -2,7 +2,9 @@ package xyz.cofe.delphi.ast;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
+import xyz.cofe.coll.im.ImList;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -17,6 +19,10 @@ public sealed interface SourcePosition {
     Optional<SourcePosition> intersection(SourcePosition other);
 
     boolean before(SourcePosition sourcePosition);
+
+    FileLessPoint minPoint();
+    FileLessPoint maxPoint();
+    ImList<String> fileNames();
 
     sealed interface FileName {
         String fileName();
@@ -134,6 +140,21 @@ public sealed interface SourcePosition {
 
             return false;
         }
+
+        @Override
+        public FileLessPoint minPoint() {
+            return this;
+        }
+
+        @Override
+        public FileLessPoint maxPoint() {
+            return this;
+        }
+
+        @Override
+        public ImList<String> fileNames() {
+            return ImList.of();
+        }
     }
 
     /**
@@ -218,6 +239,25 @@ public sealed interface SourcePosition {
             }
 
             return false;
+        }
+
+        public FileLessPoint toFileLestPoint(){
+            return new FileLessPoint(lineNumber, charNumber);
+        }
+
+        @Override
+        public FileLessPoint minPoint() {
+            return toFileLestPoint();
+        }
+
+        @Override
+        public FileLessPoint maxPoint() {
+            return toFileLestPoint();
+        }
+
+        @Override
+        public ImList<String> fileNames() {
+            return ImList.of(fileName);
         }
     }
 
@@ -316,6 +356,21 @@ public sealed interface SourcePosition {
             }
 
             return false;
+        }
+
+        @Override
+        public FileLessPoint minPoint() {
+            return start;
+        }
+
+        @Override
+        public FileLessPoint maxPoint() {
+            return end;
+        }
+
+        @Override
+        public ImList<String> fileNames() {
+            return ImList.of();
         }
     }
 
@@ -443,6 +498,22 @@ public sealed interface SourcePosition {
 
             return false;
         }
+
+        @Override
+        public FileLessPoint minPoint() {
+            return start.toFileLestPoint();
+        }
+
+        @Override
+        public FileLessPoint maxPoint() {
+            return end.toFileLestPoint();
+        }
+
+        @Override
+        public ImList<String> fileNames() {
+            if( start.fileName.equals(end.fileName) ) return ImList.of(start.fileName);
+            return ImList.of(start.fileName, end.fileName);
+        }
     }
 
     static SourcePosition of(ParserRuleContext ctx) {
@@ -474,6 +545,46 @@ public sealed interface SourcePosition {
             );
         } else {
             return new FileLessPoint(token.getLine(), token.getCharPositionInLine());
+        }
+    }
+
+    static SourcePosition mergeExtend(SourcePosition first,SourcePosition second){
+        if( first==null ) throw new IllegalArgumentException("first==null");
+        if( second==null ) throw new IllegalArgumentException("second==null");
+
+        var fnames = new HashSet<String>();
+        first.fileNames().prepend(second.fileNames()).each(fnames::add);
+
+        if( !first.before(second) && !second.before(first) )
+            return first;
+
+        if( fnames.size()>1 )throw AstParseError.notImplemented();
+
+        var begin = first.before(second) ?
+            first.minPoint() : second.minPoint();
+        var end = first.before(second) ?
+            second.maxPoint() :
+            first.maxPoint();
+
+        if( fnames.isEmpty() ){
+            var begin1 = new FileLessPoint(
+                begin.lineNumber, begin.charNumber
+            );
+            var end1 = new FileLessPoint(
+                end.lineNumber, end.charNumber
+            );
+            return new FileLessRange(begin1, end1);
+        }else{
+            var fname = fnames.iterator().next();
+            var begin1 = new FilePoint(
+                fname,
+                begin.lineNumber, begin.charNumber
+            );
+            var end1 = new FilePoint(
+                fname,
+                end.lineNumber, end.charNumber
+            );
+            return new FileRange(begin1, end1);
         }
     }
 }

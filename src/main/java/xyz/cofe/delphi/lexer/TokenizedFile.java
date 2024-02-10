@@ -3,6 +3,7 @@ package xyz.cofe.delphi.lexer;
 import org.antlr.v4.runtime.*;
 import xyz.cofe.coll.im.ImList;
 import xyz.cofe.delphi.parser.DelphiLexer;
+import xyz.cofe.delphi.parser.DelphiParser;
 
 import java.io.IOError;
 import java.io.IOException;
@@ -44,6 +45,10 @@ public record TokenizedFile(Source source, ImList<Token> tokens) {
     public TokenStream toTokenStream() {
         var listTokenSource = new ListTokenSource(tokens.toList());
         return new CommonTokenStream(listTokenSource);
+    }
+
+    public DelphiParser toDelphiParser(){
+        return new DelphiParser(toTokenStream());
     }
 
     public sealed interface Source {
