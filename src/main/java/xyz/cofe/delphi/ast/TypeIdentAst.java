@@ -11,18 +11,8 @@ import java.util.Objects;
 public record TypeIdentAst(
     ImList<String> name,
     ImList<GenericAst.Param> params
-) implements TypeDeclAst, AstUpdate<TypeIdentAst>
+) implements TypeDeclAst
 {
-    @Override
-    public TypeIdentAst astUpdate(AstUpdate.UpdateContext ctx) {
-        return this;
-    }
-
-    @Override
-    public ImList<? extends AstNode> nestedAstNodes() {
-        return params;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -12,23 +12,8 @@ public sealed interface RecordItemAst permits ClassMethodAst,
                                               TypeSectionAst,
                                               VisibilityAst {
     record Vars(boolean klass, VarSectionAst varSection, SourcePosition position, ImList<Comment> comments)
-        implements RecordItemAst, AstNode, AstUpdate<Vars>, Commented<Vars>, SrcPos
+        implements RecordItemAst, Commented<Vars>, SrcPos
     {
-        @Override
-        public ImList<? extends AstNode> nestedAstNodes() {
-            return ImList.of(varSection);
-        }
-
-        @Override
-        public Vars astUpdate(AstUpdate.UpdateContext ctx) {
-            if( ctx==null )throw new IllegalArgumentException("ctx==null");
-            var cmts = ctx instanceof AstUpdate.CommentingContext cc ?
-                cc.commenting(this) : this;
-            var vsec = varSection.astUpdate(ctx);
-            if( cmts==this && vsec==varSection )return this;
-            return new Vars(klass,vsec,position,cmts.comments);
-        }
-
         @Override
         public Vars withComments(ImList<Comment> comments) {
             if( comments==null )throw new IllegalArgumentException("comments==null");

@@ -13,11 +13,7 @@ import java.util.Optional;
  * Секция переменных
  */
 public sealed interface VarSectionAst
-    extends InterfaceDecl,
-            AstNode {
-
-    @Override
-    VarSectionAst astUpdate(AstUpdate.UpdateContext ctx);
+    extends InterfaceDecl {
 
     /**
      * Перечень переменных
@@ -35,20 +31,6 @@ public sealed interface VarSectionAst
                  AstNode,
                  SrcPos,
                  Commented<Variables> {
-        @Override
-        public Variables astUpdate(AstUpdate.UpdateContext ctx) {
-            var vars = ctx.update(variables);
-            var cmts = ctx instanceof AstUpdate.CommentingContext cc ?
-                cc.commenting(this) : this;
-            if (cmts == this && vars.isEmpty()) return this;
-            return new Variables(key, variables, position, cmts.comments);
-        }
-
-        @Override
-        public ImList<? extends AstNode> nestedAstNodes() {
-            return upcast(key).append(upcast(variables));
-        }
-
         static Variables of(DelphiParser.VarSectionContext ctx) {
             var key = VarKey.Var;
 
@@ -96,35 +78,9 @@ public sealed interface VarSectionAst
         SourcePosition position,
         ImList<CustomAttributeAst> attributes,
         ImList<Comment> comments
-    ) implements AstNode,
-                 SrcPos,
-                 Commented<VarDeclaration>,
-                 AstUpdate<VarDeclaration> {
-        @Override
-        public VarDeclaration astUpdate(AstUpdate.UpdateContext ctx) {
-            var cmnt = ctx instanceof AstUpdate.CommentingContext cc ?
-                cc.commenting(this) : this;
-
-            var valSpec = ctx.updateUnsafe(valueSpec);
-            var attr = ctx.update(attributes);
-            var t = type.astUpdate(ctx);
-
-            if (valSpec.isEmpty()
-                && attr.isEmpty()
-                && t == type
-                && cmnt == this
-            ) return this;
-
-            return new VarDeclaration(
-                name,
-                t,
-                valSpec.orElse(valueSpec),
-                position,
-                attr.orElse(attributes),
-                cmnt.comments
-            );
-        }
-
+    ) implements
+      SrcPos,
+      Commented<VarDeclaration> {
         @Override
         public VarDeclaration withComments(ImList<Comment> comments) {
             return new VarDeclaration(
@@ -135,11 +91,6 @@ public sealed interface VarSectionAst
                 attributes,
                 comments
             );
-        }
-
-        @Override
-        public ImList<? extends AstNode> nestedAstNodes() {
-            return upcast(type).append(upcast(valueSpec)).append(upcast(attributes));
         }
 
         static ImList<VarDeclaration> of(DelphiParser.VarDeclarationContext ctx) {
@@ -168,9 +119,6 @@ public sealed interface VarSectionAst
     }
 
     sealed interface VarValueSpec extends AstNode {
-        @Override
-        VarValueSpec astUpdate(AstUpdate.UpdateContext ctx);
-
         static VarValueSpec of(DelphiParser.VarValueSpecContext ctx) {
             if (ctx.ABSOLUTE() != null) {
                 if (ctx.ident() != null && ctx.ident().getText() != null) {
@@ -198,31 +146,9 @@ public sealed interface VarSectionAst
 
     record AbsoluteExp(ConstSectionAst.ConstExpression expression) implements VarValueSpec,
                                                                               AstNode {
-        @Override
-        public AbsoluteExp astUpdate(AstUpdate.UpdateContext ctx) {
-            var exp = expression.astUpdate(ctx);
-            if (exp == expression) return this;
-            return new AbsoluteExp(exp);
-        }
-
-        @Override
-        public ImList<? extends AstNode> nestedAstNodes() {
-            return upcast(expression);
-        }
     }
 
     record Expr(ConstSectionAst.ConstExpression expression) implements VarValueSpec,
                                                                        AstNode {
-        @Override
-        public Expr astUpdate(AstUpdate.UpdateContext ctx) {
-            var expr = expression.astUpdate(ctx);
-            if (expr == expression) return this;
-            return new Expr(expr);
-        }
-
-        @Override
-        public ImList<? extends AstNode> nestedAstNodes() {
-            return upcast(expression);
-        }
     }
 }

@@ -5,12 +5,8 @@ import static xyz.cofe.delphi.ast.AstNode.upcast;
 
 
 public sealed interface InterfaceItemAst
-extends AstNode, AstUpdate
 permits ClassPropertyAst, ClassMethodAst
 {
-    @Override
-    InterfaceItemAst astUpdate(AstUpdate.UpdateContext ctx);
-
     static InterfaceItemAst of(DelphiParser.InterfaceItemContext ctx){
         if( ctx.classMethod()!=null && !ctx.classMethod().isEmpty() ){
             return ClassMethodAst.of(ctx.classMethod());

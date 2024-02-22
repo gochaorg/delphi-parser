@@ -12,9 +12,6 @@ sealed public interface StructuredTypeAst extends TypeDeclAst permits ArrayTypeA
                                                                       MetaClassTypeAst,
                                                                       RecordAst,
                                                                       SetTypeAst {
-    @Override
-    StructuredTypeAst astUpdate(AstUpdate.UpdateContext ctx);
-
     static StructuredTypeAst of(DelphiParser.StrucTypeContext ctx) {
         if (ctx == null) throw new IllegalArgumentException("ctx==null");
 

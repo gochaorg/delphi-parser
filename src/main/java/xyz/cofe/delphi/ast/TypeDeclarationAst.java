@@ -18,39 +18,7 @@ public record TypeDeclarationAst(
     SourcePosition position,
     ImList<Comment> comments,
     ImList<CustomAttributeAst> attributes
-) implements AstNode, SrcPos, Commented<TypeDeclarationAst>, AstUpdate<TypeDeclarationAst> {
-    @Override
-    public TypeDeclarationAst astUpdate(AstUpdate.UpdateContext ctx) {
-        if( ctx==null ) throw new IllegalArgumentException("ctx==null");
-        var t1= typeIdent.astUpdate(ctx);
-        var t2 = typeDecl.astUpdate(ctx);
-        var t3 = ctx.update(attributes);
-
-        var res = this;
-        if( ctx instanceof AstUpdate.CommentingContext cc ){
-            res = cc.commenting(res);
-        }
-
-        //noinspection ConstantConditions
-        if( t1==typeIdent
-            && t2==typeDecl
-            && res.comments==this.comments
-            && t3.isEmpty()
-        )return this;
-        return new TypeDeclarationAst(
-            t1,
-            t2,
-            position,
-            res.comments,
-            t3.orElse(attributes)
-        );
-    }
-
-    @Override
-    public ImList<? extends AstNode> nestedAstNodes() {
-        return ImListLinked.of(typeIdent, typeDecl);
-    }
-
+) implements SrcPos, Commented<TypeDeclarationAst> {
     static ImList<TypeDeclarationAst> of(Iterable<DelphiParser.TypeDeclarationContext> decs){
         return ImListLinked.of(decs).map(TypeDeclarationAst::of);
     }

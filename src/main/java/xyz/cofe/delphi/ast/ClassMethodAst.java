@@ -24,9 +24,6 @@ public sealed interface ClassMethodAst extends InterfaceItemAst,
      */
     ImList<ArgumentAst> arguments();
 
-    @Override
-    ClassMethodAst astUpdate(AstUpdate.UpdateContext ctx);
-
     /**
      * Процедура
      *
@@ -48,38 +45,6 @@ public sealed interface ClassMethodAst extends InterfaceItemAst,
         ImList<CustomAttributeAst> attributes
     ) implements ClassMethodAst,
                  SrcPos {
-        @Override
-        public Procedure astUpdate(AstUpdate.UpdateContext ctx) {
-            var genericParams = ctx.update(this.genericParams); // AstUpdate.astUpdates(this.genericParams, ctx);
-            var arguments = ctx.update(this.arguments);
-            var directives = ctx.updateUnsafe(this.directives);
-            var attrs = ctx.update(attributes);
-
-            var res = this;
-            if (ctx instanceof AstUpdate.CommentingContext cc) {
-                res = (Procedure) cc.commenting(res);
-            }
-
-            if (directives.isEmpty()
-                && genericParams.isEmpty()
-                && arguments.isEmpty()
-                && res.comments == this.comments
-                && attrs.isEmpty()
-            ) return this;
-
-            //noinspection unchecked,rawtypes
-            res = new Procedure(
-                name,
-                genericParams.orElse(this.genericParams),
-                arguments.orElse(this.arguments),
-                (ImList) directives.orElse((ImList) this.directives), //directives.orElse(this.directives),
-                position,
-                res.comments,
-                attrs.orElse(attributes)
-            );
-
-            return res;
-        }
 
         @Override
         public Procedure withComments(ImList<Comment> comments) {
@@ -89,15 +54,6 @@ public sealed interface ClassMethodAst extends InterfaceItemAst,
                 attributes
             );
         }
-
-        @Override
-        public ImList<? extends AstNode> nestedAstNodes() {
-            return upcast(genericParams)
-                .append(upcast(arguments))
-                .append(upcast(directives))
-                .append(upcast(attributes));
-        }
-
 
         @Override
         public String toString() {
@@ -154,46 +110,6 @@ public sealed interface ClassMethodAst extends InterfaceItemAst,
             return new Constructor(name, genericParams, arguments, directives, position, comments, attributes);
         }
 
-        public Constructor astUpdate(AstUpdate.UpdateContext ctx) {
-            var genericParams = ctx.update(this.genericParams);
-            var arguments = ctx.update(this.arguments);
-            var directives = ctx.updateUnsafe(this.directives);
-            var attrs = ctx.update(attributes);
-
-            var res = this;
-            if (ctx instanceof AstUpdate.CommentingContext cc) {
-                res = (Constructor) cc.commenting(res);
-            }
-
-            if (directives.isEmpty()
-                && genericParams.isEmpty()
-                && arguments.isEmpty()
-                && res.comments == this.comments
-                && attrs.isEmpty()
-            ) return this;
-
-            //noinspection unchecked,rawtypes
-            res = new Constructor(
-                name,
-                genericParams.orElse(this.genericParams),
-                arguments.orElse(this.arguments),
-                (ImList) directives.orElse((ImList) this.directives),
-                position,
-                res.comments,
-                attrs.orElse(attributes)
-            );
-
-            return res;
-        }
-
-        @Override
-        public ImList<? extends AstNode> nestedAstNodes() {
-            return upcast(genericParams)
-                .append(upcast(arguments))
-                .append(upcast(directives))
-                .append(upcast(attributes));
-        }
-
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder();
@@ -244,50 +160,9 @@ public sealed interface ClassMethodAst extends InterfaceItemAst,
         ImList<CustomAttributeAst> attributes
     ) implements ClassMethodAst,
                  SrcPos {
-        public Destructor astUpdate(AstUpdate.UpdateContext ctx) {
-            var genericParams = ctx.update(this.genericParams);
-            var arguments = ctx.update(this.arguments);
-            var directives = ctx.updateUnsafe(this.directives);
-            var attrs = ctx.update(attributes);
-
-            var res = this;
-            if (ctx instanceof AstUpdate.CommentingContext cc) {
-                res = (Destructor) cc.commenting(res);
-            }
-
-            if (directives.isEmpty()
-                && genericParams.isEmpty()
-                && arguments.isEmpty()
-                && res.comments == this.comments
-                && attrs.isEmpty()
-            ) return this;
-
-            //noinspection unchecked,rawtypes
-            res = new Destructor(
-                name,
-                genericParams.orElse(this.genericParams),
-                arguments.orElse(this.arguments),
-                (ImList) directives.orElse((ImList) this.directives),
-                position,
-                res.comments,
-                attrs.orElse(attributes)
-            );
-
-            return res;
-        }
-
         @Override
         public Destructor withComments(ImList<Comment> comments) {
             return new Destructor(name, genericParams, arguments, directives, position, comments, attributes);
-        }
-
-        @Override
-        public ImList<? extends AstNode> nestedAstNodes() {
-            return
-                upcast(genericParams)
-                    .append(upcast(arguments))
-                    .append(upcast(directives))
-                    .append(upcast(attributes));
         }
 
         @Override
@@ -345,46 +220,6 @@ public sealed interface ClassMethodAst extends InterfaceItemAst,
     ) implements ClassMethodAst,
                  SrcPos {
         @Override
-        public Function astUpdate(AstUpdate.UpdateContext ctx) {
-            var genericParams = ctx.update(this.genericParams); // AstUpdate.astUpdates(this.genericParams, ctx);
-            var arguments = ctx.update(this.arguments);
-            var directives = ctx.updateUnsafe(this.directives);
-            var result = this.result.astUpdate(ctx);
-            var attrs = ctx.update(attributes);
-            var rattrs = ctx.update(resultAttributes);
-
-            var res = this;
-
-            if (ctx instanceof AstUpdate.CommentingContext cc) {
-                res = (Function) cc.commenting(res);
-            }
-
-            if (directives.isEmpty()
-                && genericParams.isEmpty()
-                && arguments.isEmpty()
-                && result == this.result
-                && res.comments == this.comments
-                && attrs.isEmpty()
-                && rattrs.isEmpty()
-            ) return this;
-
-            //noinspection unchecked,rawtypes
-            res = new Function(
-                name,
-                genericParams.orElse(this.genericParams),
-                arguments.orElse(this.arguments),
-                result,
-                (ImList) directives.orElse((ImList) this.directives),
-                position,
-                res.comments,
-                attrs.orElse(attributes),
-                rattrs.orElse(resultAttributes)
-            );
-
-            return res;
-        }
-
-        @Override
         public Function withComments(ImList<Comment> comments) {
             if (comments == null) throw new IllegalArgumentException("comments==null");
             return new Function(
@@ -397,16 +232,6 @@ public sealed interface ClassMethodAst extends InterfaceItemAst,
                 comments,
                 attributes,
                 resultAttributes);
-        }
-
-        @Override
-        public ImList<? extends AstNode> nestedAstNodes() {
-            return upcast(genericParams)
-                .append(upcast(arguments))
-                .append(upcast(directives))
-                .append(result)
-                .append(upcast(attributes))
-                .append(resultAttributes);
         }
 
         @Override
@@ -467,50 +292,10 @@ public sealed interface ClassMethodAst extends InterfaceItemAst,
         ImList<CustomAttributeAst> resultAttributes
     ) implements ClassMethodAst,
                  SrcPos {
-        public Operator astUpdate(AstUpdate.UpdateContext ctx) {
-            var genericParams = ctx.update(this.genericParams);
-            var arguments = ctx.update(this.arguments);
-            var result = this.result.astUpdate(ctx);
-            var attrs = ctx.update(attributes);
-            var rattrs = ctx.update(resultAttributes);
-
-            var res = this;
-            if (ctx instanceof AstUpdate.CommentingContext cc) {
-                res = (Operator) cc.commenting(res);
-            }
-
-            if (genericParams.isEmpty()
-                && arguments.isEmpty()
-                && res.comments == this.comments
-                && result == this.result
-                && attrs.isEmpty()
-                && rattrs.isEmpty()
-            ) return this;
-
-            res = new Operator(
-                name,
-                genericParams.orElse(this.genericParams),
-                arguments.orElse(this.arguments),
-                result,
-                position,
-                res.comments,
-                attrs.orElse(attributes),
-                rattrs.orElse(resultAttributes)
-            );
-
-            return res;
-        }
-
         @Override
         public Operator withComments(ImList<Comment> comments) {
             return this;
         }
-
-        @Override
-        public ImList<? extends AstNode> nestedAstNodes() {
-            return upcast(genericParams).append(upcast(arguments)).append(result);
-        }
-
 
         @Override
         public String toString() {
@@ -549,18 +334,6 @@ public sealed interface ClassMethodAst extends InterfaceItemAst,
         @Override
         public ImList<ArgumentAst> arguments() {
             return ImList.of();
-        }
-
-        @Override
-        public ClassMethodAst astUpdate(AstUpdate.UpdateContext ctx) {
-            var withCmnts = this;
-            if (ctx instanceof AstUpdate.CommentingContext cc) {
-                withCmnts = (MethodAlias) cc.commenting(withCmnts);
-            }
-
-            if (withCmnts.comments == comments) return this;
-
-            return withCmnts;
         }
 
         @Override

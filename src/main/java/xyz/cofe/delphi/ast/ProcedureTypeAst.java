@@ -32,20 +32,7 @@ public sealed interface ProcedureTypeAst extends TypeDeclAst {
         TypeDeclAst result,
         Optional<CallConvention> callConvention,
         SourcePosition position
-    ) implements ProcedureTypeAst, AstUpdate<FunctionType>, SrcPos {
-        @Override
-        public ImList<? extends AstNode> nestedAstNodes() {
-            return upcast(result).prepend(upcast(arguments));
-        }
-
-        @Override
-        public FunctionType astUpdate(AstUpdate.UpdateContext updateCtx) {
-            var args = AstUpdate.astUpdates(arguments,updateCtx);
-            var res = result.astUpdate(updateCtx);
-            if( res==result && args.isEmpty() )return this;
-
-            return new FunctionType(args.orElse(arguments), res, callConvention, position);
-        }
+    ) implements ProcedureTypeAst, SrcPos {
     }
 
     /**
@@ -58,19 +45,7 @@ public sealed interface ProcedureTypeAst extends TypeDeclAst {
         ImList<ArgumentAst> arguments,
         Optional<CallConvention> callConvention,
         SourcePosition position
-    ) implements ProcedureTypeAst, AstUpdate<ProcedureType>, SrcPos {
-        @Override
-        public ImList<? extends AstNode> nestedAstNodes() {
-            return upcast(arguments);
-        }
-
-        @Override
-        public ProcedureType astUpdate(AstUpdate.UpdateContext updateCtx) {
-            var args = AstUpdate.astUpdates(arguments,updateCtx);
-            if( args.isEmpty() )return this;
-
-            return new ProcedureType(args.orElse(arguments),callConvention,position);
-        }
+    ) implements ProcedureTypeAst, SrcPos {
     }
 
     /**
@@ -83,20 +58,7 @@ public sealed interface ProcedureTypeAst extends TypeDeclAst {
         ImList<ArgumentAst> arguments,
         TypeDeclAst result,
         SourcePosition position
-    ) implements ProcedureTypeAst, AstUpdate<ObjFunctionType>, SrcPos {
-        @Override
-        public ImList<? extends AstNode> nestedAstNodes() {
-            return upcast(result).prepend(upcast(arguments));
-        }
-
-        @Override
-        public ObjFunctionType astUpdate(AstUpdate.UpdateContext updateCtx) {
-            var args = AstUpdate.astUpdates(arguments,updateCtx);
-            var res = result.astUpdate(updateCtx);
-            if( res==result && args.isEmpty() )return this;
-
-            return new ObjFunctionType(args.orElse(arguments),res,position);
-        }
+    ) implements ProcedureTypeAst, SrcPos {
     }
 
     /**
@@ -107,56 +69,20 @@ public sealed interface ProcedureTypeAst extends TypeDeclAst {
     record ObjProcedureType(
         ImList<ArgumentAst> arguments,
         SourcePosition position
-    ) implements ProcedureTypeAst, AstUpdate<ObjProcedureType>, SrcPos {
-        @Override
-        public ImList<? extends AstNode> nestedAstNodes() {
-            return upcast(arguments);
-        }
-
-        @Override
-        public ObjProcedureType astUpdate(AstUpdate.UpdateContext updateCtx) {
-            var args = AstUpdate.astUpdates(arguments,updateCtx);
-            if( args.isEmpty() )return this;
-
-            return new ObjProcedureType(args.orElse(arguments), position);
-        }
+    ) implements ProcedureTypeAst, SrcPos {
     }
 
     record RefFunctionType(
         ImList<ArgumentAst> arguments,
         TypeDeclAst result,
         SourcePosition position
-    ) implements ProcedureTypeAst, AstUpdate<RefFunctionType>, SrcPos {
-        @Override
-        public ImList<? extends AstNode> nestedAstNodes() {
-            return upcast(result).prepend(upcast(arguments));
-        }
-
-        @Override
-        public RefFunctionType astUpdate(AstUpdate.UpdateContext updateCtx) {
-            var args = AstUpdate.astUpdates(arguments,updateCtx);
-            var res = result.astUpdate(updateCtx);
-            if( res==result && args.isEmpty() )return this;
-
-            return new RefFunctionType(args.orElse(arguments),res,position);
-        }
+    ) implements ProcedureTypeAst, SrcPos {
     }
+
     record RefProcedureType(
         ImList<ArgumentAst> arguments,
         SourcePosition position
-    ) implements ProcedureTypeAst, AstUpdate<RefProcedureType>, SrcPos {
-        @Override
-        public ImList<? extends AstNode> nestedAstNodes() {
-            return upcast(arguments);
-        }
-
-        @Override
-        public RefProcedureType astUpdate(AstUpdate.UpdateContext updateCtx) {
-            var args = AstUpdate.astUpdates(arguments,updateCtx);
-            if( args.isEmpty() )return this;
-
-            return new RefProcedureType(args.orElse(arguments),position);
-        }
+    ) implements ProcedureTypeAst, SrcPos {
     }
 
     private static <R> R of(

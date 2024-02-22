@@ -9,7 +9,6 @@ import static xyz.cofe.delphi.ast.AstNode.upcast;
  * Публичная часть
  */
 public sealed interface InterfaceDecl
-extends AstNode
 permits
     TypeSectionAst,
     MethodDeclAst,
@@ -19,9 +18,6 @@ permits
     ExportsSectionAst,
     VarSectionAst
 {
-    @Override
-    InterfaceDecl astUpdate(AstUpdate.UpdateContext ctx);
-
     static InterfaceDecl of(DelphiParser.InterfaceDeclContext itf){
         if( itf.typeSection()!=null && !itf.typeSection().isEmpty() ){
             return

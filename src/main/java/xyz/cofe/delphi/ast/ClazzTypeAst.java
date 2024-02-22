@@ -26,35 +26,8 @@ public record ClazzTypeAst(
     ImList<Comment> comments
 ) implements StructuredTypeAst, SrcPos, Commented<ClazzTypeAst>, TypeDeclAst {
     @Override
-    public ClazzTypeAst astUpdate(AstUpdate.UpdateContext ctx) {
-        if (ctx == null) throw new IllegalArgumentException("ctx==null");
-
-        var parents = ctx.update(this.parents);
-        //noinspection unchecked
-        Optional<ImList<ClassItemAst>> body = ctx.update(this.body);
-
-        var res = this;
-        if (ctx instanceof AstUpdate.CommentingContext cc) res = cc.commenting(res);
-
-        if (parents.isEmpty() && body.isEmpty() && res.comments == this.comments) return this;
-
-        ImList<ClassItemAst> b2 = body.orElse(this.body);
-
-        return new ClazzTypeAst(
-            state, parents.orElse(this.parents),
-            b2,
-            position,
-            res.comments);
-    }
-
-    @Override
     public ClazzTypeAst withComments(ImList<Comment> comments) {
         return new ClazzTypeAst(state, parents, body, position, comments);
-    }
-
-    @Override
-    public ImList<? extends AstNode> nestedAstNodes() {
-        return upcast(parents).append(upcast(body));
     }
 
     public String toString() {

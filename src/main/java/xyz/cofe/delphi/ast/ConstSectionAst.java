@@ -10,7 +10,7 @@ import java.util.Optional;
 /**
  * Секция констант
  */
-public sealed interface ConstSectionAst extends InterfaceDecl, AstNode {
+public sealed interface ConstSectionAst extends InterfaceDecl {
     /**
      * Перечень констант
      * @param constants константы
@@ -21,26 +21,11 @@ public sealed interface ConstSectionAst extends InterfaceDecl, AstNode {
         ConstKey key,
         SourcePosition position,
         ImList<Comment> comments
-    ) implements ConstSectionAst, ClassItemAst, AstNode, RecordItemAst, SrcPos, Commented<Constants>
+    ) implements ConstSectionAst, ClassItemAst, RecordItemAst, SrcPos, Commented<Constants>
     {
-        @Override
-        public Constants astUpdate(AstUpdate.UpdateContext ctx) {
-            var cns = ctx.update(constants);
-            var k = (ConstKey) key.astUpdate(ctx);
-            var cmts = ctx instanceof AstUpdate.CommentingContext cc ?
-                cc.commenting(this) : this;
-            if( cmts==this  && k==key && cns.isEmpty() )return this;
-            return new Constants(cns.orElse(constants), k, position, cmts.comments);
-        }
-
         @Override
         public Constants withComments(ImList<Comment> comments) {
             return new Constants(constants,key,position,comments);
-        }
-
-        @Override
-        public ImList<? extends AstNode> nestedAstNodes() {
-            return upcast(constants).append(upcast(key));
         }
 
         static Constants of(DelphiParser.ConstSectionContext ctx){
@@ -75,38 +60,14 @@ public sealed interface ConstSectionAst extends InterfaceDecl, AstNode {
         ImList<CustomAttributeAst> attributes,
         ImList<Comment> comments,
         SourcePosition position
-    ) implements AstNode, AstUpdate<Const>, Commented<Const>
+    ) implements Commented<Const>
     {
-        @Override
-        public Const astUpdate(AstUpdate.UpdateContext ctx) {
-            if( ctx==null )throw new IllegalArgumentException("ctx==null");
-            var cmts = ctx instanceof AstUpdate.CommentingContext cc ?
-                cc.commenting(this) : this;
-            var type1 = ctx.updateUnsafe(type);
-            var expr = expression.astUpdate(ctx);
-            var attr = ctx.update(attributes);
-            if( cmts==this && type1.isEmpty() && expr==expression && attr.isEmpty() )return this;
-            return new Const(
-                name,
-                type1.orElse(type),
-                expr,
-                attr.orElse(attributes),
-                cmts.comments,
-                position
-            );
-        }
-
         @Override
         public Const withComments(ImList<Comment> comments) {
             if( comments==null )throw new IllegalArgumentException("comments==null");
             return new Const(
                 name, type, expression, attributes, comments, position
             );
-        }
-
-        @Override
-        public ImList<? extends AstNode> nestedAstNodes() {
-            return upcast(type).append(expression).append(upcast(attributes));
         }
 
         static Const of(DelphiParser.ConstDeclarationContext ctx){
@@ -124,12 +85,7 @@ public sealed interface ConstSectionAst extends InterfaceDecl, AstNode {
             );
         }
     }
-    sealed interface ConstExpression extends AstNode, AstUpdate<ConstExpression> {
-        @Override
-        default ConstExpression astUpdate(AstUpdate.UpdateContext ctx) {
-            return this;
-        }
-
+    sealed interface ConstExpression {
         static ConstExpression of(DelphiParser.ConstExpressionContext ctx ) {
             if( ctx.recordConstExpression()!=null && !ctx.recordConstExpression().isEmpty() ){
                 return new SeqNamed(
@@ -154,17 +110,8 @@ public sealed interface ConstSectionAst extends InterfaceDecl, AstNode {
     }
 
     record ConstExp( ExpressionAst expression ) implements ConstExpression {
-        @Override
-        public ImList<? extends AstNode> nestedAstNodes() {
-            return upcast(expression);
-        }
     }
     record NamedExp( String name, ConstExpression expression ) implements ConstExpression {
-        @Override
-        public ImList<? extends AstNode> nestedAstNodes() {
-            return upcast(expression);
-        }
-
         public static NamedExp of(DelphiParser.RecordConstExpressionContext ctx){
             return new NamedExp(
                 ctx.ident().getText(),
@@ -173,15 +120,7 @@ public sealed interface ConstSectionAst extends InterfaceDecl, AstNode {
         }
     }
     record Sequence( ImList<ConstExpression> seq ) implements ConstExpression {
-        @Override
-        public ImList<? extends AstNode> nestedAstNodes() {
-            return upcast(seq);
-        }
     }
     record SeqNamed( ImList<NamedExp> seq ) implements ConstExpression {
-        @Override
-        public ImList<? extends AstNode> nestedAstNodes() {
-            return upcast(seq);
-        }
     }
 }

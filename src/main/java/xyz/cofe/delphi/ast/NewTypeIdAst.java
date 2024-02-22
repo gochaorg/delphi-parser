@@ -46,17 +46,7 @@ public record NewTypeIdAst(
     ImList<Comment> comments
 ) implements TypeDeclAst, SrcPos, Commented<NewTypeIdAst> {
     @Override
-    public NewTypeIdAst astUpdate(AstUpdate.UpdateContext ctx) {
-        return this;
-    }
-
-    @Override
     public NewTypeIdAst withComments(ImList<Comment> comments) {
         return this;
-    }
-
-    @Override
-    public ImList<? extends AstNode> nestedAstNodes() {
-        return genericParams;
     }
 }

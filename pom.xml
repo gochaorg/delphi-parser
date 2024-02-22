@@ -18,14 +18,13 @@
         <dependency>
             <groupId>xyz.cofe</groupId>
             <artifactId>coll-im</artifactId>
-            <version>2.0.0-SNAPSHOT</version>
+            <version>2.0</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.antlr/antlr4-runtime -->
         <dependency>
             <groupId>org.antlr</groupId>
             <artifactId>antlr4-runtime</artifactId>
-<!--            <version>4.12.0</version>-->
             <version>4.13.1</version>
         </dependency>
 
@@ -126,7 +125,7 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>build-helper-maven-plugin</artifactId>
-                        <version>3.4.0</version>
+                        <version>3.5.0</version>
                         <executions>
                             <execution>
                                 <id>add-test-src</id>

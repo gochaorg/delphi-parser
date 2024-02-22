@@ -21,41 +21,11 @@ public record ProcDeclAst(
     SourcePosition position,
     ImList<Comment> comments
 
-) implements InterfaceDecl, AstNode, Commented<ProcDeclAst> // TODO Comments
+) implements InterfaceDecl, Commented<ProcDeclAst> // TODO Comments
 {
     @Override
     public ProcDeclAst withComments(ImList<Comment> comments) {
         return new ProcDeclAst(name,arguments,result,directives,position,comments);
-    }
-
-    @Override
-    public ProcDeclAst astUpdate(AstUpdate.UpdateContext ctx) {
-        if( ctx==null )throw new IllegalArgumentException("ctx==null");
-        var args = ctx.update(arguments);
-        var resUpdates = new boolean[]{ false };
-        var res = result.map(r -> {
-            var newR = r.astUpdate(ctx);
-            resUpdates[0] = newR!=r;
-            return newR;
-        });
-        var directives = ctx.updateUnsafe(this.directives);
-
-        var ret = this;
-        if( ctx instanceof AstUpdate.CommentingContext cc ){
-            ret = cc.commenting(ret);
-        }
-
-        if( ret.comments==comments && args.isEmpty() && !resUpdates[0] && directives.isEmpty() )return this;
-
-        //noinspection unchecked,rawtypes
-        return new ProcDeclAst(
-            name,
-            args.orElse(arguments),
-            res,
-            (ImList) directives.orElse((ImList) this.directives),
-            position,
-            ret.comments
-        );
     }
 
     private static Tuple3<String,ImList<ArgumentAst>,Optional<TypeDeclAst>> of(DelphiParser.ProcDeclHeadingContext ctx) {

@@ -13,10 +13,7 @@ import static xyz.cofe.delphi.ast.AstNode.upcast;
 /**
  * Свойство класса/интерфейса
  */
-public sealed interface ClassPropertyAst extends InterfaceItemAst, ClassItemAst, AstNode, RecordItemAst {
-    @Override
-    ClassPropertyAst astUpdate(AstUpdate.UpdateContext ctx);
-
+public sealed interface ClassPropertyAst extends InterfaceItemAst, ClassItemAst, RecordItemAst {
     record Property(
         String name,
         ImList<ArgumentAst> propertyArray,
@@ -28,47 +25,6 @@ public sealed interface ClassPropertyAst extends InterfaceItemAst, ClassItemAst,
         ImList<Comment> comments,
         ImList<CustomAttributeAst> attributes
     ) implements ClassPropertyAst, SrcPos, Commented<Property> {
-        @Override
-        public Property astUpdate(AstUpdate.UpdateContext ctx) {
-            var cmts = this;
-
-            if( ctx instanceof AstUpdate.CommentingContext cc )
-                cmts = cc.commenting(cmts);
-
-            var propArr = ctx.update(propertyArray);
-
-            var typeChanged = new boolean[]{ false };
-            var type = this.type.map( t -> {
-                TypeIdentAst r = (TypeIdentAst) t.astUpdate(ctx);
-                //noinspection ConstantValue
-                typeChanged[0] = r!=t;
-                return r;
-            });
-
-            var idxChanged = new boolean[]{ false };
-            var idx = this.index.map( t -> {
-                var r = t.astUpdate(ctx);
-                idxChanged[0] = r!=t;
-                return r;
-            });
-
-            Optional<ImList<Specifier>> spec = (Optional)ctx.updateUnsafe(specifiers);
-
-            var attr = ctx.update(attributes);
-
-            return new Property(
-                name,
-                propArr.orElse(propertyArray),
-                type,
-                idx,
-                spec.orElse(specifiers),
-                classFlag,
-                position,
-                comments,
-                attr.orElse(attributes)
-            );
-        }
-
         @Override
         public Property withComments(ImList<Comment> comments) {
             return new Property(
@@ -82,15 +38,6 @@ public sealed interface ClassPropertyAst extends InterfaceItemAst, ClassItemAst,
                 comments,
                 attributes
             );
-        }
-
-        @Override
-        public ImList<? extends AstNode> nestedAstNodes() {
-            return upcast(propertyArray)
-                .append(upcast(type))
-                .append(upcast(index))
-                .append(upcast(specifiers))
-                .append(upcast(attributes));
         }
 
         public Property withClassFlag(boolean value) {
@@ -111,7 +58,7 @@ public sealed interface ClassPropertyAst extends InterfaceItemAst, ClassItemAst,
             boolean classFlag =
                 ctx.CLASS() != null
                     && ctx.CLASS().getText() != null
-                    && ctx.CLASS().getText().length() > 0;
+                    && !ctx.CLASS().getText().isEmpty();
 
             String name = ctx.classPropertyName().getText();
 
@@ -165,10 +112,7 @@ public sealed interface ClassPropertyAst extends InterfaceItemAst, ClassItemAst,
         }
     }
 
-    sealed interface Specifier extends AstNode, AstUpdate {
-        @Override
-        Specifier astUpdate(AstUpdate.UpdateContext ctx);
-
+    sealed interface Specifier {
         static Specifier of(DelphiParser.ClassPropSpecContext ctx) {
             if (ctx.READ() != null && ctx.ident() != null && !ctx.ident().isEmpty()) {
                 return new Read(ImList.of(ctx.ident()).map(RuleContext::getText));
@@ -209,33 +153,17 @@ public sealed interface ClassPropertyAst extends InterfaceItemAst, ClassItemAst,
     record Read(
         ImList<String> name
     ) implements Specifier {
-        @Override
-        public Read astUpdate(AstUpdate.UpdateContext ctx) {
-            return this;
-        }
     }
 
     record Write(
         ImList<String> name
     ) implements Specifier {
-        @Override
-        public Write astUpdate(AstUpdate.UpdateContext ctx) {
-            return this;
-        }
     }
 
     record ReadOnly() implements Specifier {
-        @Override
-        public ReadOnly astUpdate(AstUpdate.UpdateContext ctx) {
-            return this;
-        }
     }
 
     record WriteOnly() implements Specifier {
-        @Override
-        public WriteOnly astUpdate(AstUpdate.UpdateContext ctx) {
-            return this;
-        }
     }
 
     /**
@@ -243,17 +171,6 @@ public sealed interface ClassPropertyAst extends InterfaceItemAst, ClassItemAst,
      * @param expression По идее константа
      */
     record DispID(ExpressionAst expression) implements Specifier {
-        @Override
-        public DispID astUpdate(AstUpdate.UpdateContext ctx) {
-            var exp = expression.astUpdate(ctx);
-            if( exp==expression )return this;
-            return new DispID(expression);
-        }
-
-        @Override
-        public ImList<? extends AstNode> nestedAstNodes() {
-            return upcast(expression);
-        }
     }
 
     /**
@@ -261,44 +178,14 @@ public sealed interface ClassPropertyAst extends InterfaceItemAst, ClassItemAst,
      * @param expression значение, по идее константа
      */
     record Stored(ExpressionAst expression) implements Specifier {
-        @Override
-        public Stored astUpdate(AstUpdate.UpdateContext ctx) {
-            var exp = expression.astUpdate(ctx);
-            if( exp==expression )return this;
-            return new Stored(exp);
-        }
-
-        @Override
-        public ImList<? extends AstNode> nestedAstNodes() {
-            return upcast(expression);
-        }
     }
 
     record Default(Optional<ExpressionAst> expression) implements Specifier {
-        @Override
-        public Default astUpdate(AstUpdate.UpdateContext ctx) {
-            var exp = ctx.updateUnsafe(expression);
-            if( exp.isEmpty() )return this;
-            return new Default(exp.orElse(expression));
-        }
-
-        @Override
-        public ImList<? extends AstNode> nestedAstNodes() {
-            return upcast(expression);
-        }
     }
 
     record NoDefault() implements Specifier {
-        @Override
-        public NoDefault astUpdate(AstUpdate.UpdateContext ctx) {
-            return this;
-        }
     }
 
     record Implements(ImList<String> typeId) implements Specifier {
-        @Override
-        public Implements astUpdate(AstUpdate.UpdateContext ctx) {
-            return this;
-        }
     }
 }

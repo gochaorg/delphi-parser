@@ -28,8 +28,7 @@ public record ArrayTypeAst(
 ) implements StructuredTypeAst,
              TypeDeclAst,
              SrcPos,
-             Commented<ArrayTypeAst>,
-             AstUpdate<ArrayTypeAst> {
+             Commented<ArrayTypeAst> {
 
     public static ArrayTypeAst of(DelphiParser.ArrayTypeContext ctx, boolean packed) {
         if (ctx == null) throw new IllegalArgumentException("ctx==null");
@@ -45,26 +44,6 @@ public record ArrayTypeAst(
     }
 
     @Override
-    public ArrayTypeAst astUpdate(AstUpdate.UpdateContext ctx) {
-        var cmts = ctx instanceof AstUpdate.CommentingContext cc ?
-            cc.commenting(this) : this;
-
-        var idx = ctx.update(indexes);
-        var st = subType.astUpdate(ctx);
-
-        if (cmts == this && st == subType && idx.isEmpty())
-            return this;
-
-        return new ArrayTypeAst(
-            idx.orElse(indexes),
-            st,
-            packed,
-            position,
-            cmts.comments
-        );
-    }
-
-    @Override
     public ArrayTypeAst withComments(ImList<Comment> comments) {
         return new ArrayTypeAst(
             indexes,
@@ -75,16 +54,10 @@ public record ArrayTypeAst(
         );
     }
 
-    @Override
-    public ImList<? extends AstNode> nestedAstNodes() {
-        return upcast(indexes).append(subType);
-    }
-
     /**
      * Тип элемента массива
      */
-    sealed public static interface ArraySubTypeAst extends AstNode,
-                                                           AstUpdate<ArraySubTypeAst> {
+    sealed public static interface ArraySubTypeAst {
 
         public static ArraySubTypeAst of(DelphiParser.ArraySubTypeContext ctx) {
             if (ctx == null) throw new IllegalArgumentException("ctx==null");
@@ -102,39 +75,23 @@ public record ArrayTypeAst(
             throw AstParseError.unExpected(ctx);
         }
 
-        @Override
-        ArraySubTypeAst astUpdate(AstUpdate.UpdateContext ctx);
-
         /**
          * Константа
+         *
          * @param position позиция в исходниках
          */
         record Const(SourcePosition position) implements ArraySubTypeAst,
                                                          SrcPos {
-            @Override
-            public Const astUpdate(AstUpdate.UpdateContext ctx) {
-                return this;
-            }
         }
 
         /**
          * Ссылка на тип
-         * @param decl тип
+         *
+         * @param decl     тип
          * @param position позиция в исходниках
          */
         record TypeRef(TypeDeclAst decl, SourcePosition position) implements ArraySubTypeAst,
                                                                              SrcPos {
-            @Override
-            public TypeRef astUpdate(AstUpdate.UpdateContext ctx) {
-                var d = decl.astUpdate(ctx);
-                if (d == decl) return this;
-                return new TypeRef(d, position);
-            }
-
-            @Override
-            public ImList<? extends AstNode> nestedAstNodes() {
-                return ImListLinked.of(decl);
-            }
         }
     }
 
@@ -167,8 +124,9 @@ public record ArrayTypeAst(
 
         /**
          * Элементы массива
-         * @param from с какого элемента
-         * @param to по какой элемент включительно
+         *
+         * @param from     с какого элемента
+         * @param to       по какой элемент включительно
          * @param position позиция в исходниках
          */
         record ArrayIndexRangeAst(ExpressionAst from, ExpressionAst to, SourcePosition position)
@@ -190,7 +148,8 @@ public record ArrayTypeAst(
 
         /**
          * Ссылка на тип
-         * @param typeId тип
+         *
+         * @param typeId   тип
          * @param position позиция в исходниках
          */
         record ArrayIndexTypeAst(ImList<String> typeId, SourcePosition position)

@@ -17,11 +17,6 @@ import java.util.Optional;
  * @param position позиция в исходниках
  */
 public record EnumTypeAst(ImList<EnumEntry> entries, SourcePosition position) implements SrcPos, TypeDeclAst {
-    @Override
-    public TypeDeclAst astUpdate(AstUpdate.UpdateContext ctx) {
-        return this;
-    }
-
     public sealed interface EnumEntry {
         /**
          * Именная константа, без указанного значения <code>type TAccess = (<b>Deny</b>, View, All, None)</code>

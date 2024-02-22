@@ -26,39 +26,10 @@ public record InterfaceTypeAst(
     SourcePosition position,
     ImList<Comment> comments
 ) implements StructuredTypeAst, TypeDeclAst, SrcPos, Commented<InterfaceTypeAst> {
-    @Override
-    public InterfaceTypeAst astUpdate(AstUpdate.UpdateContext ctx) {
-        var parents = ctx.update(this.parents);
-        Optional<ImList<InterfaceItemAst>> body = ctx.update(this.body);
-
-        var res = this;
-        if (ctx instanceof AstUpdate.CommentingContext cc) {
-            res = cc.commenting(res);
-        }
-
-        if (parents.isEmpty()
-            && body.isEmpty()
-            && res.comments == this.comments
-        ) return this;
-
-        return new InterfaceTypeAst(
-            parents.orElse(this.parents),
-            itfType,
-            guid,
-            body.orElse(this.body),
-            position,
-            res.comments
-        );
-    }
 
     @Override
     public InterfaceTypeAst withComments(ImList<Comment> comments) {
         return this;
-    }
-
-    @Override
-    public ImList<? extends AstNode> nestedAstNodes() {
-        return upcast(parents).append(upcast(body));
     }
 
     public static InterfaceTypeAst of(DelphiParser.InterfaceTypeDeclContext ctx) {

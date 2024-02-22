@@ -16,25 +16,6 @@ public record TypeSectionAst(
     SourcePosition position
 ) implements InterfaceDecl, ClassItemAst, SrcPos, RecordItemAst
 {
-    @Override
-    public TypeSectionAst astUpdate(AstUpdate.UpdateContext ctx) {
-        if( ctx==null ) throw new IllegalArgumentException("ctx==null");
-        var changed = new boolean[]{ false };
-        var types1 = types.foldRight(ImListLinked.<TypeDeclarationAst>of(), (acc, it) -> {
-            var it1 = it.astUpdate(ctx);
-            if( it1!=it )changed[0] = true;
-            return acc.prepend(it1);
-        });
-
-        if( changed[0] )return new TypeSectionAst(types1,position);
-        return this;
-    }
-
-    @Override
-    public ImList<? extends AstNode> nestedAstNodes() {
-        return upcast(types);
-    }
-
     public String toString(){
         var sb = new StringBuilder();
         sb.append("type(section):\n");

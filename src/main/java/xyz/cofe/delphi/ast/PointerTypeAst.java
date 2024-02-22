@@ -17,15 +17,8 @@ public sealed interface PointerTypeAst extends TypeDeclAst
     }
 
     record UntypedPointer(SourcePosition position, ImList<Comment> comments)
-        implements PointerTypeAst, AstUpdate<UntypedPointer>, Commented<UntypedPointer>
+        implements PointerTypeAst, Commented<UntypedPointer>
     {
-        @Override
-        public UntypedPointer astUpdate(AstUpdate.UpdateContext ctx) {
-            if( ctx==null ) throw new IllegalArgumentException("ctx==null");
-            return ctx instanceof AstUpdate.CommentingContext cc ?
-                cc.commenting(this) : this;
-        }
-
         @Override
         public UntypedPointer withComments(ImList<Comment> comments) {
             if( comments==null ) throw new IllegalArgumentException("comments==null");
@@ -34,27 +27,8 @@ public sealed interface PointerTypeAst extends TypeDeclAst
     }
 
     record Pointer(TypeDeclAst type, SourcePosition position, ImList<Comment> comments)
-        implements PointerTypeAst, AstUpdate<Pointer>, Commented<Pointer>
+        implements PointerTypeAst, Commented<Pointer>
     {
-        @Override
-        public Pointer astUpdate(AstUpdate.UpdateContext ctx) {
-            if( ctx==null ) throw new IllegalArgumentException("ctx==null");
-            var t = type.astUpdate(ctx);
-            var cmts = ctx instanceof AstUpdate.CommentingContext cc ?
-                cc.commenting(this) : this;
-            if( t==type && cmts==this )return this;
-            return new Pointer(
-                type,
-                position,
-                cmts.comments
-            );
-        }
-
-        @Override
-        public ImList<? extends AstNode> nestedAstNodes() {
-            return ImList.of(type);
-        }
-
         @Override
         public Pointer withComments(ImList<Comment> comments) {
             if( comments==null ) throw new IllegalArgumentException("comments==null");

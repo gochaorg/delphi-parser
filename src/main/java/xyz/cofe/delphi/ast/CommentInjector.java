@@ -11,12 +11,12 @@ import java.util.stream.StreamSupport;
  */
 @SuppressWarnings("rawtypes")
 public class CommentInjector {
-    private final Comparator<SourcePosition> sourcePositionComparator = new Comparator<SourcePosition>() {
+    private final Comparator<SourcePosition> sourcePositionComparator = new Comparator<>() {
         @Override
         public int compare(SourcePosition a, SourcePosition b) {
-            if( a.equals(b) )return 0;
-            if( a.before(b) )return -1;
-            if( b.before(a) )return 1;
+            if (a.equals(b)) return 0;
+            if (a.before(b)) return -1;
+            if (b.before(a)) return 1;
             return 0;
         }
     };
@@ -25,15 +25,11 @@ public class CommentInjector {
         var result = new HashMap<Commented,List<Comment>>();
 
         var breakPointsMap = new TreeMap<SourcePosition,Commented>(sourcePositionComparator);
-
-        StreamSupport.stream(unit.tree().spliterator(),false).map(
-            treePath -> treePath.last().flatMap(
-                n -> n instanceof Commented s ?
-                    Optional.of(Tuple2.of(s.position(), s)) : Optional.empty()
-            )
-        ).flatMap(Optional::stream).forEach(cPos -> breakPointsMap.put(cPos._1(), cPos._2()));
-
-        if( breakPointsMap.isEmpty() )return result;
+        HTree.visit(unit,new Object(){
+            public void commented(Commented cmt){
+                breakPointsMap.put(cmt.position(), cmt);
+            }
+        });
 
         var commentsMap = new TreeMap<SourcePosition,Comment>(sourcePositionComparator);
         unit.comments().each(cmnt -> {
@@ -73,13 +69,22 @@ public class CommentInjector {
         if( unit==null ) throw new IllegalArgumentException("unit==null");
 
         var injections = injectionsOf(unit);
-        //noinspection rawtypes
-        var injectionsMap = new HashMap<Commented, ImList<Comment>>();
-        injections.forEach( (k,v) -> {
-            injectionsMap.put(k, ImListLinked.of(v));
+        return HTree.visit(unit, new Object(){
+            @SuppressWarnings("unchecked")
+            Commented commenting(Commented cmt){
+                var astNode = injections.get(cmt);
+                if( astNode!=null ){
+                    return (Commented) cmt.withComments(ImList.of(astNode));
+                }
+                return cmt;
+            }
         });
-
-        var comments = new AstUpdate.Commenting(injectionsMap);
-        return unit.astUpdate(comments);
+//        var injectionsMap = new HashMap<Commented, ImList<Comment>>();
+//        injections.forEach( (k,v) -> {
+//            injectionsMap.put(k, ImListLinked.of(v));
+//        });
+//
+//        var comments = new AstUpdate.Commenting(injectionsMap);
+//        return unit.astUpdate(comments);
     }
 }

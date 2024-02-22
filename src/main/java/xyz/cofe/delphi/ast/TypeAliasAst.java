@@ -6,17 +6,7 @@ public record TypeAliasAst(ImList<String> name, ImList<TypeDeclAst> genericParam
                            ImList<Comment> comments)
     implements TypeDeclAst, SrcPos, Commented<TypeAliasAst> {
     @Override
-    public TypeAliasAst astUpdate(AstUpdate.UpdateContext ctx) {
-        return this;
-    }
-
-    @Override
     public TypeAliasAst withComments(ImList<Comment> comments) {
         return this;
-    }
-
-    @Override
-    public ImList<? extends AstNode> nestedAstNodes() {
-        return genericParams;
     }
 }

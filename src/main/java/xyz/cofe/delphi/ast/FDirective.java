@@ -9,11 +9,11 @@ import java.util.Optional;
 /**
  * Директивы метода/функции
  */
-public sealed interface FDirective extends AstNode {
-    sealed interface FunctionDirective extends AstNode {
+public sealed interface FDirective {
+    sealed interface FunctionDirective {
     }
 
-    sealed interface MethodDirective extends AstNode {
+    sealed interface MethodDirective {
     }
 
     sealed interface CallConvention {
@@ -207,25 +207,12 @@ public sealed interface FDirective extends AstNode {
     ) implements FDirective,
                  FunctionDirective,
                  SrcPos {
-        sealed interface Specifier extends AstNode {
+        sealed interface Specifier {
             record Index(ConstSectionAst.ConstExpression index) implements Specifier {
-                @java.lang.Override
-                public ImList<? extends AstNode> nestedAstNodes() {
-                    return ImList.of(index);
-                }
             }
 
             record Name(ConstSectionAst.ConstExpression index) implements Specifier {
-                @java.lang.Override
-                public ImList<? extends AstNode> nestedAstNodes() {
-                    return ImList.of(index);
-                }
             }
-        }
-
-        @java.lang.Override
-        public ImList<? extends AstNode> nestedAstNodes() {
-            return AstNode.upcast(constExpression).append(AstNode.upcast(specifiers));
         }
     }
 

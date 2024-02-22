@@ -14,11 +14,6 @@ sealed public interface StringTypeAst extends TypeDeclAst, SrcPos {
     record StrIng(Optional<ExpressionAst> expression, SourcePosition position,
                   ImList<Comment> comments) implements StringTypeAst, Commented<StrIng> {
         @Override
-        public StrIng astUpdate(AstUpdate.UpdateContext ctx) {
-            return this;
-        }
-
-        @Override
         public StrIng withComments(ImList<Comment> comments) {
             return new StrIng(expression, position, comments);
         }
@@ -39,11 +34,6 @@ sealed public interface StringTypeAst extends TypeDeclAst, SrcPos {
 
     record AnsiString(Optional<String> codePageNum, boolean typeFlag, SourcePosition position,
                       ImList<Comment> comments) implements StringTypeAst, Commented<AnsiString> {
-        @Override
-        public AnsiString astUpdate(AstUpdate.UpdateContext ctx) {
-            return this;
-        }
-
         @Override
         public AnsiString withComments(ImList<Comment> comments) {
             return new AnsiString(codePageNum, typeFlag, position, comments);

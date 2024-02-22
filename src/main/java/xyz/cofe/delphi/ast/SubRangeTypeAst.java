@@ -32,27 +32,11 @@ public sealed interface SubRangeTypeAst extends TypeDeclAst {
                   SourcePosition position,
                   ImList<Comment> comments
     ) implements SubRangeTypeAst,
-                 AstUpdate<Single>,
                  Commented<Single> {
-        @Override
-        public Single astUpdate(AstUpdate.UpdateContext ctx) {
-            if (ctx == null) throw new IllegalArgumentException("ctx==null");
-            var cmts = ctx instanceof AstUpdate.CommentingContext cc ?
-                cc.commenting(this) : this;
-            var exp = expression.astUpdate(ctx);
-            if (cmts == this && exp == expression) return this;
-            return new Single(exp, position, cmts.comments);
-        }
-
         @Override
         public Single withComments(ImList<Comment> comments) {
             if (comments == null) throw new IllegalArgumentException("comments==null");
             return new Single(expression, position, comments);
-        }
-
-        @Override
-        public ImList<? extends AstNode> nestedAstNodes() {
-            return ImList.of(expression);
         }
     }
 
@@ -61,34 +45,11 @@ public sealed interface SubRangeTypeAst extends TypeDeclAst {
                   SourcePosition position,
                   ImList<Comment> comments
     ) implements SubRangeTypeAst,
-                 AstUpdate<FromTo>,
                  Commented<FromTo> {
-        @Override
-        public FromTo astUpdate(AstUpdate.UpdateContext ctx) {
-            if (ctx == null) throw new IllegalArgumentException("ctx==null");
-
-            var cmts = ctx instanceof AstUpdate.CommentingContext cc ?
-                cc.commenting(this) : this;
-
-            var f = from.astUpdate(ctx);
-            var t = to.astUpdate(ctx);
-
-            if (cmts == this && from == f && to == t) return this;
-
-            return new FromTo(
-                f, t, position, cmts.comments
-            );
-        }
-
         @Override
         public FromTo withComments(ImList<Comment> comments) {
             if (comments == null) throw new IllegalArgumentException("comments==null");
             return new FromTo(from, to, position, comments);
-        }
-
-        @Override
-        public ImList<? extends AstNode> nestedAstNodes() {
-            return ImList.of(from,to);
         }
     }
 }

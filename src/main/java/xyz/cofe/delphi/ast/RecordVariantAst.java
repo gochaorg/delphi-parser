@@ -8,29 +8,8 @@ public record RecordVariantAst(
     ImList<RecordFieldAst> fields,
     SourcePosition position,
     ImList<Comment> comments
-) implements AstNode, AstUpdate<RecordVariantAst>, Commented<RecordVariantAst>, SrcPos
+) implements Commented<RecordVariantAst>, SrcPos
 {
-    @Override
-    public ImList<? extends AstNode> nestedAstNodes() {
-        return AstNode.upcast(determinants).append(fields);
-    }
-
-    @Override
-    public RecordVariantAst astUpdate(AstUpdate.UpdateContext ctx) {
-        if( ctx==null )throw new IllegalArgumentException("ctx==null");
-        var det = ctx.update(determinants);
-        var flds = ctx.update(fields);
-        var cmts = ctx instanceof AstUpdate.CommentingContext cc ?
-            cc.commenting(this) : this;
-        if( det.isEmpty() && flds.isEmpty() && cmts==this )return this;
-        return new RecordVariantAst(
-            det.orElse(determinants),
-            flds.orElse(fields),
-            position,
-            cmts.comments
-        );
-    }
-
     @Override
     public RecordVariantAst withComments(ImList<Comment> comments) {
         if( comments==null )throw new IllegalArgumentException("comments==null");

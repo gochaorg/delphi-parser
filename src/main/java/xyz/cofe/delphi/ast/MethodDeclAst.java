@@ -14,23 +14,12 @@ import static xyz.cofe.delphi.ast.AstNode.upcast;
  */
 @SuppressWarnings("rawtypes")
 public sealed interface MethodDeclAst extends InterfaceDecl,
-                                              AstNode,
-                                              SrcPos,
-                                              AstUpdate
+                                              SrcPos
 {
-    @Override
-    default MethodDeclAst astUpdate(AstUpdate.UpdateContext ctx) {
-        return this;
-    }
-
     /**
      * Имя метода
      */
-    sealed interface Name extends AstNode, SrcPos {
-        default Name astUpdate(AstUpdate.UpdateContext ctx) {
-            return this;
-        }
-
+    sealed interface Name extends SrcPos {
         /**
          * Имя метода класса
          *
@@ -46,39 +35,10 @@ public sealed interface MethodDeclAst extends InterfaceDecl,
             ImList<GenericAst.Param> methodGenericParams,
             SourcePosition position,
             ImList<Comment> comments
-        ) implements Name, AstUpdate<DirectName>, Commented<DirectName> {
+        ) implements Name, Commented<DirectName> {
             @Override
             public DirectName withComments(ImList<Comment> comments) {
                 return new DirectName(className,classGenericParams,methodName,methodGenericParams,position,comments);
-            }
-
-            @Override
-            public ImList<? extends AstNode> nestedAstNodes() {
-                return upcast(methodGenericParams).prepend(upcast(classGenericParams));
-            }
-
-            @Override
-            public DirectName astUpdate(AstUpdate.UpdateContext ctx) {
-                if( ctx==null ) throw new IllegalArgumentException("ctx==null");
-                var res = this;
-
-                if( ctx instanceof AstUpdate.CommentingContext cc ){
-                    res = cc.commenting(this);
-                }
-
-                var clsGen = ctx.update(classGenericParams);
-                var mthGen = ctx.update(methodGenericParams);
-
-                if( clsGen.isEmpty() && mthGen.isEmpty() && comments==res.comments )return this;
-
-                return new DirectName(
-                    className,
-                    clsGen.orElse(classGenericParams),
-                    methodName,
-                    mthGen.orElse(methodGenericParams),
-                    position,
-                    res.comments
-                );
             }
         }
 
@@ -101,42 +61,10 @@ public sealed interface MethodDeclAst extends InterfaceDecl,
             ImList<GenericAst.Param> methodGenericParams,
             SourcePosition position,
             ImList<Comment> comments
-        ) implements Name, Commented<NestedName>, AstUpdate<NestedName> {
+        ) implements Name, Commented<NestedName> {
             @Override
             public NestedName withComments(ImList<Comment> comments) {
                 return new NestedName(className, classGenericParams, nestedName, nestedGenericParams, methodName, methodGenericParams, position, comments);
-            }
-
-            @Override
-            public ImList<? extends AstNode> nestedAstNodes() {
-                return upcast(classGenericParams).append(upcast(nestedGenericParams)).append(upcast(methodGenericParams));
-            }
-
-            @Override
-            public NestedName astUpdate(AstUpdate.UpdateContext ctx) {
-                if( ctx==null ) throw new IllegalArgumentException("ctx==null");
-                var res = this;
-
-                if( ctx instanceof AstUpdate.CommentingContext cc ){
-                    res = cc.commenting(this);
-                }
-
-                var clsGen = ctx.update(classGenericParams);
-                var mthGen = ctx.update(methodGenericParams);
-                var nstGen = ctx.update(nestedGenericParams);
-
-                if( clsGen.isEmpty() && mthGen.isEmpty() && nstGen.isEmpty() && comments==res.comments )return this;
-
-                return new NestedName(
-                    className,
-                    clsGen.orElse(classGenericParams),
-                    nestedName,
-                    nstGen.orElse(nestedGenericParams),
-                    methodName,
-                    mthGen.orElse(methodGenericParams),
-                    position,
-                    res.comments
-                );
             }
         }
 
@@ -204,27 +132,6 @@ public sealed interface MethodDeclAst extends InterfaceDecl,
         public Constructor withComments(ImList<Comment> comments) {
             return new Constructor(statik,name,arguments,directives,position,comments);
         }
-
-        @Override
-        public ImList<? extends AstNode> nestedAstNodes() {
-            return upcast(arguments).append(upcast(directives));
-        }
-
-        @Override
-        public Constructor astUpdate(AstUpdate.UpdateContext ctx) {
-            var args = ctx.update(arguments);
-            var directives = ctx.updateUnsafe(this.directives);
-            var cmnt = ctx instanceof AstUpdate.CommentingContext cc ? cc.commenting(this) : this;
-            if( cmnt==this && args.isEmpty() && directives.isEmpty() )return this;
-            //noinspection unchecked,rawtypes
-            return new Constructor(
-                statik,
-                name,
-                args.orElse(arguments),
-                (ImList) directives.orElse((ImList) this.directives),
-                position,
-                cmnt.comments);
-        }
     }
     //endregion
 
@@ -250,28 +157,6 @@ public sealed interface MethodDeclAst extends InterfaceDecl,
         public Destructor withComments(ImList<Comment> comments) {
             return new Destructor(statik,name,arguments,directives,position,comments);
         }
-
-        @Override
-        public ImList<? extends AstNode> nestedAstNodes() {
-            return upcast(arguments).append(upcast(directives));
-        }
-
-        @Override
-        public Destructor astUpdate(AstUpdate.UpdateContext ctx) {
-            var args = ctx.update(arguments);
-            var directives = ctx.updateUnsafe(this.directives);
-            var cmnt = ctx instanceof AstUpdate.CommentingContext cc ? cc.commenting(this) : this;
-            if( cmnt==this && args.isEmpty() && directives.isEmpty() )return this;
-            //noinspection unchecked,rawtypes
-            return new Destructor(
-                statik,
-                name,
-                args.orElse(arguments),
-                (ImList) directives.orElse((ImList) this.directives),
-                position,
-                cmnt.comments
-            );
-        }
     }
     //endregion
 
@@ -287,27 +172,6 @@ public sealed interface MethodDeclAst extends InterfaceDecl,
         @Override
         public Procedure withComments(ImList<Comment> comments) {
             return new Procedure(statik,name,arguments,directives,position,comments);
-        }
-
-        @Override
-        public ImList<? extends AstNode> nestedAstNodes() {
-            return upcast(arguments).append(upcast(directives));
-        }
-
-        @Override
-        public Procedure astUpdate(AstUpdate.UpdateContext ctx) {
-            var args = ctx.update(arguments);
-            var directives = ctx.updateUnsafe(this.directives);
-            var cmnt = ctx instanceof AstUpdate.CommentingContext cc ? cc.commenting(this) : this;
-            if( cmnt==this && args.isEmpty() && directives.isEmpty() )return this;
-            //noinspection unchecked,rawtypes
-            return new Procedure(
-                statik,
-                name,
-                args.orElse(arguments),
-                (ImList) directives.orElse((ImList) this.directives),
-                position,
-                cmnt.comments);
         }
     }
     //endregion
@@ -326,29 +190,6 @@ public sealed interface MethodDeclAst extends InterfaceDecl,
         public Function withComments(ImList<Comment> comments) {
             return new Function(statik,name,arguments,returns,directives,position,comments);
         }
-
-        @Override
-        public ImList<? extends AstNode> nestedAstNodes() {
-            return upcast(arguments).append(returns).append(upcast(directives));
-        }
-
-        @Override
-        public Function astUpdate(AstUpdate.UpdateContext ctx) {
-            var args = ctx.update(arguments);
-            var directives = ctx.updateUnsafe(this.directives);
-            var cmnt = ctx instanceof AstUpdate.CommentingContext cc ? cc.commenting(this) : this;
-            var rets = returns.astUpdate(ctx);
-            if( cmnt==this && args.isEmpty() && rets==returns && directives.isEmpty() )return this;
-            //noinspection unchecked,rawtypes
-            return new Function(
-                statik,
-                name,
-                args.orElse(arguments),
-                rets,
-                (ImList) directives.orElse((ImList) this.directives),
-                position,
-                cmnt.comments);
-        }
     }
     //endregion
 
@@ -364,16 +205,6 @@ public sealed interface MethodDeclAst extends InterfaceDecl,
         @Override
         public Operator withComments(ImList<Comment> comments) {
             return new Operator(name,arguments,returns,directives,position,comments);
-        }
-
-        @Override
-        public ImList<? extends AstNode> nestedAstNodes() {
-            return upcast(arguments).append(returns).append(upcast(directives));
-        }
-
-        @Override
-        public Operator astUpdate(AstUpdate.UpdateContext ctx) {
-            return this;
         }
     }
     //endregion

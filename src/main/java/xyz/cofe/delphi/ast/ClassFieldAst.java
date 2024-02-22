@@ -17,21 +17,6 @@ public record ClassFieldAst(String name, TypeDeclAst type, SourcePosition positi
                             ImList<CustomAttributeAst> attributes)
 implements ClassItemAst, AstNode, SrcPos, Commented<ClassFieldAst>
 {
-    @Override
-    public ClassFieldAst astUpdate(AstUpdate.UpdateContext ctx) {
-        var cmts = this;
-        if( ctx instanceof AstUpdate.CommentingContext cc ){
-            cmts = cc.commenting(cmts);
-        }
-
-        var type = this.type.astUpdate(ctx);
-        var attrs = ctx.update(attributes);
-
-        if( cmts.comments==comments && type==this.type && attrs.isEmpty() )
-            return this;
-
-        return new ClassFieldAst(name, type, position, cmts.comments, attrs.orElse(attributes));
-    }
 
     @Override
     public ClassFieldAst withComments(ImList<Comment> comments) {
@@ -42,11 +27,6 @@ implements ClassItemAst, AstNode, SrcPos, Commented<ClassFieldAst>
             comments,
             attributes
         );
-    }
-
-    @Override
-    public ImList<? extends AstNode> nestedAstNodes() {
-        return ImList.<AstNode>of(type).append(attributes);
     }
 
     static ImList<ClassFieldAst> of(DelphiParser.ClassFieldContext ctx){

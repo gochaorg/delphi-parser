@@ -12,7 +12,6 @@ import static xyz.cofe.delphi.impl.Indent.indent;
  * Объявление типа
  */
 public sealed interface TypeDeclAst
-    extends AstNode
     permits ArrayTypeAst,
             ClazzTypeAst,
             EnumTypeAst,
@@ -31,9 +30,6 @@ public sealed interface TypeDeclAst
             TypeAliasAst,
             TypeIdentAst,
             VariantTypeAst {
-    @Override
-    TypeDeclAst astUpdate(AstUpdate.UpdateContext ctx);
-
     public static TypeDeclAst of(DelphiParser.TypeDeclContext ctx) {
         if (ctx.strucType() != null
             && !ctx.strucType().isEmpty()

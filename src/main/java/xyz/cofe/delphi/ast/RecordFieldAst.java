@@ -10,24 +10,8 @@ public record RecordFieldAst(
     ImList<FDirective.Hinting> directives,
     SourcePosition position,
     ImList<Comment> comments
-) implements AstNode, AstUpdate<RecordFieldAst>, Commented<RecordFieldAst>, SrcPos, RecordItemAst
+) implements Commented<RecordFieldAst>, SrcPos, RecordItemAst
 {
-    @Override
-    public RecordFieldAst astUpdate(AstUpdate.UpdateContext ctx) {
-        if( ctx==null )throw new IllegalArgumentException("ctx==null");
-        var typ = type.astUpdate(ctx);
-        var cmts = ctx instanceof AstUpdate.CommentingContext cc ?
-            cc.commenting(this) : this;
-        if( typ==type && cmts==this )return this;
-        return new RecordFieldAst(
-            name,
-            typ,
-            directives,
-            position,
-            cmts.comments
-        );
-    }
-
     @Override
     public RecordFieldAst withComments(ImList<Comment> comments) {
         if( comments==null )throw new IllegalArgumentException("comments==null");

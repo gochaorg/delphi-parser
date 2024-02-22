@@ -12,31 +12,8 @@ public record RecordVariantSectionAst(
     SourcePosition position,
     ImList<Comment> comments
 )
-implements SrcPos, AstNode, AstUpdate<RecordVariantSectionAst>, Commented<RecordVariantSectionAst>, RecordItemAst
+implements SrcPos, Commented<RecordVariantSectionAst>, RecordItemAst
 {
-    @Override
-    public ImList<? extends AstNode> nestedAstNodes() {
-        return variants;
-    }
-
-    @Override
-    public RecordVariantSectionAst astUpdate(AstUpdate.UpdateContext ctx) {
-        if( ctx==null )throw new IllegalArgumentException("ctx==null");
-        var typ = type.astUpdate(ctx);
-        var vars = ctx.update(variants);
-        var cmts = ctx instanceof AstUpdate.CommentingContext cc
-            ? cc.commenting(this) : this;
-        if( cmts==this && vars.isEmpty() && typ==type )return this;
-
-        return new RecordVariantSectionAst(
-            ident,
-            typ,
-            vars.orElse(variants),
-            position,
-            cmts.comments
-        );
-    }
-
     @Override
     public RecordVariantSectionAst withComments(ImList<Comment> comments) {
         if( comments==null )throw new IllegalArgumentException("comments==null");

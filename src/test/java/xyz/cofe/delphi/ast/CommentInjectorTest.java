@@ -33,8 +33,19 @@ public class CommentInjectorTest {
         System.out.println(iStringMap);
 
         var methodsFuns = iStringMap.body().fmap(ClassMethodAst.Function.class);
-        assertTrue( methodsFuns.find(m -> m.name().equalsIgnoreCase("count")).map(m -> m.comments().size()>0).orElse(false) );
-        assertTrue( methodsFuns.find(m -> m.name().equalsIgnoreCase("get")).map(m -> m.comments().size()>0).orElse(false) );
-        assertTrue( methodsFuns.find(m -> m.name().equalsIgnoreCase("exists")).map(m -> m.comments().size()>0).orElse(false) );
+        assertTrue( methodsFuns.find(m -> m.name().equalsIgnoreCase("count"))
+            .map(m -> m.comments().map(Comment::text).foldLeft("",(a, b)->a+b) )
+            .map(c -> c.contains("Возвращает кол-во пар")
+        ).orElse(false) );
+
+        assertTrue( methodsFuns.find(m -> m.name().equalsIgnoreCase("get"))
+            .map(m -> m.comments().map(Comment::text).foldLeft("",(a, b)->a+b) )
+            .map(c -> c.contains("возвращает значение по указанному ключу")
+            ).orElse(false) );
+
+        assertTrue( methodsFuns.find(m -> m.name().equalsIgnoreCase("exists"))
+            .map(m -> m.comments().map(Comment::text).foldLeft("",(a, b)->a+b) )
+            .map(c -> c.contains("проверка наличия ключа")
+            ).orElse(false) );
     }
 }

@@ -31,9 +31,4 @@ public enum VisibilityAst implements ClassItemAst, RecordItemAst {
             throw AstParseError.unExpected(ctx);
         }
     }
-
-    @Override
-    public VisibilityAst astUpdate(AstUpdate.UpdateContext ctx) {
-        return this;
-    }
 }

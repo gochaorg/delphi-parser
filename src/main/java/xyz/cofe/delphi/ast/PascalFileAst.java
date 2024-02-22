@@ -22,7 +22,7 @@ import static xyz.cofe.delphi.impl.Indent.indent;
 /**
  * Некий pascal файл
  */
-public sealed interface PascalFileAst extends AstNode {
+public sealed interface PascalFileAst {
     record Program() implements PascalFileAst {
     }
 
@@ -37,13 +37,12 @@ public sealed interface PascalFileAst extends AstNode {
      * @param position Позиция в исходниках
      * @param comments Комментарии
      */
-    @SuppressWarnings("rawtypes")
     record Unit(
         ImList<String> name,
         UnitInterface api,
         SourcePosition position,
         ImList<Comment> comments
-    ) implements PascalFileAst, AstUpdate, Commented<Unit> {
+    ) implements PascalFileAst, Commented<Unit> {
         @Override
         public Unit withComments(ImList<Comment> comments) {
             return new Unit(name, api, position, comments);
@@ -54,19 +53,6 @@ public sealed interface PascalFileAst extends AstNode {
             return "unit " + name + "\n" +
                 "interface:\n" +
                 indent("  ", api.toString());
-        }
-
-        @Override
-        public ImList<? extends AstNode> nestedAstNodes() {
-            return ImListLinked.of(api);
-        }
-
-        @Override
-        public Unit astUpdate(AstUpdate.UpdateContext updateCtx) {
-            var api = this.api.astUpdate(updateCtx);
-            if (api == this.api) return this;
-
-            return new Unit(name, api, position, comments);
         }
     }
 
@@ -79,40 +65,7 @@ public sealed interface PascalFileAst extends AstNode {
     record UnitInterface(
         ImList<NamespaceAst> uses,
         ImList<InterfaceDecl> declarations
-    ) implements AstNode {
-        @Override
-        public UnitInterface astUpdate(AstUpdate.UpdateContext ctx) {
-            var changedNs = new boolean[]{false};
-            var ns = uses.foldRight(ImListLinked.<NamespaceAst>of(), (acc, it) -> {
-                var it1 = it.astUpdate(ctx);
-                //noinspection ConstantConditions
-                if (it != it1) {
-                    changedNs[0] = true;
-                }
-                return acc.prepend(it1);
-            });
-
-            var changedDecl = new boolean[]{false};
-            var decl = declarations.foldRight(ImListLinked.<InterfaceDecl>of(), (acc, it) -> {
-                var it1 = it.astUpdate(ctx);
-                if (it != it1) {
-                    changedDecl[0] = true;
-                }
-                return acc.prepend(it1);
-            });
-
-            if (changedDecl[0] && changedNs[0]) return new UnitInterface(ns, decl);
-            if (changedNs[0]) return new UnitInterface(ns, declarations);
-            if (changedDecl[0]) return new UnitInterface(uses, decl);
-
-            return this;
-        }
-
-        @Override
-        public ImList<? extends AstNode> nestedAstNodes() {
-            return upcast(uses).append(upcast(declarations));
-        }
-
+    ) {
         static UnitInterface of(DelphiParser.UnitInterfaceContext unt) {
             if (unt == null) throw new IllegalArgumentException("unt==null");
 
