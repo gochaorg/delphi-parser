@@ -529,19 +529,24 @@ anonymousExpression          : 'procedure' (formalParameterSection)? block
                              ;
 
 // простые выражения
+// implemented
 simpleExpression             : relOp
                              ;
 
 // менее приоритетные
+// implemented
 relOp   : left=sumOp ( op=( '=' | '<>' | '<' | '>' | '<=' | '>=' | 'in' | 'is' ) right=expression )? ;
 
 // выше приоритет
+// implemented
 sumOp   : left=mulOp ( op=( '+' | '-' | 'or' | 'xor' ) right=expression )? ;
 
 // еще выше приоритет
+// implemented
 mulOp   : left=unaryOp ( op=( '*' | '/' | 'div' | 'mod' | 'and' | 'shl' | 'shr' | 'as' ) right=expression )? ;
 
 // макс приоритет операторов
+// implemented
 unaryOp : op=('@' | 'not' | '+' | '-' | '^' ) exp=expression
         | atom
         ;

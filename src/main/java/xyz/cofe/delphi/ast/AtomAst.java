@@ -11,17 +11,19 @@ import java.util.Optional;
 /**
  * Атомарное значение
  */
-sealed public interface AtomAst permits AtomAst.BoolValue,
-                                        AtomAst.DelphiSet,
-                                        AtomAst.FloatNumber,
-                                        AtomAst.IdentRef,
-                                        AtomAst.InheritedContext,
-                                        AtomAst.InheritedIdent,
-                                        AtomAst.IntNumber,
-                                        AtomAst.NestedExpression,
-                                        AtomAst.NilValue,
-                                        AtomAst.StringValue,
-                                        PostfixAst {
+sealed public interface AtomAst
+    extends ExpressionAst
+    permits AtomAst.BoolValue,
+            AtomAst.DelphiSet,
+            AtomAst.FloatNumber,
+            AtomAst.IdentRef,
+            AtomAst.InheritedContext,
+            AtomAst.InheritedIdent,
+            AtomAst.IntNumber,
+            AtomAst.NestedExpression,
+            AtomAst.NilValue,
+            AtomAst.StringValue,
+            PostfixAst {
     public static AtomAst of(DelphiParser.AtomContext ctx) {
         if (ctx == null) throw new IllegalArgumentException("ctx==null");
 
@@ -73,6 +75,16 @@ sealed public interface AtomAst permits AtomAst.BoolValue,
                                                                                           SrcPos,
                                                                                           AstNode {
         @Override
+        public ExpressionAst astUpdate(AstUpdate.UpdateContext ctx) {
+            return this;
+        }
+
+        @Override
+        public String text() {
+            return "(" + expression.text() + ")";
+        }
+
+        @Override
         public ImList<? extends AstNode> nestedAstNodes() {
             return ImList.of(expression);
         }
@@ -90,6 +102,16 @@ sealed public interface AtomAst permits AtomAst.BoolValue,
     ) implements AtomAst,
                  SrcPos,
                  AstNode {
+        @Override
+        public ExpressionAst astUpdate(AstUpdate.UpdateContext ctx) {
+            return this;
+        }
+
+        @Override
+        public String text() {
+            return Long.toString(value);
+        }
+
         public static IntNumber of(DelphiParser.IntNumContext ctx) {
             if (ctx == null) throw new IllegalArgumentException("ctx==null");
             if (ctx.TkIntNum() != null && !ctx.TkIntNum().getText().isBlank()) {
@@ -117,6 +139,16 @@ sealed public interface AtomAst permits AtomAst.BoolValue,
     ) implements AtomAst,
                  SrcPos,
                  AstNode {
+        @Override
+        public ExpressionAst astUpdate(AstUpdate.UpdateContext ctx) {
+            return this;
+        }
+
+        @Override
+        public String text() {
+            return Double.toString(value);
+        }
+
         public static FloatNumber of(DelphiParser.RealNumContext ctx) {
             if (ctx == null) throw new IllegalArgumentException("ctx==null");
             return new FloatNumber(
@@ -138,6 +170,16 @@ sealed public interface AtomAst permits AtomAst.BoolValue,
     ) implements AtomAst,
                  SrcPos,
                  AstNode {
+        @Override
+        public ExpressionAst astUpdate(AstUpdate.UpdateContext ctx) {
+            return this;
+        }
+
+        @Override
+        public String text() {
+            return "???";
+        }
+
         private static final String hex = "0123456789abcdefABCDEF";
         private static final String dec = "0123456789";
 
@@ -287,6 +329,15 @@ sealed public interface AtomAst permits AtomAst.BoolValue,
     record InheritedContext(SourcePosition position) implements AtomAst,
                                                                 SrcPos,
                                                                 AstNode {
+        @Override
+        public ExpressionAst astUpdate(AstUpdate.UpdateContext ctx) {
+            return this;
+        }
+
+        @Override
+        public String text() {
+            return "inherited";
+        }
     }
 
     /**
@@ -296,6 +347,15 @@ sealed public interface AtomAst permits AtomAst.BoolValue,
     record InheritedIdent(String id, SourcePosition position) implements AtomAst,
                                                                          SrcPos,
                                                                          AstNode {
+        @Override
+        public ExpressionAst astUpdate(AstUpdate.UpdateContext ctx) {
+            return this;
+        }
+
+        @Override
+        public String text() {
+            return "???";
+        }
     }
 
     /**
@@ -307,6 +367,15 @@ sealed public interface AtomAst permits AtomAst.BoolValue,
     record IdentRef(String id, SourcePosition position) implements AtomAst,
                                                                    SrcPos,
                                                                    AstNode {
+        @Override
+        public ExpressionAst astUpdate(AstUpdate.UpdateContext ctx) {
+            return this;
+        }
+
+        @Override
+        public String text() {
+            return "???";
+        }
     }
 
     /**
@@ -317,6 +386,14 @@ sealed public interface AtomAst permits AtomAst.BoolValue,
     record NilValue(SourcePosition position) implements AtomAst,
                                                         SrcPos,
                                                         AstNode {
+        public ExpressionAst astUpdate(AstUpdate.UpdateContext ctx) {
+            return this;
+        }
+
+        @Override
+        public String text() {
+            return "???";
+        }
     }
 
     /**
@@ -328,6 +405,14 @@ sealed public interface AtomAst permits AtomAst.BoolValue,
                                                              AtomAst,
                                                              SrcPos,
                                                              AstNode {
+        public ExpressionAst astUpdate(AstUpdate.UpdateContext ctx) {
+            return this;
+        }
+
+        @Override
+        public String text() {
+            return "???";
+        }
     }
 
     /**
@@ -336,6 +421,15 @@ sealed public interface AtomAst permits AtomAst.BoolValue,
     sealed interface DelphiSet extends SrcPos,
                                        AtomAst,
                                        AstNode {
+        default ExpressionAst astUpdate(AstUpdate.UpdateContext ctx) {
+            return this;
+        }
+
+        @Override
+        default String text() {
+            return "???";
+        }
+
         record One(ExpressionAst expression, SourcePosition position) implements DelphiSet {
             @Override
             public ImList<? extends AstNode> nestedAstNodes() {
