@@ -1,7 +1,10 @@
 package xyz.cofe.delphi.ast;
 
 import org.junit.jupiter.api.Test;
+import xyz.cofe.coll.im.HTree;
+import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
+import xyz.cofe.coll.im.htree.Nest;
 import xyz.cofe.delphi.lexer.PreProcState;
 import xyz.cofe.delphi.lexer.PreProcessor;
 import xyz.cofe.delphi.lexer.TokenizedFile;
@@ -135,5 +138,43 @@ public class PascalFileParseTest {
     public void test_tokenizedFile() {
         var pascal_file = PascalFileAst.parse(
             TokenizedFile.parse(textResource("/samples/Config.pas"), "Config.pas"), true);
+    }
+
+    private static String take(String str,int max){
+        if( str==null )return null;
+        if( str.length()>max )return str.substring(0,max);
+        return str;
+    }
+
+    @Test
+    public void htree_visit(){
+        var pascal_file =
+            PascalFileAst.parse(
+                TokenizedFile.parse(textResource("/samples/Map.pas"), "Map.pas"), false
+            );
+
+        var commented = HTree.visit(pascal_file, new Object(){
+            void enter(ImList<Nest.PathNode> path){
+                System.out.print("enter "+">>> ".repeat(path.size())+" ");
+                var value = path.head().get().pathValue();
+                if( value instanceof String s ){
+                    System.out.print(s.replaceAll("[\\n\\r]"," "));
+                }else if( value!=null ) {
+                    var str = value.toString();
+                    str = str.replaceAll("[\\n\\r]"," ");
+                    if( str.length()>60 )str = str.substring(0,60);
+                    System.out.print(str);
+                }
+                System.out.println();
+            }
+
+            Commented<?> commenting(Commented<?> cmt){
+                System.out.println("commented "+take(cmt.toString().replaceAll("[\\n\\r]"," "),50));
+                var res = cmt.withComments(ImList.of(new Comment("aaa", new SourcePosition.FileLessPoint(-1,-1))));
+                return (Commented<?>)res;
+            }
+        });
+
+        System.out.println(commented);
     }
 }

@@ -161,8 +161,8 @@ public sealed interface ProcedureTypeAst extends TypeDeclAst {
 
     private static <R> R of(
         DelphiParser.ProcedureTypeHeadingContext ctx,
-        Fn2<R,ImList<ArgumentAst>,TypeDeclAst> funMatch,
-        Fn1<R,ImList<ArgumentAst>> procMatch
+        Fn2<ImList<ArgumentAst>,TypeDeclAst,R> funMatch,
+        Fn1<ImList<ArgumentAst>,R> procMatch
     ) {
         ImList<ArgumentAst> args = ctx.formalParameterSection()!=null
             && ctx.formalParameterSection().formalParameterList()!=null
