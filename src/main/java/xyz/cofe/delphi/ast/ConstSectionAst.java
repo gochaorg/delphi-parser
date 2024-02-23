@@ -12,33 +12,37 @@ import java.util.Optional;
 public sealed interface ConstSectionAst extends InterfaceDecl {
     /**
      * Перечень констант
+     *
      * @param constants константы
-     * @param key тип констант // TODO выяснить что за Resource string
+     * @param key       тип констант // TODO выяснить что за Resource string
      */
     record Constants(
         ImList<Const> constants,
         ConstKey key,
         SourcePosition position,
         ImList<Comment> comments
-    ) implements ConstSectionAst, ClassItemAst, RecordItemAst, SrcPos, Commented<Constants>
-    {
+    ) implements ConstSectionAst,
+                 ClassItemAst,
+                 RecordItemAst,
+                 SrcPos,
+                 Commented<Constants> {
         @Override
         public Constants withComments(ImList<Comment> comments) {
-            return new Constants(constants,key,position,comments);
+            return new Constants(constants, key, position, comments);
         }
 
-        static Constants of(DelphiParser.ConstSectionContext ctx){
+        static Constants of(DelphiParser.ConstSectionContext ctx) {
             var key = ConstKey.Const;
 
-            if( ctx.constKey()!=null
+            if (ctx.constKey() != null
                 && !ctx.constKey().isEmpty()
-                && ctx.constKey().getText()!=null
-                && ctx.constKey().getText().toLowerCase().startsWith("res") ){
+                && ctx.constKey().getText() != null
+                && ctx.constKey().getText().toLowerCase().startsWith("res")) {
                 key = ConstKey.ResourceString;
             }
 
             return new Constants(
-                ctx.constDeclaration()!=null && !ctx.constDeclaration().isEmpty() ?
+                ctx.constDeclaration() != null && !ctx.constDeclaration().isEmpty() ?
                     ImList.of(ctx.constDeclaration()).map(Const::of) : ImList.of(),
                 key,
                 SourcePosition.of(ctx),
@@ -59,48 +63,48 @@ public sealed interface ConstSectionAst extends InterfaceDecl {
         ImList<CustomAttributeAst> attributes,
         ImList<Comment> comments,
         SourcePosition position
-    ) implements Commented<Const>
-    {
+    ) implements Commented<Const> {
         @Override
         public Const withComments(ImList<Comment> comments) {
-            if( comments==null )throw new IllegalArgumentException("comments==null");
+            if (comments == null) throw new IllegalArgumentException("comments==null");
             return new Const(
                 name, type, expression, attributes, comments, position
             );
         }
 
-        static Const of(DelphiParser.ConstDeclarationContext ctx){
-            if( ctx==null )throw new IllegalArgumentException("ctx==null");
+        static Const of(DelphiParser.ConstDeclarationContext ctx) {
+            if (ctx == null) throw new IllegalArgumentException("ctx==null");
             return new Const(
                 ctx.ident().getText(),
-                ctx.typeDecl()!=null && !ctx.typeDecl().isEmpty() ?
+                ctx.typeDecl() != null && !ctx.typeDecl().isEmpty() ?
                     Optional.of(TypeDeclAst.of(ctx.typeDecl())) :
                     Optional.empty(),
                 ConstExpression.of(ctx.constExpression()),
-                ctx.customAttribute()!=null && !ctx.customAttribute().isEmpty() ?
+                ctx.customAttribute() != null && !ctx.customAttribute().isEmpty() ?
                     ImList.of(ctx.customAttribute()).map(CustomAttributeAst::of) : ImList.of(),
                 ImList.of(),
                 SourcePosition.of(ctx)
             );
         }
     }
+
     sealed interface ConstExpression {
-        static ConstExpression of(DelphiParser.ConstExpressionContext ctx ) {
-            if( ctx.recordConstExpression()!=null && !ctx.recordConstExpression().isEmpty() ){
+        static ConstExpression of(DelphiParser.ConstExpressionContext ctx) {
+            if (ctx.recordConstExpression() != null && !ctx.recordConstExpression().isEmpty()) {
                 return new SeqNamed(
                     ImListLinked.of(ctx.recordConstExpression())
-                    .map(NamedExp::of));
+                        .map(NamedExp::of));
             }
 
-            if( ctx.constExpression()!=null
-            && !ctx.constExpression().isEmpty()
+            if (ctx.constExpression() != null
+                && !ctx.constExpression().isEmpty()
             ) {
                 return new Sequence(
                     ImListLinked.of(ctx.constExpression()).map(ConstExpression::of)
                 );
             }
 
-            if( ctx.expression()!=null && !ctx.expression().isEmpty() ){
+            if (ctx.expression() != null && !ctx.expression().isEmpty()) {
                 return new ConstExp(ExpressionAst.of(ctx.expression()));
             }
 
@@ -108,18 +112,21 @@ public sealed interface ConstSectionAst extends InterfaceDecl {
         }
     }
 
-    record ConstExp( ExpressionAst expression ) implements ConstExpression {
+    record ConstExp(ExpressionAst expression) implements ConstExpression {
     }
-    record NamedExp( String name, ConstExpression expression ) implements ConstExpression {
-        public static NamedExp of(DelphiParser.RecordConstExpressionContext ctx){
+
+    record NamedExp(String name, ConstExpression expression) implements ConstExpression {
+        public static NamedExp of(DelphiParser.RecordConstExpressionContext ctx) {
             return new NamedExp(
                 ctx.ident().getText(),
                 ConstExpression.of(ctx.constExpression())
             );
         }
     }
-    record Sequence( ImList<ConstExpression> seq ) implements ConstExpression {
+
+    record Sequence(ImList<ConstExpression> seq) implements ConstExpression {
     }
-    record SeqNamed( ImList<NamedExp> seq ) implements ConstExpression {
+
+    record SeqNamed(ImList<NamedExp> seq) implements ConstExpression {
     }
 }

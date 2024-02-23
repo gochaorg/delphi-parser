@@ -21,36 +21,38 @@ public class CommentInjector {
         }
     };
 
-    private Map<Commented,List<Comment>> injectionsOf(PascalFileAst.Unit unit){
-        var result = new HashMap<Commented,List<Comment>>();
+    private Map<Commented, List<Comment>> injectionsOf(PascalFileAst.Unit unit) {
+        var result = new HashMap<Commented, List<Comment>>();
 
-        var breakPointsMap = new TreeMap<SourcePosition,Commented>(sourcePositionComparator);
-        HTree.visit(unit,new Object(){
-            public void commented(Commented cmt){
+        var breakPointsMap = new TreeMap<SourcePosition, Commented>(sourcePositionComparator);
+        HTree.visit(unit, new Object() {
+            public void commented(Commented cmt) {
                 breakPointsMap.put(cmt.position(), cmt);
             }
         });
 
-        var commentsMap = new TreeMap<SourcePosition,Comment>(sourcePositionComparator);
+        var commentsMap = new TreeMap<SourcePosition, Comment>(sourcePositionComparator);
         unit.comments().each(cmnt -> {
-            commentsMap.put(cmnt.position(),cmnt);
+            commentsMap.put(cmnt.position(), cmnt);
         });
 
-        BiConsumer<Commented,List<Comment>> prepareInject = result::put;
+        BiConsumer<Commented, List<Comment>> prepareInject = result::put;
 
-        if(!breakPointsMap.isEmpty()) {
+        if (!breakPointsMap.isEmpty()) {
             var from = breakPointsMap.keySet().iterator().next();
             for (var cmntToPair : breakPointsMap.entrySet()) {
                 var to = cmntToPair.getValue().position();
                 var cmntTo = cmntToPair.getValue();
 
-                if( from.equals(to) ){
-                    var subCommentMap = commentsMap.headMap(cmntTo.position(),false);
-                    if( !subCommentMap.isEmpty() ) prepareInject.accept( cmntTo, subCommentMap.values().stream().toList() );
-                }else {
+                if (from.equals(to)) {
+                    var subCommentMap = commentsMap.headMap(cmntTo.position(), false);
+                    if (!subCommentMap.isEmpty())
+                        prepareInject.accept(cmntTo, subCommentMap.values().stream().toList());
+                } else {
                     var prevKey = breakPointsMap.lowerKey(to);
                     var subCommentMap = prevKey != null ? commentsMap.subMap(prevKey, false, to, false) : commentsMap.headMap(to, false);
-                    if( !subCommentMap.isEmpty() ) prepareInject.accept( cmntTo, subCommentMap.values().stream().toList() );
+                    if (!subCommentMap.isEmpty())
+                        prepareInject.accept(cmntTo, subCommentMap.values().stream().toList());
                 }
 
                 from = to;
@@ -62,18 +64,19 @@ public class CommentInjector {
 
     /**
      * Добавление комментариев в узлы дерева
+     *
      * @param unit AST дерево
      * @return обновленное AST дерево
      */
-    public PascalFileAst.Unit inject(PascalFileAst.Unit unit){
-        if( unit==null ) throw new IllegalArgumentException("unit==null");
+    public PascalFileAst.Unit inject(PascalFileAst.Unit unit) {
+        if (unit == null) throw new IllegalArgumentException("unit==null");
 
         var injections = injectionsOf(unit);
-        return HTree.visit(unit, new Object(){
+        return HTree.visit(unit, new Object() {
             @SuppressWarnings("unchecked")
-            Commented commenting(Commented cmt){
+            Commented commenting(Commented cmt) {
                 var astNode = injections.get(cmt);
-                if( astNode!=null ){
+                if (astNode != null) {
                     return (Commented) cmt.withComments(ImList.of(astNode));
                 }
                 return cmt;

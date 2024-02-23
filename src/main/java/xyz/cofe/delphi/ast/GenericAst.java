@@ -13,7 +13,8 @@ import java.util.stream.Collectors;
  */
 // TODO требует переименования/рефакторинга
 public sealed interface GenericAst {
-    record Param(String name, ImList<Bound> constraints) implements GenericAst, AstNode {
+    record Param(String name, ImList<Bound> constraints) implements GenericAst,
+                                                                    AstNode {
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
@@ -28,30 +29,40 @@ public sealed interface GenericAst {
         }
     }
 
-    sealed interface Bound {}
-    record ItfBound(String name) implements Bound {}
-    record Record() implements Bound {}
-    record Class() implements Bound {}
-    record Constructor() implements Bound {}
+    sealed interface Bound {
+    }
+
+    record ItfBound(String name) implements Bound {
+    }
+
+    record Record() implements Bound {
+    }
+
+    record Class() implements Bound {
+    }
+
+    record Constructor() implements Bound {
+    }
 
     static Param param(String name) {
         return new Param(name, ImListLinked.of());
     }
-    static GenericAst.Param param(DelphiParser.ConstrainedGenericContext ctx){
+
+    static GenericAst.Param param(DelphiParser.ConstrainedGenericContext ctx) {
         ImListLinked<Bound> bounds = ImListLinked.of(
-        ctx.genericConstraint().stream()
-            .map( c -> {
-                if(!c.ident().isEmpty()){
-                    return (Bound)new ItfBound(c.ident().getText());
-                }else{
-                    return switch (c.getText().toLowerCase()){
-                        case "record" -> new Record();
-                        case "class" -> new Class();
-                        case "constructor" -> new Constructor();
-                        default -> throw new AstParseError("Un expected "+c.ident().getText());
-                    };
-                }
-            }).toList());
+            ctx.genericConstraint().stream()
+                .map(c -> {
+                    if (!c.ident().isEmpty()) {
+                        return (Bound) new ItfBound(c.ident().getText());
+                    } else {
+                        return switch (c.getText().toLowerCase()) {
+                            case "record" -> new Record();
+                            case "class" -> new Class();
+                            case "constructor" -> new Constructor();
+                            default -> throw new AstParseError("Un expected " + c.ident().getText());
+                        };
+                    }
+                }).toList());
 
         var name = ctx.ident().getText();
 
@@ -60,10 +71,11 @@ public sealed interface GenericAst {
             bounds
         );
     }
-    static ImListLinked<GenericAst.Param> of(DelphiParser.GenericDefinitionContext ctx){
+
+    static ImListLinked<GenericAst.Param> of(DelphiParser.GenericDefinitionContext ctx) {
         var genParams = ImListLinked.<GenericAst.Param>of();
 
-        if ( ctx.simpleGenericDefinition()!=null && !ctx.simpleGenericDefinition().isEmpty()) {
+        if (ctx.simpleGenericDefinition() != null && !ctx.simpleGenericDefinition().isEmpty()) {
             genParams = ImListLinked.of(
                 ctx.simpleGenericDefinition().ident().stream()
                     .map(RuleContext::getText).toList()
@@ -72,7 +84,7 @@ public sealed interface GenericAst {
             ));
         }
 
-        if ( ctx.constrainedGenericDefinition()!=null && !ctx.constrainedGenericDefinition().isEmpty()) {
+        if (ctx.constrainedGenericDefinition() != null && !ctx.constrainedGenericDefinition().isEmpty()) {
             genParams = ImListLinked.of(
                 ctx.constrainedGenericDefinition().constrainedGeneric()
                     .stream()

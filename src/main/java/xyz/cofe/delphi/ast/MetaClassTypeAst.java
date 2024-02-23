@@ -11,11 +11,13 @@ import static xyz.cofe.delphi.ast.impl.Ident.identifier;
  * @param type ссылка на тип
  */
 public record MetaClassTypeAst(ImList<String> type, SourcePosition position, ImList<Comment> comments)
-    implements TypeDeclAst, SrcPos, Commented<MetaClassTypeAst>, StructuredTypeAst
-{
+    implements TypeDeclAst,
+               SrcPos,
+               Commented<MetaClassTypeAst>,
+               StructuredTypeAst {
     @Override
     public MetaClassTypeAst withComments(ImList<Comment> comments) {
-        if( comments==null )throw new IllegalArgumentException("comments==null");
+        if (comments == null) throw new IllegalArgumentException("comments==null");
         return new MetaClassTypeAst(
             type,
             position,
@@ -23,9 +25,9 @@ public record MetaClassTypeAst(ImList<String> type, SourcePosition position, ImL
         );
     }
 
-    public static MetaClassTypeAst of(DelphiParser.ClassTypeTypeDeclContext ctx){
-        if( ctx==null ) throw new IllegalArgumentException("ctx==null");
-        if( ctx.typeId()==null || ctx.typeId().isEmpty() )throw AstParseError.unExpected(ctx);
+    public static MetaClassTypeAst of(DelphiParser.ClassTypeTypeDeclContext ctx) {
+        if (ctx == null) throw new IllegalArgumentException("ctx==null");
+        if (ctx.typeId() == null || ctx.typeId().isEmpty()) throw AstParseError.unExpected(ctx);
         return new MetaClassTypeAst(
             identifier(ctx.typeId()),
             SourcePosition.of(ctx),

@@ -36,15 +36,17 @@ import xyz.cofe.coll.im.ImList;
  *
  * @param name          имя типа
  * @param genericParams параметры типа
- * @param comments Комментарии
- * @param position Позиция в исходниках
+ * @param comments      Комментарии
+ * @param position      Позиция в исходниках
  */
 public record NewTypeIdAst(
     ImList<String> name,
     ImList<TypeDeclAst> genericParams,
     SourcePosition position,
     ImList<Comment> comments
-) implements TypeDeclAst, SrcPos, Commented<NewTypeIdAst> {
+) implements TypeDeclAst,
+             SrcPos,
+             Commented<NewTypeIdAst> {
     @Override
     public NewTypeIdAst withComments(ImList<Comment> comments) {
         return this;

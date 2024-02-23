@@ -7,7 +7,8 @@ import xyz.cofe.delphi.parser.DelphiParser;
 import java.util.Optional;
 
 public record CustomAttributeAst(ImList<Attribute> attributes, SourcePosition position, ImList<Comment> comments)
-    implements SrcPos, Commented<CustomAttributeAst> {
+    implements SrcPos,
+               Commented<CustomAttributeAst> {
     private static ImList<String> idOf(DelphiParser.NamespacedQualifiedIdentContext ctx) {
         if (ctx == null) throw new IllegalArgumentException("ctx==null");
         var ids = ctx.namespaceName() != null && ctx.namespaceName().ident() != null ?
@@ -44,7 +45,8 @@ public record CustomAttributeAst(ImList<Attribute> attributes, SourcePosition po
 
     public record Attribute(ImList<String> id, ImList<ExpressionAst> args, SourcePosition position,
                             ImList<Comment> comments)
-        implements SrcPos, Commented<Attribute> {
+        implements SrcPos,
+                   Commented<Attribute> {
 
         public static Attribute of(DelphiParser.CustomAttributeNamedCallContext ctx) {
             if (ctx == null) throw new IllegalArgumentException("ctx==null");

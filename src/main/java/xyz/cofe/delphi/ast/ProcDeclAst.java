@@ -9,9 +9,10 @@ import java.util.Optional;
 
 /**
  * Процедура/функция объявленная в публичной секции
- * @param name имя процедуры
+ *
+ * @param name      имя процедуры
  * @param arguments аргументы
- * @param result тип результата в случае функции
+ * @param result    тип результата в случае функции
  */
 public record ProcDeclAst(
     String name,
@@ -21,23 +22,24 @@ public record ProcDeclAst(
     SourcePosition position,
     ImList<Comment> comments
 
-) implements InterfaceDecl, Commented<ProcDeclAst> // TODO Comments
+) implements InterfaceDecl,
+             Commented<ProcDeclAst> // TODO Comments
 {
     @Override
     public ProcDeclAst withComments(ImList<Comment> comments) {
-        return new ProcDeclAst(name,arguments,result,directives,position,comments);
+        return new ProcDeclAst(name, arguments, result, directives, position, comments);
     }
 
-    private static Tuple3<String,ImList<ArgumentAst>,Optional<TypeDeclAst>> of(DelphiParser.ProcDeclHeadingContext ctx) {
+    private static Tuple3<String, ImList<ArgumentAst>, Optional<TypeDeclAst>> of(DelphiParser.ProcDeclHeadingContext ctx) {
         ImList<ArgumentAst> formal_params =
-            ctx.formalParameterSection()==null
-            ? ImList.of()
-            : ctx.formalParameterSection().formalParameterList()==null
+            ctx.formalParameterSection() == null
+                ? ImList.of()
+                : ctx.formalParameterSection().formalParameterList() == null
                 ? ImList.of()
                 : ArgumentAst.of(ctx.formalParameterSection().formalParameterList());
 
         var fun_name = ctx.ident().getText();
-        var fun_res = ctx.typeDecl()!=null && !ctx.typeDecl().isEmpty()
+        var fun_res = ctx.typeDecl() != null && !ctx.typeDecl().isEmpty()
             ? Optional.of(TypeDeclAst.of(ctx.typeDecl()))
             : Optional.<TypeDeclAst>empty();
 
@@ -48,10 +50,10 @@ public record ProcDeclAst(
         );
     }
 
-    static ProcDeclAst of(DelphiParser.ProcDeclContext ctx){
-        if( ctx==null ) throw new IllegalArgumentException("ctx==null");
+    static ProcDeclAst of(DelphiParser.ProcDeclContext ctx) {
+        if (ctx == null) throw new IllegalArgumentException("ctx==null");
         var fTup3 = of(ctx.procDeclHeading());
-        var directives = ctx.funcDirective()!=null && !ctx.funcDirective().isEmpty()
+        var directives = ctx.funcDirective() != null && !ctx.funcDirective().isEmpty()
             ? ImListLinked.of(ctx.funcDirective())
             .map(FDirective::of)
             : ImListLinked.<FDirective.FunctionDirective>of();

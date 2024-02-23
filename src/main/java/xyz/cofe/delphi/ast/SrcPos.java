@@ -6,6 +6,7 @@ package xyz.cofe.delphi.ast;
 public interface SrcPos {
     /**
      * Возвращает расположение в исходниках
+     *
      * @return расположение
      */
     SourcePosition position();

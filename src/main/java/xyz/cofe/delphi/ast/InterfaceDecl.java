@@ -8,17 +8,16 @@ import xyz.cofe.delphi.parser.DelphiParser;
  * Публичная часть
  */
 public sealed interface InterfaceDecl
-permits
+    permits
     TypeSectionAst,
     MethodDeclAst,
     ProcDeclAst,
     ExportedProcHeadingAst,
     ConstSectionAst,
     ExportsSectionAst,
-    VarSectionAst
-{
-    static InterfaceDecl of(DelphiParser.InterfaceDeclContext itf){
-        if( itf.typeSection()!=null && !itf.typeSection().isEmpty() ){
+    VarSectionAst {
+    static InterfaceDecl of(DelphiParser.InterfaceDeclContext itf) {
+        if (itf.typeSection() != null && !itf.typeSection().isEmpty()) {
             return
                 new TypeSectionAst(
                     TypeDeclarationAst.of(itf.typeSection().typeDeclaration()),
@@ -26,26 +25,26 @@ permits
                 );
         }
 
-        if( itf.constSection()!=null && !itf.constSection().isEmpty() ){
+        if (itf.constSection() != null && !itf.constSection().isEmpty()) {
             return ConstSectionAst.Constants.of(itf.constSection());
         }
 
-        if( itf.varSection()!=null && !itf.varSection().isEmpty() ){
+        if (itf.varSection() != null && !itf.varSection().isEmpty()) {
             return VarSectionAst.Variables.of(itf.varSection());
         }
 
-        if( itf.procDecl()!=null && !itf.procDecl().isEmpty() ){
+        if (itf.procDecl() != null && !itf.procDecl().isEmpty()) {
             return ProcDeclAst.of(itf.procDecl());
         }
 
-        if( itf.methodDecl()!=null && !itf.methodDecl().isEmpty() ){
+        if (itf.methodDecl() != null && !itf.methodDecl().isEmpty()) {
             return MethodDeclAst.of(itf.methodDecl());
         }
 
         throw AstParseError.notImplemented();
     }
 
-    static ImList<InterfaceDecl> of(Iterable<DelphiParser.InterfaceDeclContext> ctx){
+    static ImList<InterfaceDecl> of(Iterable<DelphiParser.InterfaceDeclContext> ctx) {
         return ImListLinked.of(ctx).map(InterfaceDecl::of);
     }
 }

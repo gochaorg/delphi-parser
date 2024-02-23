@@ -16,6 +16,7 @@ public record FileTypeAst(Optional<TypeDeclAst> type, SourcePosition position, I
             : Optional.<TypeDeclAst>empty();
         return new FileTypeAst(t, SourcePosition.of(ctx), ImList.of());
     }
+
     @Override
     public FileTypeAst withComments(ImList<Comment> comments) {
         if (comments == null) throw new IllegalArgumentException("comments==null");

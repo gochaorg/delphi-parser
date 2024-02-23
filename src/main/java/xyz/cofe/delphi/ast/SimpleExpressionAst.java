@@ -157,25 +157,25 @@ public sealed interface SimpleExpressionAst extends ExpressionAst {
     }
 
     record Operator(OpName opName, SourcePosition position)
-        implements SrcPos, AstNode {
+        implements SrcPos,
+                   AstNode {
     }
 
     record Binary(Operator op, ExpressionAst left, ExpressionAst right, SourcePosition position)
         implements SimpleExpressionAst,
                    SrcPos,
-                   AstNode
-    {
+                   AstNode {
         @Override
         public String text() {
             return "???";
         }
 
-        public static ExpressionAst of(DelphiParser.RelOpContext ctx){
-            if( ctx==null ) throw new IllegalArgumentException("ctx==null");
+        public static ExpressionAst of(DelphiParser.RelOpContext ctx) {
+            if (ctx == null) throw new IllegalArgumentException("ctx==null");
 
-            if( ctx.op!=null && ctx.left!=null && ctx.right!=null ){
+            if (ctx.op != null && ctx.left != null && ctx.right != null) {
                 var opNameOpt = OpName.of(ctx.op.getText());
-                if(opNameOpt.isPresent()) {
+                if (opNameOpt.isPresent()) {
                     return new Binary(
                         new Operator(opNameOpt.get(), SourcePosition.of(ctx)),
                         of(ctx.left),
@@ -185,19 +185,19 @@ public sealed interface SimpleExpressionAst extends ExpressionAst {
                 }
             }
 
-            if( ctx.left!=null ){
+            if (ctx.left != null) {
                 return of(ctx.left);
             }
 
             throw AstParseError.unExpected(ctx);
         }
 
-        public static ExpressionAst of(DelphiParser.SumOpContext ctx){
-            if( ctx==null ) throw new IllegalArgumentException("ctx==null");
+        public static ExpressionAst of(DelphiParser.SumOpContext ctx) {
+            if (ctx == null) throw new IllegalArgumentException("ctx==null");
 
-            if( ctx.op!=null && ctx.left!=null && ctx.right!=null ){
+            if (ctx.op != null && ctx.left != null && ctx.right != null) {
                 var opNameOpt = OpName.of(ctx.op.getText());
-                if(opNameOpt.isPresent()) {
+                if (opNameOpt.isPresent()) {
                     return new Binary(
                         new Operator(opNameOpt.get(), SourcePosition.of(ctx)),
                         of(ctx.left),
@@ -207,19 +207,19 @@ public sealed interface SimpleExpressionAst extends ExpressionAst {
                 }
             }
 
-            if( ctx.left!=null ){
+            if (ctx.left != null) {
                 return of(ctx.left);
             }
 
             throw AstParseError.unExpected(ctx);
         }
 
-        public static ExpressionAst of(DelphiParser.MulOpContext ctx){
-            if( ctx==null ) throw new IllegalArgumentException("ctx==null");
+        public static ExpressionAst of(DelphiParser.MulOpContext ctx) {
+            if (ctx == null) throw new IllegalArgumentException("ctx==null");
 
-            if( ctx.op!=null && ctx.left!=null && ctx.right!=null ){
+            if (ctx.op != null && ctx.left != null && ctx.right != null) {
                 var opNameOpt = OpName.of(ctx.op.getText());
-                if(opNameOpt.isPresent()) {
+                if (opNameOpt.isPresent()) {
                     return new Binary(
                         new Operator(opNameOpt.get(), SourcePosition.of(ctx)),
                         Unary.of(ctx.left),
@@ -229,7 +229,7 @@ public sealed interface SimpleExpressionAst extends ExpressionAst {
                 }
             }
 
-            if( ctx.left!=null ){
+            if (ctx.left != null) {
                 return Unary.of(ctx.left);
             }
 
@@ -239,20 +239,19 @@ public sealed interface SimpleExpressionAst extends ExpressionAst {
 
     record Unary(Operator op, ExpressionAst expression, SourcePosition position)
         implements SimpleExpressionAst,
-                   SrcPos
-    {
+                   SrcPos {
         @Override
         public String text() {
             return "???";
         }
 
-        public static ExpressionAst of(DelphiParser.UnaryOpContext ctx){
-            if( ctx==null ) throw new IllegalArgumentException("ctx==null");
-            if( ctx.op!=null && !ctx.op.getText().isEmpty()
-            && ctx.expression()!=null && !ctx.expression().isEmpty()
-            ){
+        public static ExpressionAst of(DelphiParser.UnaryOpContext ctx) {
+            if (ctx == null) throw new IllegalArgumentException("ctx==null");
+            if (ctx.op != null && !ctx.op.getText().isEmpty()
+                && ctx.expression() != null && !ctx.expression().isEmpty()
+            ) {
                 var opNameOpt = OpName.of(ctx.op.getText());
-                if(opNameOpt.isPresent()) {
+                if (opNameOpt.isPresent()) {
                     return new Unary(
                         new Operator(opNameOpt.get(), SourcePosition.of(ctx)),
                         ExpressionAst.of(ctx.expression()),
@@ -261,7 +260,7 @@ public sealed interface SimpleExpressionAst extends ExpressionAst {
                 }
             }
 
-            if( ctx.atom()!=null && !ctx.atom().isEmpty() ){
+            if (ctx.atom() != null && !ctx.atom().isEmpty()) {
                 return AtomAst.of(ctx.atom());
             }
 
@@ -269,9 +268,9 @@ public sealed interface SimpleExpressionAst extends ExpressionAst {
         }
     }
 
-    public static ExpressionAst of(DelphiParser.SimpleExpressionContext ctx){
-        if( ctx==null ) throw new IllegalArgumentException("ctx==null");
-        if( ctx.relOp()!=null ){
+    public static ExpressionAst of(DelphiParser.SimpleExpressionContext ctx) {
+        if (ctx == null) throw new IllegalArgumentException("ctx==null");
+        if (ctx.relOp() != null) {
             return Binary.of(ctx.relOp());
         }
         throw AstParseError.unExpected(ctx);

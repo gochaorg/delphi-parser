@@ -44,11 +44,11 @@ sealed public interface StructuredTypeAst extends TypeDeclAst permits ArrayTypeA
             && !ctx.classTypeDecl().isEmpty()
         ) return ClazzTypeAst.of(ctx.classTypeDecl());
 
-        if (ctx.recordDecl()!=null && !ctx.recordDecl().isEmpty()){
+        if (ctx.recordDecl() != null && !ctx.recordDecl().isEmpty()) {
             return RecordAst.of(ctx.recordDecl());
         }
 
-        if( ctx.classTypeTypeDecl()!=null && !ctx.classTypeTypeDecl().isEmpty() ){
+        if (ctx.classTypeTypeDecl() != null && !ctx.classTypeTypeDecl().isEmpty()) {
             return MetaClassTypeAst.of(ctx.classTypeTypeDecl());
         }
 

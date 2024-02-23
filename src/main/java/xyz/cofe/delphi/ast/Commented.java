@@ -6,6 +6,7 @@ import java.util.Optional;
 
 /**
  * Поддержка комментариев к узлу AST
+ *
  * @param <SELF> собственный тип
  */
 public interface Commented<SELF> extends SrcPos {

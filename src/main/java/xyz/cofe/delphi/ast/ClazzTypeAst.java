@@ -23,7 +23,10 @@ public record ClazzTypeAst(
     ImList<ClassItemAst> body,
     SourcePosition position,
     ImList<Comment> comments
-) implements StructuredTypeAst, SrcPos, Commented<ClazzTypeAst>, TypeDeclAst {
+) implements StructuredTypeAst,
+             SrcPos,
+             Commented<ClazzTypeAst>,
+             TypeDeclAst {
     @Override
     public ClazzTypeAst withComments(ImList<Comment> comments) {
         return new ClazzTypeAst(state, parents, body, position, comments);

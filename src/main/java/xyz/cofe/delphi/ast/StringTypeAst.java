@@ -10,9 +10,11 @@ import java.util.Optional;
 /**
  * Текстовый тип
  */
-sealed public interface StringTypeAst extends TypeDeclAst, SrcPos {
+sealed public interface StringTypeAst extends TypeDeclAst,
+                                              SrcPos {
     record StrIng(Optional<ExpressionAst> expression, SourcePosition position,
-                  ImList<Comment> comments) implements StringTypeAst, Commented<StrIng> {
+                  ImList<Comment> comments) implements StringTypeAst,
+                                                       Commented<StrIng> {
         @Override
         public StrIng withComments(ImList<Comment> comments) {
             return new StrIng(expression, position, comments);
@@ -33,7 +35,8 @@ sealed public interface StringTypeAst extends TypeDeclAst, SrcPos {
     }
 
     record AnsiString(Optional<String> codePageNum, boolean typeFlag, SourcePosition position,
-                      ImList<Comment> comments) implements StringTypeAst, Commented<AnsiString> {
+                      ImList<Comment> comments) implements StringTypeAst,
+                                                           Commented<AnsiString> {
         @Override
         public AnsiString withComments(ImList<Comment> comments) {
             return new AnsiString(codePageNum, typeFlag, position, comments);

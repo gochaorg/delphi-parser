@@ -4,20 +4,20 @@ import xyz.cofe.delphi.parser.DelphiParser;
 
 
 public sealed interface InterfaceItemAst
-permits ClassPropertyAst, ClassMethodAst
-{
-    static InterfaceItemAst of(DelphiParser.InterfaceItemContext ctx){
-        if( ctx.classMethod()!=null && !ctx.classMethod().isEmpty() ){
+    permits ClassPropertyAst,
+            ClassMethodAst {
+    static InterfaceItemAst of(DelphiParser.InterfaceItemContext ctx) {
+        if (ctx.classMethod() != null && !ctx.classMethod().isEmpty()) {
             return ClassMethodAst.of(ctx.classMethod());
         }
 
-        if( ctx.classProperty()!=null && !ctx.classProperty().isEmpty() ){
-            var classFlag = ctx.CLASS()!=null
-                && ctx.CLASS().getText()!=null
-                && ctx.CLASS().getText().length()>0;
+        if (ctx.classProperty() != null && !ctx.classProperty().isEmpty()) {
+            var classFlag = ctx.CLASS() != null
+                && ctx.CLASS().getText() != null
+                && ctx.CLASS().getText().length() > 0;
 
             var prop = ClassPropertyAst.Property.of(ctx.classProperty());
-            if( classFlag ){
+            if (classFlag) {
                 prop = prop.withClassFlag(true);
             }
 

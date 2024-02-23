@@ -24,7 +24,10 @@ public record InterfaceTypeAst(
     ImList<InterfaceItemAst> body,
     SourcePosition position,
     ImList<Comment> comments
-) implements StructuredTypeAst, TypeDeclAst, SrcPos, Commented<InterfaceTypeAst> {
+) implements StructuredTypeAst,
+             TypeDeclAst,
+             SrcPos,
+             Commented<InterfaceTypeAst> {
 
     @Override
     public InterfaceTypeAst withComments(ImList<Comment> comments) {

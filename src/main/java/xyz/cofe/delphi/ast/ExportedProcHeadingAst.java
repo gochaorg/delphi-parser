@@ -1,4 +1,5 @@
 package xyz.cofe.delphi.ast;
 
-public record ExportedProcHeadingAst() implements InterfaceDecl, AstNode {
+public record ExportedProcHeadingAst() implements InterfaceDecl,
+                                                  AstNode {
 }

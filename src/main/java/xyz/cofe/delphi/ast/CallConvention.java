@@ -28,8 +28,8 @@ public enum CallConvention {
         throw AstParseError.unExpected(ctx);
     }
 
-    public static CallConvention of(DelphiParser.CallConventionContext ctx){
-        if( ctx==null ) throw new IllegalArgumentException("ctx==null");
+    public static CallConvention of(DelphiParser.CallConventionContext ctx) {
+        if (ctx == null) throw new IllegalArgumentException("ctx==null");
         var txt = ctx.getText().toLowerCase();
         if (txt.startsWith("cdecl")) return CallConvention.Cdecl;
         if (txt.startsWith("pascal")) return CallConvention.Pascal;
@@ -40,12 +40,12 @@ public enum CallConvention {
         throw AstParseError.unExpected(ctx);
     }
 
-    public static CallConvention of(DelphiParser.OldCallConventionDirectiveContext ctx){
-        if( ctx==null ) throw new IllegalArgumentException("ctx==null");
+    public static CallConvention of(DelphiParser.OldCallConventionDirectiveContext ctx) {
+        if (ctx == null) throw new IllegalArgumentException("ctx==null");
         var txt = ctx.getText().toLowerCase();
-        if( txt.startsWith("far") )return CallConvention.Far;
-        if( txt.startsWith("local") )return CallConvention.Local;
-        if( txt.startsWith("near") )return CallConvention.Near;
+        if (txt.startsWith("far")) return CallConvention.Far;
+        if (txt.startsWith("local")) return CallConvention.Local;
+        if (txt.startsWith("near")) return CallConvention.Near;
         throw AstParseError.unExpected(ctx);
     }
 }

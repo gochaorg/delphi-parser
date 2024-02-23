@@ -10,7 +10,9 @@ import java.util.Optional;
 /**
  * Свойство класса/интерфейса
  */
-public sealed interface ClassPropertyAst extends InterfaceItemAst, ClassItemAst, RecordItemAst {
+public sealed interface ClassPropertyAst extends InterfaceItemAst,
+                                                 ClassItemAst,
+                                                 RecordItemAst {
     record Property(
         String name,
         ImList<ArgumentAst> propertyArray,
@@ -21,7 +23,9 @@ public sealed interface ClassPropertyAst extends InterfaceItemAst, ClassItemAst,
         SourcePosition position,
         ImList<Comment> comments,
         ImList<CustomAttributeAst> attributes
-    ) implements ClassPropertyAst, SrcPos, Commented<Property> {
+    ) implements ClassPropertyAst,
+                 SrcPos,
+                 Commented<Property> {
         @Override
         public Property withComments(ImList<Comment> comments) {
             return new Property(
@@ -103,8 +107,8 @@ public sealed interface ClassPropertyAst extends InterfaceItemAst, ClassItemAst,
                 classFlag,
                 SourcePosition.of(ctx),
                 ImList.of(),
-                ctx.customAttribute()!=null && !ctx.customAttribute().isEmpty() ?
-                ImList.of(ctx.customAttribute()).map(CustomAttributeAst::of) : ImList.of()
+                ctx.customAttribute() != null && !ctx.customAttribute().isEmpty() ?
+                    ImList.of(ctx.customAttribute()).map(CustomAttributeAst::of) : ImList.of()
             );
         }
     }
@@ -115,7 +119,7 @@ public sealed interface ClassPropertyAst extends InterfaceItemAst, ClassItemAst,
                 return new Read(ImList.of(ctx.ident()).map(RuleContext::getText));
             } else if (ctx.WRITE() != null && ctx.ident() != null && !ctx.ident().isEmpty()) {
                 return new Write(ImList.of(ctx.ident()).map(RuleContext::getText));
-            } else if( ctx.IMPLEMENTS()!=null && ctx.ident()!=null && !ctx.ident().isEmpty() ){
+            } else if (ctx.IMPLEMENTS() != null && ctx.ident() != null && !ctx.ident().isEmpty()) {
                 return new Implements(ImList.of(ctx.ident()).map(RuleContext::getText));
             } else {
                 throw AstParseError.unExpected(ctx);
@@ -165,6 +169,7 @@ public sealed interface ClassPropertyAst extends InterfaceItemAst, ClassItemAst,
 
     /**
      * Идентификатор IDispatch
+     *
      * @param expression По идее константа
      */
     record DispID(ExpressionAst expression) implements Specifier {
@@ -172,6 +177,7 @@ public sealed interface ClassPropertyAst extends InterfaceItemAst, ClassItemAst,
 
     /**
      * Параметр для IDE не помню зачем
+     *
      * @param expression значение, по идее константа
      */
     record Stored(ExpressionAst expression) implements Specifier {

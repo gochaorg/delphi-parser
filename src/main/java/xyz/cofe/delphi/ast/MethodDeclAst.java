@@ -10,10 +10,8 @@ import java.util.Optional;
 /**
  * Декларация метода класса
  */
-@SuppressWarnings("rawtypes")
 public sealed interface MethodDeclAst extends InterfaceDecl,
-                                              SrcPos
-{
+                                              SrcPos {
     /**
      * Имя метода
      */
@@ -33,10 +31,11 @@ public sealed interface MethodDeclAst extends InterfaceDecl,
             ImList<GenericAst.Param> methodGenericParams,
             SourcePosition position,
             ImList<Comment> comments
-        ) implements Name, Commented<DirectName> {
+        ) implements Name,
+                     Commented<DirectName> {
             @Override
             public DirectName withComments(ImList<Comment> comments) {
-                return new DirectName(className,classGenericParams,methodName,methodGenericParams,position,comments);
+                return new DirectName(className, classGenericParams, methodName, methodGenericParams, position, comments);
             }
         }
 
@@ -59,7 +58,8 @@ public sealed interface MethodDeclAst extends InterfaceDecl,
             ImList<GenericAst.Param> methodGenericParams,
             SourcePosition position,
             ImList<Comment> comments
-        ) implements Name, Commented<NestedName> {
+        ) implements Name,
+                     Commented<NestedName> {
             @Override
             public NestedName withComments(ImList<Comment> comments) {
                 return new NestedName(className, classGenericParams, nestedName, nestedGenericParams, methodName, methodGenericParams, position, comments);
@@ -111,12 +111,13 @@ public sealed interface MethodDeclAst extends InterfaceDecl,
 
     /**
      * Конструктор класса
-     * @param statik флаг статичного конструктора - он по определению должен быть всегда true (по сути)
-     * @param name Имя конструктора
-     * @param arguments Аргументы
+     *
+     * @param statik     флаг статичного конструктора - он по определению должен быть всегда true (по сути)
+     * @param name       Имя конструктора
+     * @param arguments  Аргументы
      * @param directives Директивы
-     * @param position Позиция в исходниках
-     * @param comments Комментарии
+     * @param position   Позиция в исходниках
+     * @param comments   Комментарии
      */
     record Constructor(
         boolean statik,
@@ -125,23 +126,26 @@ public sealed interface MethodDeclAst extends InterfaceDecl,
         ImList<FDirective.MethodDirective> directives,
         SourcePosition position,
         ImList<Comment> comments
-    ) implements MethodDeclAst, Commented<Constructor> {
+    ) implements MethodDeclAst,
+                 Commented<Constructor> {
         @Override
         public Constructor withComments(ImList<Comment> comments) {
-            return new Constructor(statik,name,arguments,directives,position,comments);
+            return new Constructor(statik, name, arguments, directives, position, comments);
         }
     }
     //endregion
 
     //region Destructor
+
     /**
      * Деструктор класса
-     * @param statik флаг статичного конструктора - он по определению должен быть всегда false (по сути)
-     * @param name Имя деструктора
-     * @param arguments Аргументы
+     *
+     * @param statik     флаг статичного конструктора - он по определению должен быть всегда false (по сути)
+     * @param name       Имя деструктора
+     * @param arguments  Аргументы
      * @param directives Директивы
-     * @param position Позиция в исходниках
-     * @param comments Комментарии
+     * @param position   Позиция в исходниках
+     * @param comments   Комментарии
      */
     record Destructor(
         boolean statik,
@@ -150,10 +154,11 @@ public sealed interface MethodDeclAst extends InterfaceDecl,
         ImList<FDirective.MethodDirective> directives,
         SourcePosition position,
         ImList<Comment> comments
-    ) implements MethodDeclAst, Commented<Destructor> {
+    ) implements MethodDeclAst,
+                 Commented<Destructor> {
         @Override
         public Destructor withComments(ImList<Comment> comments) {
-            return new Destructor(statik,name,arguments,directives,position,comments);
+            return new Destructor(statik, name, arguments, directives, position, comments);
         }
     }
     //endregion
@@ -166,10 +171,11 @@ public sealed interface MethodDeclAst extends InterfaceDecl,
         ImList<FDirective.MethodDirective> directives,
         SourcePosition position,
         ImList<Comment> comments
-    ) implements MethodDeclAst, Commented<Procedure> {
+    ) implements MethodDeclAst,
+                 Commented<Procedure> {
         @Override
         public Procedure withComments(ImList<Comment> comments) {
-            return new Procedure(statik,name,arguments,directives,position,comments);
+            return new Procedure(statik, name, arguments, directives, position, comments);
         }
     }
     //endregion
@@ -183,10 +189,11 @@ public sealed interface MethodDeclAst extends InterfaceDecl,
         ImList<FDirective.MethodDirective> directives,
         SourcePosition position,
         ImList<Comment> comments
-    ) implements MethodDeclAst, Commented<Function> {
+    ) implements MethodDeclAst,
+                 Commented<Function> {
         @Override
         public Function withComments(ImList<Comment> comments) {
-            return new Function(statik,name,arguments,returns,directives,position,comments);
+            return new Function(statik, name, arguments, returns, directives, position, comments);
         }
     }
     //endregion
@@ -199,10 +206,11 @@ public sealed interface MethodDeclAst extends InterfaceDecl,
         ImList<FDirective.MethodDirective> directives,
         SourcePosition position,
         ImList<Comment> comments
-    ) implements MethodDeclAst, Commented<Operator> {
+    ) implements MethodDeclAst,
+                 Commented<Operator> {
         @Override
         public Operator withComments(ImList<Comment> comments) {
-            return new Operator(name,arguments,returns,directives,position,comments);
+            return new Operator(name, arguments, returns, directives, position, comments);
         }
     }
     //endregion
@@ -212,27 +220,27 @@ public sealed interface MethodDeclAst extends InterfaceDecl,
         var name = Name.of(ctx.methodDeclHeading().methodName());
 
         boolean statik =
-            ctx.methodDeclHeading().CLASS()!=null;
+            ctx.methodDeclHeading().CLASS() != null;
 
-        var args = ctx.methodDeclHeading().formalParameterSection()!=null &&
+        var args = ctx.methodDeclHeading().formalParameterSection() != null &&
             !ctx.methodDeclHeading().formalParameterSection().isEmpty() &&
-            ctx.methodDeclHeading().formalParameterSection().formalParameterList()!=null &&
+            ctx.methodDeclHeading().formalParameterSection().formalParameterList() != null &&
             !ctx.methodDeclHeading().formalParameterSection().formalParameterList().isEmpty()
             ? ArgumentAst.of(ctx.methodDeclHeading().formalParameterSection().formalParameterList())
             : ArgumentAst.of(List.of());
 
-        var returns = ctx.methodDeclHeading().typeDecl()!=null &&
+        var returns = ctx.methodDeclHeading().typeDecl() != null &&
             !ctx.methodDeclHeading().typeDecl().isEmpty()
             ? Optional.of(TypeDeclAst.of(ctx.methodDeclHeading().typeDecl()))
             : Optional.<TypeDeclAst>empty();
 
         var directives =
-            ctx.methodDirective()!=null && !ctx.methodDirective().isEmpty()
-            ? ImListLinked.of(ctx.methodDirective()).map(FDirective::of)
-            : ImListLinked.<FDirective.MethodDirective>of();
+            ctx.methodDirective() != null && !ctx.methodDirective().isEmpty()
+                ? ImListLinked.of(ctx.methodDirective()).map(FDirective::of)
+                : ImListLinked.<FDirective.MethodDirective>of();
 
         if (ctx.methodDeclHeading().methodKey() != null && !ctx.methodDeclHeading().methodKey().isEmpty()) {
-            if( ctx.methodDeclHeading().methodKey().PROCEDURE()!=null ){
+            if (ctx.methodDeclHeading().methodKey().PROCEDURE() != null) {
                 return new Procedure(
                     statik,
                     name,
@@ -241,7 +249,7 @@ public sealed interface MethodDeclAst extends InterfaceDecl,
                     SourcePosition.of(ctx),
                     ImListLinked.of()
                 );
-            }else if( ctx.methodDeclHeading().methodKey().CONSTRUCTOR()!=null ){
+            } else if (ctx.methodDeclHeading().methodKey().CONSTRUCTOR() != null) {
                 return new Constructor(
                     statik,
                     name,
@@ -250,7 +258,7 @@ public sealed interface MethodDeclAst extends InterfaceDecl,
                     SourcePosition.of(ctx),
                     ImListLinked.of()
                 );
-            }else if( ctx.methodDeclHeading().methodKey().DESTRUCTOR()!=null ){
+            } else if (ctx.methodDeclHeading().methodKey().DESTRUCTOR() != null) {
                 return new Destructor(
                     statik,
                     name,
@@ -259,7 +267,7 @@ public sealed interface MethodDeclAst extends InterfaceDecl,
                     SourcePosition.of(ctx),
                     ImListLinked.of()
                 );
-            }else{
+            } else {
                 throw AstParseError.unExpected(ctx.methodDeclHeading().methodKey());
             }
         } else if (ctx.methodDeclHeading().FUNCTION() != null) {
@@ -281,7 +289,7 @@ public sealed interface MethodDeclAst extends InterfaceDecl,
                 SourcePosition.of(ctx),
                 ImListLinked.of()
             );
-        }else {
+        } else {
             throw AstParseError.unExpected(ctx);
         }
     }

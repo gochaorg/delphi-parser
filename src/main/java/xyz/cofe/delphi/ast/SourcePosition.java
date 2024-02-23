@@ -21,7 +21,9 @@ public sealed interface SourcePosition {
     boolean before(SourcePosition sourcePosition);
 
     FileLessPoint minPoint();
+
     FileLessPoint maxPoint();
+
     ImList<String> fileNames();
 
     sealed interface FileName {
@@ -36,7 +38,7 @@ public sealed interface SourcePosition {
         default boolean before(Point p) {
             if (p == null) return false;
             if (lineNumber() < p.lineNumber()) return true;
-            if( lineNumber() > p.lineNumber() )return false;
+            if (lineNumber() > p.lineNumber()) return false;
             return charNumber() < p.charNumber();
         }
 
@@ -81,7 +83,8 @@ public sealed interface SourcePosition {
      * @param charNumber номер символа в строке
      */
     record FileLessPoint(int lineNumber, int charNumber)
-        implements SourcePosition, Point {
+        implements SourcePosition,
+                   Point {
         @SuppressWarnings("RedundantIfStatement")
         @Override
         public boolean equals(Object obj) {
@@ -122,8 +125,8 @@ public sealed interface SourcePosition {
             if (sourcePosition == null) return false;
 
             if (sourcePosition instanceof Point p) {
-                if( lineNumber() < p.lineNumber() ) return true;
-                if( lineNumber() > p.lineNumber() ) return false;
+                if (lineNumber() < p.lineNumber()) return true;
+                if (lineNumber() > p.lineNumber()) return false;
                 return charNumber() < p.charNumber();
             }
 
@@ -165,7 +168,9 @@ public sealed interface SourcePosition {
      * @param charNumber номер символа в строке
      */
     record FilePoint(String fileName, int lineNumber, int charNumber)
-        implements SourcePosition, FileName, Point {
+        implements SourcePosition,
+                   FileName,
+                   Point {
         @SuppressWarnings("RedundantIfStatement")
         @Override
         public boolean equals(Object obj) {
@@ -241,7 +246,7 @@ public sealed interface SourcePosition {
             return false;
         }
 
-        public FileLessPoint toFileLestPoint(){
+        public FileLessPoint toFileLestPoint() {
             return new FileLessPoint(lineNumber, charNumber);
         }
 
@@ -268,7 +273,8 @@ public sealed interface SourcePosition {
      * @param end   конец отрезка включительно
      */
     record FileLessRange(FileLessPoint start, FileLessPoint end)
-        implements SourcePosition, Range<FileLessPoint> {
+        implements SourcePosition,
+                   Range<FileLessPoint> {
         @SuppressWarnings("RedundantIfStatement")
         @Override
         public boolean equals(Object obj) {
@@ -381,7 +387,9 @@ public sealed interface SourcePosition {
      * @param end   конец отрезка включительно
      */
     record FileRange(FilePoint start, FilePoint end)
-        implements SourcePosition, Range<FilePoint>, FileName {
+        implements SourcePosition,
+                   Range<FilePoint>,
+                   FileName {
         @Override
         public String fileName() {
             return start.fileName;
@@ -511,7 +519,7 @@ public sealed interface SourcePosition {
 
         @Override
         public ImList<String> fileNames() {
-            if( start.fileName.equals(end.fileName) ) return ImList.of(start.fileName);
+            if (start.fileName.equals(end.fileName)) return ImList.of(start.fileName);
             return ImList.of(start.fileName, end.fileName);
         }
     }
@@ -548,17 +556,17 @@ public sealed interface SourcePosition {
         }
     }
 
-    static SourcePosition mergeExtend(SourcePosition first,SourcePosition second){
-        if( first==null ) throw new IllegalArgumentException("first==null");
-        if( second==null ) throw new IllegalArgumentException("second==null");
+    static SourcePosition mergeExtend(SourcePosition first, SourcePosition second) {
+        if (first == null) throw new IllegalArgumentException("first==null");
+        if (second == null) throw new IllegalArgumentException("second==null");
 
         var fnames = new HashSet<String>();
         first.fileNames().prepend(second.fileNames()).each(fnames::add);
 
-        if( !first.before(second) && !second.before(first) )
+        if (!first.before(second) && !second.before(first))
             return first;
 
-        if( fnames.size()>1 )throw AstParseError.notImplemented();
+        if (fnames.size() > 1) throw AstParseError.notImplemented();
 
         var begin = first.before(second) ?
             first.minPoint() : second.minPoint();
@@ -566,7 +574,7 @@ public sealed interface SourcePosition {
             second.maxPoint() :
             first.maxPoint();
 
-        if( fnames.isEmpty() ){
+        if (fnames.isEmpty()) {
             var begin1 = new FileLessPoint(
                 begin.lineNumber, begin.charNumber
             );
@@ -574,7 +582,7 @@ public sealed interface SourcePosition {
                 end.lineNumber, end.charNumber
             );
             return new FileLessRange(begin1, end1);
-        }else{
+        } else {
             var fname = fnames.iterator().next();
             var begin1 = new FilePoint(
                 fname,

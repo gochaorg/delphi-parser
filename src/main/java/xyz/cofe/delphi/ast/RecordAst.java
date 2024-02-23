@@ -36,29 +36,32 @@ import java.util.Optional;
  * recordVariant                : constExpression (',' constExpression)* ':' '(' (recordVariantField)* ')'   //CHANGED to recordVariantField from recordField
  *                              ;
  * </pre>
+ *
  * @param items
  */
 public record RecordAst(
     ImList<RecordItemAst> items,
     SourcePosition position,
     ImList<Comment> comments
-) implements Commented<RecordAst>, SrcPos, TypeDeclAst, StructuredTypeAst
-{
+) implements Commented<RecordAst>,
+             SrcPos,
+             TypeDeclAst,
+             StructuredTypeAst {
     @Override
     public RecordAst withComments(ImList<Comment> comments) {
-        if( comments==null )throw new IllegalArgumentException("comments==null");
-        return new RecordAst(items,position,comments);
+        if (comments == null) throw new IllegalArgumentException("comments==null");
+        return new RecordAst(items, position, comments);
     }
 
-    public static RecordAst of(DelphiParser.SimpleRecordContext ctx){
-        if( ctx==null )throw new IllegalArgumentException("ctx==null");
+    public static RecordAst of(DelphiParser.SimpleRecordContext ctx) {
+        if (ctx == null) throw new IllegalArgumentException("ctx==null");
         ImList<RecordItemAst> fields =
-            ctx.recordField()!=null && !ctx.recordField().isEmpty()
-            ? ImList.of(ctx.recordField()).fmap(RecordFieldAst::of)
+            ctx.recordField() != null && !ctx.recordField().isEmpty()
+                ? ImList.of(ctx.recordField()).fmap(RecordFieldAst::of)
                 : ImList.of();
         ImList<RecordItemAst> items =
-            ctx.recordItem()!=null && !ctx.recordItem().isEmpty()
-            ? ImList.of(ctx.recordItem()).fmap(RecordItemAst::of)
+            ctx.recordItem() != null && !ctx.recordItem().isEmpty()
+                ? ImList.of(ctx.recordItem()).fmap(RecordItemAst::of)
                 : ImList.of();
         return new RecordAst(
             fields.append(items),
@@ -67,13 +70,13 @@ public record RecordAst(
         );
     }
 
-    public static RecordAst of(DelphiParser.VariantRecordContext ctx){
-        if( ctx==null )throw new IllegalArgumentException("ctx==null");
-        if( ctx.recordVariantSection()==null || ctx.recordVariantSection().isEmpty() )
+    public static RecordAst of(DelphiParser.VariantRecordContext ctx) {
+        if (ctx == null) throw new IllegalArgumentException("ctx==null");
+        if (ctx.recordVariantSection() == null || ctx.recordVariantSection().isEmpty())
             throw AstParseError.unExpected(ctx);
 
         ImList<RecordItemAst> fields =
-            ctx.recordField()!=null && !ctx.recordField().isEmpty()
+            ctx.recordField() != null && !ctx.recordField().isEmpty()
                 ? ImList.of(ctx.recordField()).fmap(RecordFieldAst::of)
                 : ImList.of();
 
@@ -86,11 +89,11 @@ public record RecordAst(
         );
     }
 
-    public static RecordAst of(DelphiParser.RecordDeclContext ctx){
-        if( ctx==null )throw new IllegalArgumentException("ctx==null");
-        if( ctx.simpleRecord()!=null && !ctx.simpleRecord().isEmpty() )
+    public static RecordAst of(DelphiParser.RecordDeclContext ctx) {
+        if (ctx == null) throw new IllegalArgumentException("ctx==null");
+        if (ctx.simpleRecord() != null && !ctx.simpleRecord().isEmpty())
             return of(ctx.simpleRecord());
-        if( ctx.variantRecord()!=null && !ctx.variantRecord().isEmpty() )
+        if (ctx.variantRecord() != null && !ctx.variantRecord().isEmpty())
             return of(ctx.variantRecord());
         throw AstParseError.unExpected(ctx);
     }

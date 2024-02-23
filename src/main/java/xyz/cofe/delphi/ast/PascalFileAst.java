@@ -41,7 +41,8 @@ public sealed interface PascalFileAst {
         UnitInterface api,
         SourcePosition position,
         ImList<Comment> comments
-    ) implements PascalFileAst, Commented<Unit> {
+    ) implements PascalFileAst,
+                 Commented<Unit> {
         @Override
         public Unit withComments(ImList<Comment> comments) {
             return new Unit(name, api, position, comments);
@@ -120,14 +121,22 @@ public sealed interface PascalFileAst {
     }
 
     public sealed interface ParseErrors {
-        record Syntax(RecognitionException err, int line, int charPositionInLine, String message) implements ParseErrors {}
-        record Ambiguity(int startIndex,int stopIndex) implements ParseErrors {}
-        record AttemptingFullContext(int startIndex,int stopIndex) implements ParseErrors {}
-        record ContextSensitivity(int startIndex,int stopIndex) implements ParseErrors {}
+        record Syntax(RecognitionException err, int line, int charPositionInLine,
+                      String message) implements ParseErrors {
+        }
+
+        record Ambiguity(int startIndex, int stopIndex) implements ParseErrors {
+        }
+
+        record AttemptingFullContext(int startIndex, int stopIndex) implements ParseErrors {
+        }
+
+        record ContextSensitivity(int startIndex, int stopIndex) implements ParseErrors {
+        }
     }
 
     static PascalFileAst parse(TokenizedFile sourceFile, boolean injectComments, PreProcState initialState) throws AstParseError {
-        return parse(sourceFile,injectComments,initialState,null);
+        return parse(sourceFile, injectComments, initialState, null);
     }
 
     static PascalFileAst parse(TokenizedFile sourceFile, boolean injectComments, PreProcState initialState, Consumer<ParseErrors> errors) throws AstParseError {
@@ -139,26 +148,26 @@ public sealed interface PascalFileAst {
 
         var parser = new DelphiParser(preProcTokFiles.toTokenStream());
 
-        if( errors!=null) {
+        if (errors != null) {
             parser.addErrorListener(new ANTLRErrorListener() {
                 @Override
                 public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
-                    errors.accept(new ParseErrors.Syntax(e,line,charPositionInLine,msg));
+                    errors.accept(new ParseErrors.Syntax(e, line, charPositionInLine, msg));
                 }
 
                 @Override
                 public void reportAmbiguity(Parser recognizer, DFA dfa, int startIndex, int stopIndex, boolean exact, BitSet ambigAlts, ATNConfigSet configs) {
-                    errors.accept(new ParseErrors.Ambiguity(startIndex,stopIndex));
+                    errors.accept(new ParseErrors.Ambiguity(startIndex, stopIndex));
                 }
 
                 @Override
                 public void reportAttemptingFullContext(Parser recognizer, DFA dfa, int startIndex, int stopIndex, BitSet conflictingAlts, ATNConfigSet configs) {
-                    errors.accept(new ParseErrors.AttemptingFullContext(startIndex,stopIndex));
+                    errors.accept(new ParseErrors.AttemptingFullContext(startIndex, stopIndex));
                 }
 
                 @Override
                 public void reportContextSensitivity(Parser recognizer, DFA dfa, int startIndex, int stopIndex, int prediction, ATNConfigSet configs) {
-                    errors.accept(new ParseErrors.ContextSensitivity(startIndex,stopIndex));
+                    errors.accept(new ParseErrors.ContextSensitivity(startIndex, stopIndex));
                 }
             });
         }
