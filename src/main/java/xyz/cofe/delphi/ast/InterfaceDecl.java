@@ -3,7 +3,6 @@ package xyz.cofe.delphi.ast;
 import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.delphi.parser.DelphiParser;
-import static xyz.cofe.delphi.ast.AstNode.upcast;
 
 /**
  * Публичная часть

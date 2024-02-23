@@ -21,11 +21,6 @@ public sealed interface PostfixAst extends AtomAst
         }
 
         @Override
-        public ExpressionAst astUpdate(AstUpdate.UpdateContext ctx) {
-            return this;
-        }
-
-        @Override
         public String text() {
             return "???";
         }
@@ -40,11 +35,6 @@ public sealed interface PostfixAst extends AtomAst
                 base,
                 SourcePosition.of(ctx)
             );
-        }
-
-        @Override
-        public ExpressionAst astUpdate(AstUpdate.UpdateContext ctx) {
-            return this;
         }
 
         @Override
@@ -89,11 +79,6 @@ public sealed interface PostfixAst extends AtomAst
         }
 
         @Override
-        public ExpressionAst astUpdate(AstUpdate.UpdateContext ctx) {
-            return this;
-        }
-
-        @Override
         public String text() {
             return "???";
         }
@@ -113,11 +98,6 @@ public sealed interface PostfixAst extends AtomAst
         }
 
         @Override
-        public ExpressionAst astUpdate(AstUpdate.UpdateContext ctx) {
-            return this;
-        }
-
-        @Override
         public String text() {
             return "???";
         }
@@ -134,11 +114,6 @@ public sealed interface PostfixAst extends AtomAst
                 ImList.of(ctx.genericTypeIdent()).map(TypeIdentAst::of),
                 SourcePosition.of(ctx)
             );
-        }
-
-        @Override
-        public ExpressionAst astUpdate(AstUpdate.UpdateContext ctx) {
-            return this;
         }
 
         @Override

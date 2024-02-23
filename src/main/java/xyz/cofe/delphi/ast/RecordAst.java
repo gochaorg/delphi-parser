@@ -38,26 +38,12 @@ import java.util.Optional;
  * </pre>
  * @param items
  */
-@SuppressWarnings("rawtypes")
 public record RecordAst(
     ImList<RecordItemAst> items,
     SourcePosition position,
     ImList<Comment> comments
-) implements AstNode, AstUpdate, Commented<RecordAst>, SrcPos, TypeDeclAst, StructuredTypeAst
+) implements Commented<RecordAst>, SrcPos, TypeDeclAst, StructuredTypeAst
 {
-    @SuppressWarnings("unchecked")
-    @Override
-    public RecordAst astUpdate(AstUpdate.UpdateContext ctx) {
-        var cmts = ctx instanceof AstUpdate.CommentingContext cc ?
-            cc.commenting(this) : this;
-        var itms = ctx.updateUnsafe(items);
-        if( cmts==this && itms.isEmpty() )return this;
-        return new RecordAst(
-            itms.orElse((ImList)items),
-            position,
-            comments);
-    }
-
     @Override
     public RecordAst withComments(ImList<Comment> comments) {
         if( comments==null )throw new IllegalArgumentException("comments==null");

@@ -5,7 +5,6 @@ import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.delphi.parser.DelphiParser;
 
-import static xyz.cofe.delphi.ast.AstNode.upcast;
 import static xyz.cofe.delphi.impl.Indent.indent;
 
 /**

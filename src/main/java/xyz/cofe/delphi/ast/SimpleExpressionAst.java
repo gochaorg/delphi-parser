@@ -166,16 +166,6 @@ public sealed interface SimpleExpressionAst extends ExpressionAst {
                    AstNode
     {
         @Override
-        public ImList<? extends AstNode> nestedAstNodes() {
-            return ImList.of(op, left, right);
-        }
-
-        @Override
-        public ExpressionAst astUpdate(AstUpdate.UpdateContext ctx) {
-            return this;
-        }
-
-        @Override
         public String text() {
             return "???";
         }
@@ -251,17 +241,6 @@ public sealed interface SimpleExpressionAst extends ExpressionAst {
         implements SimpleExpressionAst,
                    SrcPos
     {
-        @Override
-        public ImList<? extends AstNode> nestedAstNodes() {
-            return ImList.of(op, expression);
-        }
-
-        @Override
-        public ExpressionAst astUpdate(AstUpdate.UpdateContext ctx) {
-            if( ctx==null ) throw new IllegalArgumentException("ctx==null");
-            return this;
-        }
-
         @Override
         public String text() {
             return "???";

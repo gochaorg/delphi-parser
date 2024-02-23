@@ -25,13 +25,7 @@ public record ArgumentAst(
     String name,
     Optional<TypeDeclAst> typeDecl,
     Optional<ExpressionAst> defaultValue
-) implements AstNode, AstUpdate<ArgumentAst>
-{
-    @Override
-    public ArgumentAst astUpdate(AstUpdate.UpdateContext updateCtx) {
-        return this;
-    }
-
+) implements AstNode {
     /**
      * Указывает направление аргумента out | var | const
      */

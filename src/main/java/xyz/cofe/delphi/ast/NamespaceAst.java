@@ -14,11 +14,6 @@ import java.util.stream.Collectors;
  * @param name имя
  */
 public record NamespaceAst(ImList<String> name) implements AstNode {
-    @Override
-    public NamespaceAst astUpdate(AstUpdate.UpdateContext ctx) {
-        return this;
-    }
-
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     @Override
     public boolean equals(Object o) {

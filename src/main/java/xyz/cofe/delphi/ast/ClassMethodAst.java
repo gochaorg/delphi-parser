@@ -6,7 +6,6 @@ import xyz.cofe.delphi.parser.DelphiParser;
 
 import java.util.Optional;
 
-import static xyz.cofe.delphi.ast.AstNode.upcast;
 import static xyz.cofe.text.Text.indent;
 
 /**

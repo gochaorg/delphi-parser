@@ -1,6 +1,5 @@
 package xyz.cofe.delphi.ast;
 
-import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import xyz.cofe.coll.im.ImList;
 import xyz.cofe.delphi.parser.DelphiParser;
@@ -75,18 +74,8 @@ sealed public interface AtomAst
                                                                                           SrcPos,
                                                                                           AstNode {
         @Override
-        public ExpressionAst astUpdate(AstUpdate.UpdateContext ctx) {
-            return this;
-        }
-
-        @Override
         public String text() {
             return "(" + expression.text() + ")";
-        }
-
-        @Override
-        public ImList<? extends AstNode> nestedAstNodes() {
-            return ImList.of(expression);
         }
     }
 
@@ -102,11 +91,6 @@ sealed public interface AtomAst
     ) implements AtomAst,
                  SrcPos,
                  AstNode {
-        @Override
-        public ExpressionAst astUpdate(AstUpdate.UpdateContext ctx) {
-            return this;
-        }
-
         @Override
         public String text() {
             return Long.toString(value);
@@ -140,11 +124,6 @@ sealed public interface AtomAst
                  SrcPos,
                  AstNode {
         @Override
-        public ExpressionAst astUpdate(AstUpdate.UpdateContext ctx) {
-            return this;
-        }
-
-        @Override
         public String text() {
             return Double.toString(value);
         }
@@ -170,10 +149,6 @@ sealed public interface AtomAst
     ) implements AtomAst,
                  SrcPos,
                  AstNode {
-        @Override
-        public ExpressionAst astUpdate(AstUpdate.UpdateContext ctx) {
-            return this;
-        }
 
         @Override
         public String text() {
@@ -330,11 +305,6 @@ sealed public interface AtomAst
                                                                 SrcPos,
                                                                 AstNode {
         @Override
-        public ExpressionAst astUpdate(AstUpdate.UpdateContext ctx) {
-            return this;
-        }
-
-        @Override
         public String text() {
             return "inherited";
         }
@@ -347,12 +317,6 @@ sealed public interface AtomAst
     record InheritedIdent(String id, SourcePosition position) implements AtomAst,
                                                                          SrcPos,
                                                                          AstNode {
-        @Override
-        public ExpressionAst astUpdate(AstUpdate.UpdateContext ctx) {
-            return this;
-        }
-
-        @Override
         public String text() {
             return "???";
         }
@@ -368,11 +332,6 @@ sealed public interface AtomAst
                                                                    SrcPos,
                                                                    AstNode {
         @Override
-        public ExpressionAst astUpdate(AstUpdate.UpdateContext ctx) {
-            return this;
-        }
-
-        @Override
         public String text() {
             return "???";
         }
@@ -386,10 +345,6 @@ sealed public interface AtomAst
     record NilValue(SourcePosition position) implements AtomAst,
                                                         SrcPos,
                                                         AstNode {
-        public ExpressionAst astUpdate(AstUpdate.UpdateContext ctx) {
-            return this;
-        }
-
         @Override
         public String text() {
             return "???";
@@ -405,10 +360,6 @@ sealed public interface AtomAst
                                                              AtomAst,
                                                              SrcPos,
                                                              AstNode {
-        public ExpressionAst astUpdate(AstUpdate.UpdateContext ctx) {
-            return this;
-        }
-
         @Override
         public String text() {
             return "???";
@@ -421,34 +372,18 @@ sealed public interface AtomAst
     sealed interface DelphiSet extends SrcPos,
                                        AtomAst,
                                        AstNode {
-        default ExpressionAst astUpdate(AstUpdate.UpdateContext ctx) {
-            return this;
-        }
-
         @Override
         default String text() {
             return "???";
         }
 
         record One(ExpressionAst expression, SourcePosition position) implements DelphiSet {
-            @Override
-            public ImList<? extends AstNode> nestedAstNodes() {
-                return ImList.of(expression);
-            }
         }
 
         record FromTo(ExpressionAst from, ExpressionAst to, SourcePosition position) implements DelphiSet {
-            @Override
-            public ImList<? extends AstNode> nestedAstNodes() {
-                return ImList.of(from, to);
-            }
         }
 
         record Sequence(ImList<DelphiSet> items, SourcePosition position) implements DelphiSet {
-            @Override
-            public ImList<? extends AstNode> nestedAstNodes() {
-                return items;
-            }
         }
 
         public static DelphiSet of(DelphiParser.SetExpressionContext ctx) {

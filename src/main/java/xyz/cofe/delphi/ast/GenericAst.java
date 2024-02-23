@@ -3,7 +3,6 @@ package xyz.cofe.delphi.ast;
 import org.antlr.v4.runtime.RuleContext;
 import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
-import xyz.cofe.coll.im.ImListLinkedBase;
 import xyz.cofe.delphi.parser.DelphiParser;
 
 import java.util.Objects;
@@ -14,12 +13,7 @@ import java.util.stream.Collectors;
  */
 // TODO требует переименования/рефакторинга
 public sealed interface GenericAst {
-    record Param(String name, ImList<Bound> constraints) implements GenericAst, AstNode, AstUpdate<Param> {
-        @Override
-        public Param astUpdate(AstUpdate.UpdateContext ctx) {
-            return this;
-        }
-
+    record Param(String name, ImList<Bound> constraints) implements GenericAst, AstNode {
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;

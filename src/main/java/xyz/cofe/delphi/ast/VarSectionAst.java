@@ -5,8 +5,6 @@ import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.delphi.parser.DelphiParser;
 
-import static xyz.cofe.delphi.ast.AstNode.upcast;
-
 import java.util.Optional;
 
 /**
@@ -138,10 +136,6 @@ public sealed interface VarSectionAst
     }
 
     record AbsoluteId(String name) implements VarValueSpec {
-        @Override
-        public AbsoluteId astUpdate(AstUpdate.UpdateContext ctx) {
-            return this;
-        }
     }
 
     record AbsoluteExp(ConstSectionAst.ConstExpression expression) implements VarValueSpec,

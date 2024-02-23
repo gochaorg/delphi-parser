@@ -7,8 +7,6 @@ import xyz.cofe.delphi.parser.DelphiParser;
 import java.util.List;
 import java.util.Optional;
 
-import static xyz.cofe.delphi.ast.AstNode.upcast;
-
 /**
  * Декларация метода класса
  */

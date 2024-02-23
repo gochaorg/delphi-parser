@@ -11,7 +11,7 @@ import static xyz.cofe.delphi.ast.impl.Ident.identifier;
  * @param type ссылка на тип
  */
 public record MetaClassTypeAst(ImList<String> type, SourcePosition position, ImList<Comment> comments)
-    implements TypeDeclAst, SrcPos, AstUpdate<MetaClassTypeAst>, Commented<MetaClassTypeAst>, StructuredTypeAst
+    implements TypeDeclAst, SrcPos, Commented<MetaClassTypeAst>, StructuredTypeAst
 {
     @Override
     public MetaClassTypeAst withComments(ImList<Comment> comments) {
@@ -20,19 +20,6 @@ public record MetaClassTypeAst(ImList<String> type, SourcePosition position, ImL
             type,
             position,
             comments
-        );
-    }
-
-    @Override
-    public MetaClassTypeAst astUpdate(AstUpdate.UpdateContext ctx) {
-        if( ctx==null )throw new IllegalArgumentException("ctx==null");
-        var cmts = ctx instanceof AstUpdate.CommentingContext cc
-            ?  cc.commenting(this) : this;
-        if( cmts==this )return this;
-        return new MetaClassTypeAst(
-            type,
-            position,
-            cmts.comments
         );
     }
 

@@ -7,9 +7,6 @@ import xyz.cofe.delphi.parser.DelphiParser;
 
 import java.util.Optional;
 
-import static xyz.cofe.delphi.ast.AstNode.upcast;
-
-
 /**
  * Свойство класса/интерфейса
  */

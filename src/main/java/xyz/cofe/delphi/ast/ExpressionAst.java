@@ -12,14 +12,7 @@ public interface ExpressionAst extends AstNode, SrcPos {
      * @param position позиция в исходниках
      */
     record Stub(String text, SourcePosition position) implements ExpressionAst, SrcPos {
-        @Override
-        public ExpressionAst astUpdate(AstUpdate.UpdateContext ctx) {
-            return this;
-        }
     }
-
-    @Override
-    ExpressionAst astUpdate(AstUpdate.UpdateContext ctx);
 
     String text();
 

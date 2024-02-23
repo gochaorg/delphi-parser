@@ -1,7 +1,6 @@
 package xyz.cofe.delphi.ast;
 
 import xyz.cofe.delphi.parser.DelphiParser;
-import static xyz.cofe.delphi.ast.AstNode.upcast;
 
 
 public sealed interface InterfaceItemAst

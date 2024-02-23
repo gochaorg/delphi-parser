@@ -7,7 +7,7 @@ import xyz.cofe.delphi.parser.DelphiParser;
 import java.util.Optional;
 
 public record CustomAttributeAst(ImList<Attribute> attributes, SourcePosition position, ImList<Comment> comments)
-    implements AstNode, AstUpdate<CustomAttributeAst>, SrcPos, Commented<CustomAttributeAst> {
+    implements SrcPos, Commented<CustomAttributeAst> {
     private static ImList<String> idOf(DelphiParser.NamespacedQualifiedIdentContext ctx) {
         if (ctx == null) throw new IllegalArgumentException("ctx==null");
         var ids = ctx.namespaceName() != null && ctx.namespaceName().ident() != null ?
@@ -44,11 +44,7 @@ public record CustomAttributeAst(ImList<Attribute> attributes, SourcePosition po
 
     public record Attribute(ImList<String> id, ImList<ExpressionAst> args, SourcePosition position,
                             ImList<Comment> comments)
-        implements AstNode, SrcPos, Commented<Attribute>, AstUpdate<Attribute> {
-        @Override
-        public ImList<? extends AstNode> nestedAstNodes() {
-            return args;
-        }
+        implements SrcPos, Commented<Attribute> {
 
         public static Attribute of(DelphiParser.CustomAttributeNamedCallContext ctx) {
             if (ctx == null) throw new IllegalArgumentException("ctx==null");
@@ -60,21 +56,6 @@ public record CustomAttributeAst(ImList<Attribute> attributes, SourcePosition po
         @Override
         public Attribute withComments(ImList<Comment> comments) {
             return new Attribute(id, args, position, comments);
-        }
-
-        @Override
-        public Attribute astUpdate(AstUpdate.UpdateContext ctx) {
-            var cmtd = this;
-            if (ctx instanceof AstUpdate.CommentingContext cmts) {
-                cmtd = cmts.commenting(cmtd);
-            }
-
-            //noinspection unchecked,rawtypes
-            Optional<ImList<ExpressionAst>> args = (Optional) ctx.updateUnsafe(args());
-
-            if (cmtd.comments == comments && args.isEmpty()) return this;
-
-            return new Attribute(id, args.orElse(this.args), position, cmtd.comments);
         }
     }
 
@@ -103,24 +84,5 @@ public record CustomAttributeAst(ImList<Attribute> attributes, SourcePosition po
     @Override
     public CustomAttributeAst withComments(ImList<Comment> comments) {
         return new CustomAttributeAst(attributes, position, comments);
-    }
-
-    @Override
-    public ImList<? extends AstNode> nestedAstNodes() {
-        return attributes;
-    }
-
-    @Override
-    public CustomAttributeAst astUpdate(AstUpdate.UpdateContext updateCtx) {
-        var cmts = this;
-        if( updateCtx instanceof AstUpdate.CommentingContext cc ){
-            cmts = cc.commenting(cmts);
-        }
-
-        var atrs = updateCtx.update(attributes);
-
-        if( atrs.isEmpty() && cmts.comments==comments )return this;
-
-        return new CustomAttributeAst(atrs.orElse(attributes), position, cmts.comments);
     }
 }

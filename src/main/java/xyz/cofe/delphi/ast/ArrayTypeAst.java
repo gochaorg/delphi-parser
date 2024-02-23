@@ -1,10 +1,7 @@
 package xyz.cofe.delphi.ast;
 
 import xyz.cofe.coll.im.ImList;
-import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.delphi.parser.DelphiParser;
-
-import static xyz.cofe.delphi.ast.AstNode.upcast;
 import static xyz.cofe.delphi.ast.impl.Ident.identifier;
 
 /**
@@ -99,7 +96,6 @@ public record ArrayTypeAst(
      * Тип индекса массива
      */
     sealed public static interface ArrayIndexAst extends AstNode,
-                                                         AstUpdate<ArrayIndexAst>,
                                                          SrcPos {
         public static ArrayIndexAst of(DelphiParser.ArrayIndexContext ctx) {
             if (ctx == null) throw new IllegalArgumentException("ctx==null");
@@ -119,9 +115,6 @@ public record ArrayTypeAst(
             throw AstParseError.unExpected(ctx);
         }
 
-        @Override
-        ArrayIndexAst astUpdate(AstUpdate.UpdateContext ctx);
-
         /**
          * Элементы массива
          *
@@ -132,18 +125,6 @@ public record ArrayTypeAst(
         record ArrayIndexRangeAst(ExpressionAst from, ExpressionAst to, SourcePosition position)
             implements ArrayIndexAst,
                        SrcPos {
-            @Override
-            public ArrayIndexRangeAst astUpdate(AstUpdate.UpdateContext ctx) {
-                var frm = from.astUpdate(ctx);
-                var t2 = to.astUpdate(ctx);
-                if (frm == from && t2 == to) return this;
-                return new ArrayIndexRangeAst(frm, t2, position);
-            }
-
-            @Override
-            public ImList<? extends AstNode> nestedAstNodes() {
-                return ImList.of(from, to);
-            }
         }
 
         /**
@@ -155,10 +136,6 @@ public record ArrayTypeAst(
         record ArrayIndexTypeAst(ImList<String> typeId, SourcePosition position)
             implements ArrayIndexAst,
                        SrcPos {
-            @Override
-            public ArrayIndexTypeAst astUpdate(AstUpdate.UpdateContext ctx) {
-                return this;
-            }
         }
     }
 }
