@@ -7,18 +7,18 @@ import xyz.cofe.delphi.parser.DelphiParser;
  */
 public interface ExpressionAst extends AstNode,
                                        SrcPos {
-    /**
-     * Заглушка
-     *
-     * @param text     исходный текст
-     * @param position позиция в исходниках
-     */
-    record Stub(String text, SourcePosition position) implements ExpressionAst,
-                                                                 SrcPos {
-    }
 
-    static ExpressionAst of(DelphiParser.ExpressionContext exp) {
-        if (exp == null) throw new IllegalArgumentException("exp==null");
-        return new Stub(exp.getText(), SourcePosition.of(exp));
+    static ExpressionAst of(DelphiParser.ExpressionContext ctx) {
+        if (ctx == null) throw new IllegalArgumentException("ctx==null");
+
+        if(ctx.anonymousExpression()!=null && !ctx.anonymousExpression().isEmpty()){
+            return LambdaAst.of(ctx.anonymousExpression());
+        }
+
+        if(ctx.simpleExpression()!=null && !ctx.simpleExpression().isEmpty()){
+            return SimpleExpressionAst.of(ctx.simpleExpression());
+        }
+
+        throw AstParseError.unExpected(ctx);
     }
 }

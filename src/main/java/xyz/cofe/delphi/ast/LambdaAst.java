@@ -3,7 +3,7 @@ package xyz.cofe.delphi.ast;
 import xyz.cofe.coll.im.ImList;
 import xyz.cofe.delphi.parser.DelphiParser;
 
-public sealed interface LambdaAst {
+public sealed interface LambdaAst extends ExpressionAst {
     record AnonProcedure(
         ImList<ArgumentAst> arguments,
         BodyAst bodyAst,

@@ -500,7 +500,6 @@ methodName                   : className=ident (classTArgs=genericDefinition)?
                                '.' methName=ident (methTArgs=genericDefinition)?
                              ;
 
-// not implemented - - body!!!
 //procDecl                     : procDeclHeading (functionDirective)* ';' (procBody)?     //CHANGED
 procDecl                     : procDeclHeading ( ';'? funcDirective (';' funcDirective)* )? ';'? procBody? //TODO блять, точка с запятой - вообще по случайной логике раставляются
                              ;
@@ -530,8 +529,12 @@ parmType                     : 'const'
                              | 'var'
                              | 'out'
                              ;
-methodBody                   : block ';' 
+
+// implemented
+methodBody                   : block ';'
                              ;
+
+// implemented
 procBody                     : 'forward' ';' (functionDirective)*   // CHECKEN ; en directive plaats!
                              | 'external' ('name' expression | 'index' expression)* (functionDirective)* // CHECKEN directive plaats
                              | block ';'
@@ -554,6 +557,7 @@ customAttributeNamedCall     : ( namespacedQualifiedIdent | paramName ) ('(' (ex
 //****************************
 
 // Базовое выражение
+// implemented ExpressionAst
 expression                   : anonymousExpression
                              | simpleExpression //Просто для примера как не надо: (relOp simpleExpression)? ('=' expression)?   //CHANGED, added expression for: "if( functionCall(x, 7+66) = true ) then" syntax
                              ;
