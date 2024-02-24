@@ -1,4 +1,4 @@
-// Generated from C:/code/other/delphi-parser/src/main/resources/Delphi.g4 by ANTLR 4.13.1
+// Generated from /home/user/code/delphi/delphi-parser/src/main/resources/Delphi.g4 by ANTLR 4.13.1
 package xyz.cofe.delphi.parser;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 

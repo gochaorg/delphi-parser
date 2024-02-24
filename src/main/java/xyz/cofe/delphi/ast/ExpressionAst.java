@@ -17,8 +17,6 @@ public interface ExpressionAst extends AstNode,
                                                                  SrcPos {
     }
 
-    String text();
-
     static ExpressionAst of(DelphiParser.ExpressionContext exp) {
         if (exp == null) throw new IllegalArgumentException("exp==null");
         return new Stub(exp.getText(), SourcePosition.of(exp));

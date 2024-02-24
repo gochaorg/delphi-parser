@@ -661,12 +661,14 @@ setSection                   : '[' (expression ((',' | '..') expression)*)? ']'
 //                             | '(' ( callParam (',' callParam)* )? ')'
 //                             ;
 
+// implemented
 expressionList               : expression (',' expression)*;
 
 //****************************
 //section statement
 //****************************
 
+// implemented StatementAst.java
 statement                    : ifStatement
                              | caseStatement
                              | repeatStatement
@@ -682,37 +684,63 @@ statement                    : ifStatement
                              | label ':' statement
                              | simpleStatement
                              ;
-ifStatement                  : 'if' expression 'then' statement ('else' statement)?
-                             | 'if' expression 'then' statement 'else' // TODO Delphi7 реально такое компилирует !! блИат
-                             | 'if' expression 'then' 'else' statement // TODO Delphi7 реально такое компилирует !!
+
+// implemented StatementAst.java
+ifStatement                  : 'if' expression 'then' positive=statement ('else' negative=statement)?
+                             | 'if' expression 'then' positive=statement 'else' // TODO Delphi7 реально такое компилирует !! блИат
+                             | 'if' expression 'then' 'else' negative=statement // TODO Delphi7 реально такое компилирует !!
                              | 'if' expression 'then' // TODO Delphi7 реально такое компилирует !!
                              ;
+
+// implemented StatementAst.java
 caseStatement                : 'case' expression 'of' (caseItem)* ('else' statementList (';')?)? 'end'
                              ;
+
+// implemented StatementAst.java
 //caseItem                     : caseLabel (',' caseLabel)* ':' statement (';')? // checken of ; sep of scheider is //TODO <- херня какая-то
 caseItem                     : caseLabel (',' caseLabel)* ':' ( statement (';')? | ';' )
                              ;
+
+// implemented StatementAst.java
 caseLabel                    : expression ('..' expression)?
                              ;
+
+// implemented StatementAst.java
 repeatStatement              : 'repeat' statementList 'until' cond=expression
                              ;
+
+// implemented StatementAst.java
 whileStatement               : 'while' cond=expression 'do' ( ';' | statement ) ?
                              ;
+
+// implemented StatementAst.java
 forStatement                 : 'for' iterValue=atom ':=' start=expression 'to' end=expression 'do' statement
                              | 'for' iterValue=atom ':=' startBig=expression 'downto' endSmall=expression 'do' statement
                              | 'for' iterValue=atom 'in' source=expression 'do' statement
                              ;
+
+// implemented StatementAst.java
 withStatement                : 'with' withItem 'do' statement
                              ;
+
+// implemented StatementAst.java
 withItem                     : expression 'as' ident       //ADDED
                              | expression (',' expression)*
                              ;
+
+// implemented StatementAst.java
 compoundStatement            : 'begin' statementList 'end'
                              ;
+
+// implemented StatementAst.java
 statementList                : (statement)? (';' (statement)?)*
                              ;
+
+// implemented StatementAst.java
 simpleStatement              : simpleExpression (':=' ('inherited')? assignSource=expression) ?
                              ;
+
+// implemented StatementAst.java
 gotoStatement                : 'goto' label
                              | 'exit' ('(' expression ')')?   
                              | ( 'break'                          
@@ -721,17 +749,21 @@ gotoStatement                : 'goto' label
 //****************************
 //section constExpression
 //****************************
+
+// implemented ConstSectionAst
 constExpression              : '(' recordConstExpression (';' recordConstExpression)* ';'? ')' //CHANGED reversed order
                              | '(' constExpression (',' constExpression)* ')'
                              | expression
                              ;
+
+// implemented ConstSectionAst
 recordConstExpression        : ident ':' constExpression
                              ;
 //****************************
 //section exceptionStatement
 //****************************
-tryStatement                 : 'try' statementList 'except' except=handlerList 'end'
-                             | 'try' statementList 'finally' final=statementList 'end'
+tryStatement                 : 'try' actions=statementList 'except' except=handlerList 'end'
+                             | 'try' actions=statementList 'finally' final=statementList 'end'
                              ;
 handlerList                  : (handler)* ('else' statementList)?
                              | statementList
@@ -744,7 +776,7 @@ handlerIdent                 : Alpha ':'
 handlerStatement             : statement (';')?
                              | ';'
                              ;
-raiseStatement               : 'raise' (expression)? (AT atExp=expression)? // CHECKEN!
+raiseStatement               : 'raise' (base=expression)? (AT atExp=expression)? // CHECKEN!
                              ;           
 //****************************
 //section AssemblerStatement

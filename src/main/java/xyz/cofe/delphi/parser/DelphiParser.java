@@ -1,4 +1,4 @@
-// Generated from C:/code/other/delphi-parser/src/main/resources/Delphi.g4 by ANTLR 4.13.1
+// Generated from /home/user/code/delphi/delphi-parser/src/main/resources/Delphi.g4 by ANTLR 4.13.1
 package xyz.cofe.delphi.parser;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -13480,6 +13480,8 @@ public class DelphiParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class IfStatementContext extends ParserRuleContext {
+		public StatementContext positive;
+		public StatementContext negative;
 		public TerminalNode IF() { return getToken(DelphiParser.IF, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
@@ -13528,7 +13530,7 @@ public class DelphiParser extends Parser {
 				setState(2001);
 				match(THEN);
 				setState(2002);
-				statement();
+				((IfStatementContext)_localctx).positive = statement();
 				setState(2005);
 				_errHandler.sync(this);
 				switch ( getInterpreter().adaptivePredict(_input,246,_ctx) ) {
@@ -13537,7 +13539,7 @@ public class DelphiParser extends Parser {
 					setState(2003);
 					match(ELSE);
 					setState(2004);
-					statement();
+					((IfStatementContext)_localctx).negative = statement();
 					}
 					break;
 				}
@@ -13553,7 +13555,7 @@ public class DelphiParser extends Parser {
 				setState(2009);
 				match(THEN);
 				setState(2010);
-				statement();
+				((IfStatementContext)_localctx).positive = statement();
 				setState(2011);
 				match(ELSE);
 				}
@@ -13570,7 +13572,7 @@ public class DelphiParser extends Parser {
 				setState(2016);
 				match(ELSE);
 				setState(2017);
-				statement();
+				((IfStatementContext)_localctx).negative = statement();
 				}
 				break;
 			case 4:
@@ -14838,17 +14840,18 @@ public class DelphiParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class TryStatementContext extends ParserRuleContext {
+		public StatementListContext actions;
 		public HandlerListContext except;
 		public StatementListContext final_;
 		public TerminalNode TRY() { return getToken(DelphiParser.TRY, 0); }
+		public TerminalNode EXCEPT() { return getToken(DelphiParser.EXCEPT, 0); }
+		public TerminalNode END() { return getToken(DelphiParser.END, 0); }
 		public List<StatementListContext> statementList() {
 			return getRuleContexts(StatementListContext.class);
 		}
 		public StatementListContext statementList(int i) {
 			return getRuleContext(StatementListContext.class,i);
 		}
-		public TerminalNode EXCEPT() { return getToken(DelphiParser.EXCEPT, 0); }
-		public TerminalNode END() { return getToken(DelphiParser.END, 0); }
 		public HandlerListContext handlerList() {
 			return getRuleContext(HandlerListContext.class,0);
 		}
@@ -14885,7 +14888,7 @@ public class DelphiParser extends Parser {
 				setState(2190);
 				match(TRY);
 				setState(2191);
-				statementList();
+				((TryStatementContext)_localctx).actions = statementList();
 				setState(2192);
 				match(EXCEPT);
 				setState(2193);
@@ -14900,7 +14903,7 @@ public class DelphiParser extends Parser {
 				setState(2196);
 				match(TRY);
 				setState(2197);
-				statementList();
+				((TryStatementContext)_localctx).actions = statementList();
 				setState(2198);
 				match(FINALLY);
 				setState(2199);
@@ -15315,15 +15318,16 @@ public class DelphiParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class RaiseStatementContext extends ParserRuleContext {
+		public ExpressionContext base;
 		public ExpressionContext atExp;
 		public TerminalNode RAISE() { return getToken(DelphiParser.RAISE, 0); }
+		public TerminalNode AT() { return getToken(DelphiParser.AT, 0); }
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
 		}
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
 		}
-		public TerminalNode AT() { return getToken(DelphiParser.AT, 0); }
 		public RaiseStatementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -15357,7 +15361,7 @@ public class DelphiParser extends Parser {
 			case 1:
 				{
 				setState(2240);
-				expression();
+				((RaiseStatementContext)_localctx).base = expression();
 				}
 				break;
 			}

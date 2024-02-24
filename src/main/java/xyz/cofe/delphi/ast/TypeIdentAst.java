@@ -3,6 +3,7 @@ package xyz.cofe.delphi.ast;
 import org.antlr.v4.runtime.RuleContext;
 import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
+import xyz.cofe.delphi.ast.impl.Ident;
 import xyz.cofe.delphi.parser.DelphiParser;
 import xyz.cofe.delphi.tsys.tm.TypeName;
 
@@ -107,6 +108,14 @@ public record TypeIdentAst(
         return new TypeIdentAst(
             name,
             genParams
+        );
+    }
+
+    public static TypeIdentAst of(DelphiParser.TypeIdContext ctx){
+        if( ctx==null ) throw new IllegalArgumentException("ctx==null");
+        return new TypeIdentAst(
+            Ident.identifier(ctx),
+            ImList.of()
         );
     }
 }
