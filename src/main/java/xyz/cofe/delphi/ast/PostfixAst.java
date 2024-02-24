@@ -19,11 +19,6 @@ public sealed interface PostfixAst extends AtomAst {
                 SourcePosition.of(ctx)
             );
         }
-
-        @Override
-        public String text() {
-            return "???";
-        }
     }
 
     record Deref(AtomAst base, SourcePosition position)
@@ -36,11 +31,6 @@ public sealed interface PostfixAst extends AtomAst {
                 base,
                 SourcePosition.of(ctx)
             );
-        }
-
-        @Override
-        public String text() {
-            return "???";
         }
     }
 
@@ -82,11 +72,6 @@ public sealed interface PostfixAst extends AtomAst {
                 SourcePosition.of(ctx)
             );
         }
-
-        @Override
-        public String text() {
-            return "???";
-        }
     }
 
     record FieldAccess(AtomAst base, String fieldName, SourcePosition position)
@@ -101,11 +86,6 @@ public sealed interface PostfixAst extends AtomAst {
                 SourcePosition.of(ctx)
             );
         }
-
-        @Override
-        public String text() {
-            return "???";
-        }
     }
 
     record GenericCallParams(AtomAst base, ImList<TypeIdentAst> genericParameters, SourcePosition position)
@@ -119,11 +99,6 @@ public sealed interface PostfixAst extends AtomAst {
                 ImList.of(ctx.genericTypeIdent()).map(TypeIdentAst::of),
                 SourcePosition.of(ctx)
             );
-        }
-
-        @Override
-        public String text() {
-            return "???";
         }
     }
 

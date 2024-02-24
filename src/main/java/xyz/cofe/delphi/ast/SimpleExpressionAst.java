@@ -165,11 +165,6 @@ public sealed interface SimpleExpressionAst extends ExpressionAst {
         implements SimpleExpressionAst,
                    SrcPos,
                    AstNode {
-        @Override
-        public String text() {
-            return "???";
-        }
-
         public static ExpressionAst of(DelphiParser.RelOpContext ctx) {
             if (ctx == null) throw new IllegalArgumentException("ctx==null");
 
@@ -240,11 +235,6 @@ public sealed interface SimpleExpressionAst extends ExpressionAst {
     record Unary(Operator op, ExpressionAst expression, SourcePosition position)
         implements SimpleExpressionAst,
                    SrcPos {
-        @Override
-        public String text() {
-            return "???";
-        }
-
         public static ExpressionAst of(DelphiParser.UnaryOpContext ctx) {
             if (ctx == null) throw new IllegalArgumentException("ctx==null");
             if (ctx.op != null && !ctx.op.getText().isEmpty()

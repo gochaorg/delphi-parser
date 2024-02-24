@@ -1,6 +1,7 @@
 package xyz.cofe.delphi.tsys.tm;
 
 import xyz.cofe.coll.im.ImList;
+import xyz.cofe.delphi.ast.ExpressionAst;
 
 import java.util.Optional;
 
@@ -23,13 +24,13 @@ public sealed interface PropertySpecifier {
     record WriteOnly() implements PropertySpecifier {
     }
 
-    record DispID(String expression) implements PropertySpecifier {
+    record DispID(ExpressionAst expression) implements PropertySpecifier {
     }
 
-    record Stored(String expression) implements PropertySpecifier {
+    record Stored(ExpressionAst expression) implements PropertySpecifier {
     }
 
-    record Default(Optional<String> expression) implements PropertySpecifier {
+    record Default(Optional<ExpressionAst> expression) implements PropertySpecifier {
     }
 
     record NoDefault() implements PropertySpecifier {

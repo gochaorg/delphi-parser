@@ -390,13 +390,13 @@ public class TypeImporter {
             return new PropertySpecifier.WriteOnly();
         }
         if (spec instanceof ClassPropertyAst.DispID r) {
-            return new PropertySpecifier.DispID(r.expression().text());
+            return new PropertySpecifier.DispID(r.expression());
         }
         if (spec instanceof ClassPropertyAst.Stored s) {
-            return new PropertySpecifier.Stored(s.expression().text());
+            return new PropertySpecifier.Stored(s.expression());
         }
         if (spec instanceof ClassPropertyAst.Default d) {
-            return new PropertySpecifier.Default(d.expression().map(ExpressionAst::text));
+            return new PropertySpecifier.Default(d.expression());
         }
         if (spec instanceof ClassPropertyAst.NoDefault n) {
             return new PropertySpecifier.NoDefault();

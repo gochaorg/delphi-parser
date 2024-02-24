@@ -73,10 +73,6 @@ sealed public interface AtomAst
     record NestedExpression(ExpressionAst expression, SourcePosition position) implements AtomAst,
                                                                                           SrcPos,
                                                                                           AstNode {
-        @Override
-        public String text() {
-            return "(" + expression.text() + ")";
-        }
     }
 
     /**
@@ -91,11 +87,6 @@ sealed public interface AtomAst
     ) implements AtomAst,
                  SrcPos,
                  AstNode {
-        @Override
-        public String text() {
-            return Long.toString(value);
-        }
-
         public static IntNumber of(DelphiParser.IntNumContext ctx) {
             if (ctx == null) throw new IllegalArgumentException("ctx==null");
             if (ctx.TkIntNum() != null && !ctx.TkIntNum().getText().isBlank()) {
@@ -123,11 +114,6 @@ sealed public interface AtomAst
     ) implements AtomAst,
                  SrcPos,
                  AstNode {
-        @Override
-        public String text() {
-            return Double.toString(value);
-        }
-
         public static FloatNumber of(DelphiParser.RealNumContext ctx) {
             if (ctx == null) throw new IllegalArgumentException("ctx==null");
             return new FloatNumber(
@@ -149,12 +135,6 @@ sealed public interface AtomAst
     ) implements AtomAst,
                  SrcPos,
                  AstNode {
-
-        @Override
-        public String text() {
-            return "???";
-        }
-
         private static final String hex = "0123456789abcdefABCDEF";
         private static final String dec = "0123456789";
 
@@ -304,10 +284,6 @@ sealed public interface AtomAst
     record InheritedContext(SourcePosition position) implements AtomAst,
                                                                 SrcPos,
                                                                 AstNode {
-        @Override
-        public String text() {
-            return "inherited";
-        }
     }
 
     /**
@@ -331,10 +307,6 @@ sealed public interface AtomAst
     record IdentRef(String id, SourcePosition position) implements AtomAst,
                                                                    SrcPos,
                                                                    AstNode {
-        @Override
-        public String text() {
-            return "???";
-        }
     }
 
     /**
@@ -345,10 +317,6 @@ sealed public interface AtomAst
     record NilValue(SourcePosition position) implements AtomAst,
                                                         SrcPos,
                                                         AstNode {
-        @Override
-        public String text() {
-            return "???";
-        }
     }
 
     /**
@@ -360,10 +328,6 @@ sealed public interface AtomAst
                                                              AtomAst,
                                                              SrcPos,
                                                              AstNode {
-        @Override
-        public String text() {
-            return "???";
-        }
     }
 
     /**
@@ -372,11 +336,6 @@ sealed public interface AtomAst
     sealed interface DelphiSet extends SrcPos,
                                        AtomAst,
                                        AstNode {
-        @Override
-        default String text() {
-            return "???";
-        }
-
         record One(ExpressionAst expression, SourcePosition position) implements DelphiSet {
         }
 

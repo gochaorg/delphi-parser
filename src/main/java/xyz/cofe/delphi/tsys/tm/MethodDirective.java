@@ -1,5 +1,6 @@
 package xyz.cofe.delphi.tsys.tm;
 
+import xyz.cofe.delphi.ast.ExpressionAst;
 import xyz.cofe.delphi.ast.FDirective;
 
 /**
@@ -12,7 +13,7 @@ public sealed interface MethodDirective {
     record Overload() implements MethodDirective {
         public String toString() { return "Overload"; }
     }
-    record Message(String expression) implements MethodDirective {
+    record Message(ExpressionAst expression) implements MethodDirective {
         public String toString() { return "Message("+expression+")"; }
     }
     record Static() implements MethodDirective {
@@ -66,14 +67,14 @@ public sealed interface MethodDirective {
     record Near() implements MethodDirective {
         public String toString() { return "Near"; }
     }
-    record DispID(String expression) implements MethodDirective {
+    record DispID(ExpressionAst expression) implements MethodDirective {
         public String toString() { return "DispID("+expression+")"; }
     }
 
     public static MethodDirective of(FDirective.MethodDirective dir) {
         if( dir instanceof FDirective.Reintroduce )return new Reintroduce();
         if( dir instanceof FDirective.Overload )return new Overload();
-        if( dir instanceof FDirective.Message m )return new Message(m.expression().text());
+        if( dir instanceof FDirective.Message m )return new Message(m.expression());
         if( dir instanceof FDirective.Static )return new Static();
         if( dir instanceof FDirective.Dynamic )return new Dynamic();
         if( dir instanceof FDirective.Override )return new Override();
@@ -91,7 +92,7 @@ public sealed interface MethodDirective {
         if( dir instanceof FDirective.Far )return new Far();
         if( dir instanceof FDirective.Local )return new Local();
         if( dir instanceof FDirective.Near )return new Near();
-        if( dir instanceof FDirective.DispID d )return new DispID(d.expression().text());
+        if( dir instanceof FDirective.DispID d )return new DispID(d.expression());
         return null;
     }
 }
