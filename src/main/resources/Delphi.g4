@@ -762,25 +762,39 @@ recordConstExpression        : ident ':' constExpression
 //****************************
 //section exceptionStatement
 //****************************
+
+// implemented StatementAst.java
 tryStatement                 : 'try' actions=statementList 'except' except=handlerList 'end'
                              | 'try' actions=statementList 'finally' final=statementList 'end'
                              ;
+
+// implemented StatementAst.java
 handlerList                  : (handler)* ('else' statementList)?
                              | statementList
                              ;
+
+// implemented StatementAst.java
 handler                      : 'on' (handlerIdent)? typeId 'do' handlerStatement  //CHANGED - ; is not required ; handlerIdent not required, example:  "on einvalidoperation do;"
                              ;
+
+// implemented StatementAst.java
 handlerIdent                 : Alpha ':'
                              | ident ':'
                              ;
+
+// implemented StatementAst.java
 handlerStatement             : statement (';')?
                              | ';'
                              ;
+
+// implemented StatementAst.java
 raiseStatement               : 'raise' (base=expression)? (AT atExp=expression)? // CHECKEN!
                              ;           
 //****************************
 //section AssemblerStatement
 //****************************
+
+// implemented StatementAst.java
 assemblerStatement           : 'asm' ~('end')* 'end'    //ADDED we don't realy care about assembler statements, since they don't contribute to
                              ;                //any measure, just skip, allow all
 //****************************
