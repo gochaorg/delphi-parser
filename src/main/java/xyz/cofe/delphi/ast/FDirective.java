@@ -213,6 +213,17 @@ public sealed interface FDirective {
 
             record Name(ConstSectionAst.ConstExpression index) implements Specifier {
             }
+
+            static Specifier of(DelphiParser.ExternalSpecifierContext ctx) {
+                if (ctx == null) throw new IllegalArgumentException("ctx==null");
+                if (ctx.INDEX() != null) {
+                    return new Index(ConstSectionAst.ConstExpression.of(ctx.constExpression()));
+                }
+                if (ctx.NAME() != null) {
+                    return new Name(ConstSectionAst.ConstExpression.of(ctx.constExpression()));
+                }
+                throw AstParseError.unExpected(ctx);
+            }
         }
     }
 
@@ -372,6 +383,135 @@ public sealed interface FDirective {
             if (ctx.hintingDirective().LIBRARY() != null && !ctx.hintingDirective().LIBRARY().getText().isEmpty())
                 return new Library(SourcePosition.of(ctx));
         }
+        throw AstParseError.unExpected(ctx);
+    }
+
+    static ImList<FunctionDirective> of(DelphiParser.FunctionDirectiveContext ctx) {
+        if (ctx == null) throw new IllegalArgumentException("ctx==null");
+
+        if (ctx.overloadDirective() != null && !ctx.overloadDirective().isEmpty())
+            return ImList.of(new Overload(SourcePosition.of(ctx)));
+
+        if (ctx.inlineDirective() != null && !ctx.inlineDirective().isEmpty() && ctx.inlineDirective().INLINE() != null)
+            return ImList.of(new Inline(SourcePosition.of(ctx)));
+
+        if (ctx.inlineDirective() != null && !ctx.inlineDirective().isEmpty() && ctx.inlineDirective().ASSEMBLER() != null)
+            return ImList.of(new Assembler(SourcePosition.of(ctx)));
+
+        if (ctx.callConvention() != null && !ctx.callConvention().isEmpty() && ctx.callConvention().CDECL() != null)
+            return ImList.of(new Cdecl(SourcePosition.of(ctx)));
+
+        if (ctx.callConvention() != null && !ctx.callConvention().isEmpty() && ctx.callConvention().PASCAL() != null)
+            return ImList.of(new Pascal(SourcePosition.of(ctx)));
+
+        if (ctx.callConvention() != null && !ctx.callConvention().isEmpty() && ctx.callConvention().REGISTER() != null)
+            return ImList.of(new Register(SourcePosition.of(ctx)));
+
+        if (ctx.callConvention() != null && !ctx.callConvention().isEmpty() && ctx.callConvention().SAFECALL() != null)
+            return ImList.of(new SafeCall(SourcePosition.of(ctx)));
+
+        if (ctx.callConvention() != null && !ctx.callConvention().isEmpty() && ctx.callConvention().STDCALL() != null)
+            return ImList.of(new StdCall(SourcePosition.of(ctx)));
+
+        if (ctx.callConvention() != null && !ctx.callConvention().isEmpty() && ctx.callConvention().EXPORT() != null)
+            return ImList.of(new Export(SourcePosition.of(ctx)));
+
+        if (ctx.externalDirective() != null) {
+            FunctionDirective fdir = null;
+
+            if (ctx.externalDirective().EXTERNAL() != null) {
+                External ext = null;
+
+                if (ctx.externalDirective().constExpression() != null) {
+                    var spec =
+                        ctx.externalDirective().externalSpecifier() != null
+                            ? ImList.of(ctx.externalDirective().externalSpecifier()).map(External.Specifier::of)
+                            : ImList.<External.Specifier>of();
+
+                    ext = new External(
+                        Optional.of(
+                            ConstSectionAst.ConstExpression.of(ctx.externalDirective().constExpression())
+                        ),
+                        spec,
+                        SourcePosition.of(ctx.externalDirective())
+                    );
+                } else {
+                    ext = new External(
+                        Optional.empty(),
+                        ImList.of(),
+                        SourcePosition.of(ctx)
+                    );
+                }
+
+                fdir = ext;
+            } else {
+                fdir = new VarArgs(SourcePosition.of(ctx));
+            }
+
+            FunctionDirective callConv = null;
+
+            if (ctx.callConventionNoSemi() != null && !ctx.callConventionNoSemi().isEmpty() && ctx.callConventionNoSemi().CDECL() != null)
+                callConv = new Cdecl(SourcePosition.of(ctx));
+
+            if (ctx.callConventionNoSemi() != null && !ctx.callConventionNoSemi().isEmpty() && ctx.callConventionNoSemi().PASCAL() != null)
+                callConv = new Pascal(SourcePosition.of(ctx));
+
+            if (ctx.callConventionNoSemi() != null && !ctx.callConventionNoSemi().isEmpty() && ctx.callConventionNoSemi().REGISTER() != null)
+                callConv = new Register(SourcePosition.of(ctx));
+
+            if (ctx.callConventionNoSemi() != null && !ctx.callConventionNoSemi().isEmpty() && ctx.callConventionNoSemi().SAFECALL() != null)
+                callConv = new SafeCall(SourcePosition.of(ctx));
+
+            if (ctx.callConventionNoSemi() != null && !ctx.callConventionNoSemi().isEmpty() && ctx.callConventionNoSemi().STDCALL() != null)
+                callConv = new StdCall(SourcePosition.of(ctx));
+
+            if (ctx.callConventionNoSemi() != null && !ctx.callConventionNoSemi().isEmpty() && ctx.callConventionNoSemi().EXPORT() != null)
+                callConv = new Export(SourcePosition.of(ctx));
+
+            if (callConv != null) {
+                return ImList.of(callConv, fdir);
+            }
+
+            return ImList.of(fdir);
+        }
+
+        if (ctx.oldCallConventionDirective() != null) {
+            if (ctx.oldCallConventionDirective().FAR() != null) return ImList.of(new Far(SourcePosition.of(ctx)));
+            if (ctx.oldCallConventionDirective().LOCAL() != null) return ImList.of(new Local(SourcePosition.of(ctx)));
+            if (ctx.oldCallConventionDirective().NEAR() != null) return ImList.of(new Near(SourcePosition.of(ctx)));
+        }
+
+        if (ctx.hintingDirective() != null) {
+            if (ctx.hintingDirective().DEPRECATED() != null) {
+                if (ctx.hintingDirective().stringFactor() != null) {
+                    return ImList.of(
+                        new Depricated(
+                            Optional.of(ctx.hintingDirective().stringFactor().getText()), // TODO decode!!
+                            SourcePosition.of(ctx))
+                    );
+                }
+
+                return ImList.of(
+                    new Depricated(Optional.empty(), SourcePosition.of(ctx))
+                );
+            }
+
+            if(ctx.hintingDirective().EXPERIMENTAL()!=null)
+                return ImList.of(new Experimental(SourcePosition.of(ctx)));
+
+            if(ctx.hintingDirective().PLATFORM()!=null)
+                return ImList.of(new Platform(SourcePosition.of(ctx)));
+
+            if(ctx.hintingDirective().LIBRARY()!=null)
+                return ImList.of(new Library(SourcePosition.of(ctx)));
+        }
+
+        if( ctx.UNSAFE()!=null )
+            return ImList.of( new Unsafe(SourcePosition.of(ctx)));
+
+        if( ctx.DELAYED()!=null )
+            return ImList.of( new Delayed(SourcePosition.of(ctx)));
+
         throw AstParseError.unExpected(ctx);
     }
 }

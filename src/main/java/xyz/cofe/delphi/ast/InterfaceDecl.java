@@ -14,7 +14,6 @@ public sealed interface InterfaceDecl
     ProcDeclAst,
     ExportedProcHeadingAst,
     ConstSectionAst,
-    ExportsSectionAst,
     VarSectionAst {
     static InterfaceDecl of(DelphiParser.InterfaceDeclContext itf) {
         if (itf.typeSection() != null && !itf.typeSection().isEmpty()) {

@@ -109,13 +109,21 @@ interfaceDecl                : procDecl
                              ;
 labelDeclSection             : 'label' label (',' label)* ';'
                              ;
+
+// implemented ConstSectionAst
 constSection                 : constKey (constDeclaration)*  //CHANGED, erased one constDeclaration, for: "const {$include versioninfo.inc }"
                              ;
+
+// implemented
 constKey                     : 'const'
                              | 'resourcestring'
                              ;
+
+// implemented
 constDeclaration             : (customAttribute)* ident (':' typeDecl)? '=' constExpression (hintingDirective)* ';'
                              ;
+
+// implemented
 typeSection                  : 'type' typeDeclaration (typeDeclaration)* 
                              ;
 
@@ -145,13 +153,19 @@ varValueSpec                 : 'absolute' ident
                              //    DispParams: TDispParams = ();
 
                              ;
+
+// implemented
 exportsSection               : 'exports' ident exportItem (',' ident exportItem)* ';'
                              ;
-exportItem                   : ('(' (formalParameterList)? ')')? (INDEX expression)? (NAME expression)? ('resident')?
+
+// implemented
+exportItem                   : ('(' (formalParameterList)? ')')? (INDEX index1=expression)? (NAME name1=expression)? ('resident')?
                              ;
 //****************************
 //section type
 //****************************
+
+// implemented
 typeDecl                     : strucType
                              | pointerType
                              | stringType
@@ -447,14 +461,19 @@ visibility                   : (STRICT)? 'protected'
 //****************************
 //section procedure
 //****************************
+
+//implemented
 //TODO Как так procedure имеет возвращаемый тип, а function нет ???
+//TODO Проверить на счет перестановки procedure <-> function
 exportedProcHeading          : 'procedure' ident (formalParameterSection)? ':' (customAttribute)* typeDecl ';' (functionDirective)*
                              | 'function' ident (formalParameterSection)? ';' (functionDirective)*
                              ;
 
+// implemented
 methodDecl                   : methodDeclHeading ';' (methodDirective)* (methodBody)?
                              ;
 
+// implemented
 methodDeclHeading            : (customAttribute)* ('class')?  methodKey methodName (formalParameterSection)?
                              | (customAttribute)* ('class')? 'function' methodName (formalParameterSection)? (':' (customAttribute)* typeDecl)?
                              | (customAttribute)* 'class' 'operator' methodName (formalParameterSection)? (':' (customAttribute)* typeDecl)?
@@ -470,10 +489,15 @@ methodKey                    : 'procedure'
 methodName                   : className=ident (classTArgs=genericDefinition)?
                                ('.' nestedName=ident (nestedTArgs=genericDefinition)?)?
                                '.' methName=ident (methTArgs=genericDefinition)?
-                             ;                             
+                             ;
+
+// not implemented - - body!!!
 //procDecl                     : procDeclHeading (functionDirective)* ';' (procBody)?     //CHANGED
 procDecl                     : procDeclHeading ( ';'? funcDirective (';' funcDirective)* )? ';'? procBody? //TODO блять, точка с запятой - вообще по случайной логике раставляются
                              ;
+
+
+// impl
 procDeclHeading              : (customAttribute)* 'procedure' ident (formalParameterSection)?             //CHANGED
                              | (customAttribute)* 'function' ident (formalParameterSection)? ':' typeDecl
                              ;
@@ -485,7 +509,9 @@ formalParameterSection       : '(' (formalParameterList)? ')'
 // impl
 formalParameterList          : formalParameter (';' formalParameter)*
                              ;
-formalParameter              : //(customAttribute)? 
+
+// impl
+formalParameter              : //(customAttribute)?
                                (parmType)? identListFlat (':' typeDecl)? ('=' expression)? 
                //expressions was cut out, beacause we dont have to know default variable values; they were causing troubles with DelphiCodeAnalyser
                              ;
@@ -914,6 +940,8 @@ dispIDDirective              : 'dispid' expression ';'
 //****************************
 ////section general
 //****************************
+
+// implemented
 ident                        : TkIdentifier
                              | AMBER TkIdentifier
                              | usedKeywordsAsNames

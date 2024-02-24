@@ -2983,17 +2983,19 @@ public class DelphiParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class ExportItemContext extends ParserRuleContext {
+		public ExpressionContext index1;
+		public ExpressionContext name1;
 		public TerminalNode LPAREN() { return getToken(DelphiParser.LPAREN, 0); }
 		public TerminalNode RPAREN() { return getToken(DelphiParser.RPAREN, 0); }
 		public TerminalNode INDEX() { return getToken(DelphiParser.INDEX, 0); }
+		public TerminalNode NAME() { return getToken(DelphiParser.NAME, 0); }
+		public TerminalNode RESIDENT() { return getToken(DelphiParser.RESIDENT, 0); }
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
 		}
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
 		}
-		public TerminalNode NAME() { return getToken(DelphiParser.NAME, 0); }
-		public TerminalNode RESIDENT() { return getToken(DelphiParser.RESIDENT, 0); }
 		public FormalParameterListContext formalParameterList() {
 			return getRuleContext(FormalParameterListContext.class,0);
 		}
@@ -3053,7 +3055,7 @@ public class DelphiParser extends Parser {
 				setState(689);
 				match(INDEX);
 				setState(690);
-				expression();
+				((ExportItemContext)_localctx).index1 = expression();
 				}
 			}
 
@@ -3065,7 +3067,7 @@ public class DelphiParser extends Parser {
 				setState(693);
 				match(NAME);
 				setState(694);
-				expression();
+				((ExportItemContext)_localctx).name1 = expression();
 				}
 			}
 
