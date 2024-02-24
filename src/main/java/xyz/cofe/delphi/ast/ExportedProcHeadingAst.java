@@ -3,7 +3,7 @@ package xyz.cofe.delphi.ast;
 import xyz.cofe.coll.im.ImList;
 import xyz.cofe.delphi.parser.DelphiParser;
 
-public sealed interface ExportedProcHeadingAst extends InterfaceDecl {
+public sealed interface ExportedProcHeadingAst extends InterfaceDecl, DeclSectionAst {
     record Procedure(
         String name,
         ImList<ArgumentAst> params,

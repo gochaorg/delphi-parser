@@ -11,7 +11,7 @@ import java.util.Optional;
  * Секция переменных
  */
 public sealed interface VarSectionAst
-    extends InterfaceDecl {
+    extends InterfaceDecl, DeclSectionAst {
 
     /**
      * Перечень переменных
@@ -29,7 +29,7 @@ public sealed interface VarSectionAst
                  AstNode,
                  SrcPos,
                  Commented<Variables> {
-        static Variables of(DelphiParser.VarSectionContext ctx) {
+        public static Variables of(DelphiParser.VarSectionContext ctx) {
             var key = VarKey.Var;
 
             if (ctx.varKey() != null && ctx.varKey().getText() != null) {

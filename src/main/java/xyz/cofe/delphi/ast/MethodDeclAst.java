@@ -11,7 +11,8 @@ import java.util.Optional;
  * Декларация метода класса
  */
 public sealed interface MethodDeclAst extends InterfaceDecl,
-                                              SrcPos {
+                                              SrcPos,
+                                              DeclSectionAst {
     /**
      * Имя метода
      */
@@ -116,6 +117,7 @@ public sealed interface MethodDeclAst extends InterfaceDecl,
      * @param name       Имя конструктора
      * @param arguments  Аргументы
      * @param directives Директивы
+     * @param body       Тело
      * @param position   Позиция в исходниках
      * @param comments   Комментарии
      */
@@ -124,13 +126,14 @@ public sealed interface MethodDeclAst extends InterfaceDecl,
         Name name,
         ImList<ArgumentAst> arguments,
         ImList<FDirective.MethodDirective> directives,
+        Optional<BodyAst> body,
         SourcePosition position,
         ImList<Comment> comments
     ) implements MethodDeclAst,
                  Commented<Constructor> {
         @Override
         public Constructor withComments(ImList<Comment> comments) {
-            return new Constructor(statik, name, arguments, directives, position, comments);
+            return new Constructor(statik, name, arguments, directives, body, position, comments);
         }
     }
     //endregion
@@ -144,6 +147,7 @@ public sealed interface MethodDeclAst extends InterfaceDecl,
      * @param name       Имя деструктора
      * @param arguments  Аргументы
      * @param directives Директивы
+     * @param body       Тело
      * @param position   Позиция в исходниках
      * @param comments   Комментарии
      */
@@ -152,13 +156,14 @@ public sealed interface MethodDeclAst extends InterfaceDecl,
         Name name,
         ImList<ArgumentAst> arguments,
         ImList<FDirective.MethodDirective> directives,
+        Optional<BodyAst> body,
         SourcePosition position,
         ImList<Comment> comments
     ) implements MethodDeclAst,
                  Commented<Destructor> {
         @Override
         public Destructor withComments(ImList<Comment> comments) {
-            return new Destructor(statik, name, arguments, directives, position, comments);
+            return new Destructor(statik, name, arguments, directives, body, position, comments);
         }
     }
     //endregion
@@ -169,13 +174,14 @@ public sealed interface MethodDeclAst extends InterfaceDecl,
         Name name,
         ImList<ArgumentAst> arguments,
         ImList<FDirective.MethodDirective> directives,
+        Optional<BodyAst> body,
         SourcePosition position,
         ImList<Comment> comments
     ) implements MethodDeclAst,
                  Commented<Procedure> {
         @Override
         public Procedure withComments(ImList<Comment> comments) {
-            return new Procedure(statik, name, arguments, directives, position, comments);
+            return new Procedure(statik, name, arguments, directives, body, position, comments);
         }
     }
     //endregion
@@ -187,13 +193,14 @@ public sealed interface MethodDeclAst extends InterfaceDecl,
         ImList<ArgumentAst> arguments,
         TypeDeclAst returns,
         ImList<FDirective.MethodDirective> directives,
+        Optional<BodyAst> body,
         SourcePosition position,
         ImList<Comment> comments
     ) implements MethodDeclAst,
                  Commented<Function> {
         @Override
         public Function withComments(ImList<Comment> comments) {
-            return new Function(statik, name, arguments, returns, directives, position, comments);
+            return new Function(statik, name, arguments, returns, directives, body, position, comments);
         }
     }
     //endregion
@@ -204,13 +211,14 @@ public sealed interface MethodDeclAst extends InterfaceDecl,
         ImList<ArgumentAst> arguments,
         TypeDeclAst returns,
         ImList<FDirective.MethodDirective> directives,
+        Optional<BodyAst> body,
         SourcePosition position,
         ImList<Comment> comments
     ) implements MethodDeclAst,
                  Commented<Operator> {
         @Override
         public Operator withComments(ImList<Comment> comments) {
-            return new Operator(name, arguments, returns, directives, position, comments);
+            return new Operator(name, arguments, returns, directives, body, position, comments);
         }
     }
     //endregion
@@ -239,6 +247,11 @@ public sealed interface MethodDeclAst extends InterfaceDecl,
                 ? ImListLinked.of(ctx.methodDirective()).map(FDirective::of)
                 : ImListLinked.<FDirective.MethodDirective>of();
 
+        Optional<BodyAst> body =
+            ctx.methodBody() != null && !ctx.methodBody().isEmpty()
+                ? Optional.of(BodyAst.of(ctx.methodBody().block()))
+                : Optional.empty();
+
         if (ctx.methodDeclHeading().methodKey() != null && !ctx.methodDeclHeading().methodKey().isEmpty()) {
             if (ctx.methodDeclHeading().methodKey().PROCEDURE() != null) {
                 return new Procedure(
@@ -246,6 +259,7 @@ public sealed interface MethodDeclAst extends InterfaceDecl,
                     name,
                     args,
                     directives,
+                    body,
                     SourcePosition.of(ctx),
                     ImListLinked.of()
                 );
@@ -255,6 +269,7 @@ public sealed interface MethodDeclAst extends InterfaceDecl,
                     name,
                     args,
                     directives,
+                    body,
                     SourcePosition.of(ctx),
                     ImListLinked.of()
                 );
@@ -264,6 +279,7 @@ public sealed interface MethodDeclAst extends InterfaceDecl,
                     name,
                     args,
                     directives,
+                    body,
                     SourcePosition.of(ctx),
                     ImListLinked.of()
                 );
@@ -277,6 +293,7 @@ public sealed interface MethodDeclAst extends InterfaceDecl,
                 args,
                 returns.get(),
                 directives,
+                body,
                 SourcePosition.of(ctx),
                 ImListLinked.of()
             );
@@ -286,6 +303,7 @@ public sealed interface MethodDeclAst extends InterfaceDecl,
                 args,
                 returns.get(),
                 directives,
+                body,
                 SourcePosition.of(ctx),
                 ImListLinked.of()
             );

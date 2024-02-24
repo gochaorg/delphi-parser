@@ -9,7 +9,8 @@ public record ExportSectionAst(
     ImList<Export> exports,
     SourcePosition position,
     ImList<Comment> comments
-) {
+) implements DeclSectionAst {
+
     public record Export(
         String ident,
         ImList<ArgumentAst> params,

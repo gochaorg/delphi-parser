@@ -9,7 +9,7 @@ import java.util.Optional;
 /**
  * Секция констант
  */
-public sealed interface ConstSectionAst extends InterfaceDecl {
+public sealed interface ConstSectionAst extends InterfaceDecl, DeclSectionAst {
     /**
      * Перечень констант
      *
@@ -31,7 +31,7 @@ public sealed interface ConstSectionAst extends InterfaceDecl {
             return new Constants(constants, key, position, comments);
         }
 
-        static Constants of(DelphiParser.ConstSectionContext ctx) {
+        public static Constants of(DelphiParser.ConstSectionContext ctx) {
             var key = ConstKey.Const;
 
             if (ctx.constKey() != null

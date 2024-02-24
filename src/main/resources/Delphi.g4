@@ -85,11 +85,17 @@ namespaceNameList            : namespaceName (',' namespaceName)* ';'
 //****************************
 //section declaration
 //****************************
+
+// implemented BodyAst
 block                        : (declSection)* (blockBody)
                              ;
+
+// implemented BlockBodyAst
 blockBody                    : compoundStatement
                              | assemblerStatement
                              ;
+
+// implemented DeclSectionAst
 declSection                  : labelDeclSection
                              | constSection
                              | typeSection
@@ -99,6 +105,7 @@ declSection                  : labelDeclSection
                              | procDecl
                              | exportsSection
                              ;
+
 interfaceDecl                : procDecl
                              | methodDecl
                              | typeSection
@@ -107,6 +114,8 @@ interfaceDecl                : procDecl
                              | exportsSection
                              | constSection
                              ;
+
+// implemented LabelDeclSectionAst
 labelDeclSection             : 'label' label (',' label)* ';'
                              ;
 
@@ -550,6 +559,7 @@ expression                   : anonymousExpression
                              ;
 
 // типа лямбды
+// implemented LambdaAst
 anonymousExpression          : 'procedure' (formalParameterSection)? block
                              | 'function' (formalParameterSection)? ':' typeDecl block
                              ;

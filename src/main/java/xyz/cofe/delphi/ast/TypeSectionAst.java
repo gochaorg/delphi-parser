@@ -12,7 +12,7 @@ import static xyz.cofe.delphi.impl.Indent.indent;
 public record TypeSectionAst(
     ImList<TypeDeclarationAst> types,
     SourcePosition position
-) implements InterfaceDecl, ClassItemAst, SrcPos, RecordItemAst
+) implements InterfaceDecl, ClassItemAst, SrcPos, RecordItemAst, DeclSectionAst
 {
     public String toString(){
         var sb = new StringBuilder();

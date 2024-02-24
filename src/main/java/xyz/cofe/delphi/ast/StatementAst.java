@@ -637,6 +637,7 @@ public sealed interface StatementAst permits StatementAst.Assembler,
         SourcePosition position,
         ImList<Comment> comments
     ) implements StatementAst,
+                 BlockBodyAst,
                  WithComments<Assembler> {
         public static Assembler of(DelphiParser.AssemblerStatementContext ctx) {
             if (ctx == null) throw new IllegalArgumentException("ctx==null");
@@ -674,6 +675,7 @@ public sealed interface StatementAst permits StatementAst.Assembler,
         SourcePosition position,
         ImList<Comment> comments
     ) implements StatementAst,
+                 BlockBodyAst,
                  WithComments<Compound> {
         public static Compound of(DelphiParser.CompoundStatementContext ctx) {
             if (ctx == null) throw new IllegalArgumentException("ctx==null");
