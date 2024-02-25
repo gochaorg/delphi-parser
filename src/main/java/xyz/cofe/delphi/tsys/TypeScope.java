@@ -133,7 +133,7 @@ public class TypeScope implements Freeze {
      * @param unit файл
      */
     @SuppressWarnings("StatementWithEmptyBody")
-    public PascalUnit add(PascalFileAst.Unit unit) {
+    public PascalUnit add(UnitAst unit) {
         if (unit == null) throw new IllegalArgumentException("unit==null");
         if( frozen )throw new TypeSysError.Frozen();
 

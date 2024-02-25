@@ -179,7 +179,7 @@ public sealed interface StatementAst permits StatementAst.Assembler,
             }
 
             return new Expr.Simple(
-                SimpleExpressionAst.of(ctx.simpleExpression()),
+                SimpleExpressionAst.of(st.simpleExpression()),
                 SourcePosition.of(ctx),
                 ImList.of()
             );

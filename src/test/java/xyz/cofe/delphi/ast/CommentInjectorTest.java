@@ -14,8 +14,8 @@ public class CommentInjectorTest {
             textResource("/samples/Map.pas"),
             "Map.pas");
 
-        assertTrue(pascal_file instanceof PascalFileAst.Unit);
-        var unit = (PascalFileAst.Unit)pascal_file;
+        assertTrue(pascal_file instanceof UnitAst);
+        var unit = (UnitAst)pascal_file;
 
         var injector = new CommentInjector();
         var commented = injector.inject(unit);

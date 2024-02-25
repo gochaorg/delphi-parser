@@ -27,15 +27,14 @@ sealed public interface AtomAst
         if (ctx == null) throw new IllegalArgumentException("ctx==null");
 
         AtomAst base = null;
+
         if (ctx.intNum() != null && !ctx.intNum().isEmpty()) {
             base = IntNumber.of(ctx.intNum());
         } else if (ctx.realNum() != null && !ctx.realNum().isEmpty()) {
             base = FloatNumber.of(ctx.realNum());
-        }
-        if (ctx.stringFactor() != null && !ctx.stringFactor().isEmpty()) {
+        } else if (ctx.stringFactor() != null && !ctx.stringFactor().isEmpty()) {
             base = StringValue.of(ctx.stringFactor());
-        }
-        if (ctx.preDefinedValues() != null && !ctx.preDefinedValues().isEmpty()) {
+        } else if (ctx.preDefinedValues() != null && !ctx.preDefinedValues().isEmpty()) {
             var txt = ctx.preDefinedValues().getText().toLowerCase();
             base = switch (txt) {
                 case "nil" -> new NilValue(SourcePosition.of(ctx));
@@ -43,24 +42,26 @@ sealed public interface AtomAst
                 case "false" -> new BoolValue(false, SourcePosition.of(ctx));
                 default -> throw AstParseError.unExpected(ctx);
             };
-        }
-        if (ctx.INHERITED() != null && !ctx.INHERITED().getText().isEmpty()) {
+        } else if (ctx.INHERITED() != null && !ctx.INHERITED().getText().isEmpty()) {
             if (ctx.identInAtom() != null && !ctx.identInAtom().isEmpty()) {
-                return new InheritedIdent(ctx.identInAtom().getText(), SourcePosition.of(ctx));
+                base = new InheritedIdent(ctx.identInAtom().getText(), SourcePosition.of(ctx));
+            }else {
+                base = new InheritedContext(SourcePosition.of(ctx));
             }
-            base = new InheritedContext(SourcePosition.of(ctx));
-        }
-        if (ctx.expression() != null) {
+        } else if( ctx.identInAtom()!=null && !ctx.identInAtom().isEmpty() ){
+            base = new IdentRef(ctx.identInAtom().getText(), SourcePosition.of(ctx));
+        } else if (ctx.expression() != null) {
             base = new NestedExpression(
                 ExpressionAst.of(ctx.expression()),
                 SourcePosition.of(ctx)
             );
-        }
-        if (ctx.setExpression() != null && !ctx.setExpression().isEmpty()) {
+        } else if (ctx.setExpression() != null && !ctx.setExpression().isEmpty()) {
             base = DelphiSet.of(ctx.setExpression());
         }
 
-        if (base == null) throw AstParseError.notImplemented(ctx);
+        if (base == null) {
+            throw AstParseError.notImplemented(ctx);
+        }
         if (ctx.postfix() == null || ctx.postfix().isEmpty()) return base;
 
         for (var postfix : ctx.postfix()) {

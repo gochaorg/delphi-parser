@@ -53,14 +53,19 @@ unit                         : unitHead unitInterface unitImplementation? unitBl
                              ;
 unitHead                     : 'unit' namespaceName (hintingDirective)* ';' 
                              ;
+
+// implementation
 unitInterface                : 'interface' (usesClause)? (interfaceDecl)* 
                              ;
+
+// implementation
 unitImplementation           : 'implementation' (usesClause)? (declSection)* 
                              ;
 unitBlock                    : unitInitialization 'end'
                              | compoundStatement
                              | 'end'
                              ;
+
 unitInitialization           : 'initialization' statementList (unitFinalization)?
                              ;
 unitFinalization             : 'finalization' statementList
@@ -106,6 +111,7 @@ declSection                  : labelDeclSection
                              | exportsSection
                              ;
 
+// implemented InterfaceDeclAst
 interfaceDecl                : procDecl
                              | methodDecl
                              | typeSection

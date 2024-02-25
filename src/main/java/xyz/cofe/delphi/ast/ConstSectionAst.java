@@ -9,7 +9,7 @@ import java.util.Optional;
 /**
  * Секция констант
  */
-public sealed interface ConstSectionAst extends InterfaceDecl, DeclSectionAst {
+public sealed interface ConstSectionAst extends InterfaceDeclAst, DeclSectionAst {
     /**
      * Перечень констант
      *

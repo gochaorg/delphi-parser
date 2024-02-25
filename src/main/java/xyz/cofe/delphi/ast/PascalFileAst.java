@@ -1,14 +1,12 @@
 package xyz.cofe.delphi.ast;
 
 import java.util.BitSet;
-import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.atn.ATNConfigSet;
 import org.antlr.v4.runtime.dfa.DFA;
-import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.delphi.lexer.PreProcState;
 import xyz.cofe.delphi.lexer.PreProcessor;
@@ -21,85 +19,10 @@ import static xyz.cofe.delphi.impl.Indent.indent;
 /**
  * Некий pascal файл
  */
-public sealed interface PascalFileAst {
-    record Program() implements PascalFileAst {
-    }
-
-    record Library() implements PascalFileAst {
-    }
-
-    /**
-     * Единица компиляции
-     *
-     * @param name     имя модуля
-     * @param api      Экспортируемое api
-     * @param position Позиция в исходниках
-     * @param comments Комментарии
-     */
-    record Unit(
-        ImList<String> name,
-        UnitInterface api,
-        SourcePosition position,
-        ImList<Comment> comments
-    ) implements PascalFileAst,
-                 Commented<Unit> {
-        @Override
-        public Unit withComments(ImList<Comment> comments) {
-            return new Unit(name, api, position, comments);
-        }
-
-        @Override
-        public String toString() {
-            return "unit " + name + "\n" +
-                "interface:\n" +
-                indent("  ", api.toString());
-        }
-    }
-
-    /**
-     * Экспортируемое api
-     *
-     * @param uses         какие используются модули
-     * @param declarations Объявляемое API
-     */
-    record UnitInterface(
-        ImList<NamespaceAst> uses,
-        ImList<InterfaceDecl> declarations
-    ) {
-        static UnitInterface of(DelphiParser.UnitInterfaceContext unt) {
-            if (unt == null) throw new IllegalArgumentException("unt==null");
-
-            ImList<NamespaceAst> uses =
-                unt.usesClause() == null
-                    ? ImList.of()
-                    : unt.usesClause().namespaceNameList() == null
-                    ? ImList.of()
-                    : unt.usesClause().namespaceNameList().namespaceName() == null
-                    ? ImList.of()
-                    : ImList.of(unt.usesClause().namespaceNameList().namespaceName().stream().map(NamespaceAst::of).collect(Collectors.toList()));
-
-            return new UnitInterface(
-                uses,
-                InterfaceDecl.of(unt.interfaceDecl())
-            );
-        }
-
-        @Override
-        public String toString() {
-            var sb = new StringBuilder();
-
-            sb.append("uses:\n");
-            uses.each(n -> sb.append("  ").append(n).append("\n"));
-
-            sb.append("declarations:\n");
-            declarations.each(d -> sb.append(indent("  ", d.toString())).append("\n"));
-
-            return sb.toString();
-        }
-    }
-
-    record Package() implements PascalFileAst {
-    }
+public sealed interface PascalFileAst permits LibraryAst,
+                                              PackageAst,
+                                              ProgramAst,
+                                              UnitAst {
 
     static PascalFileAst parse(String source, String sourceName) throws AstParseError {
         return parse(source, sourceName, false);
@@ -175,10 +98,10 @@ public sealed interface PascalFileAst {
         var file = parser.file();
 
         var prg = file.program();
-        if (prg != null && !prg.isEmpty()) return new Program();
+        if (prg != null && !prg.isEmpty()) return new ProgramAst();
 
         var lib = file.library();
-        if (lib != null && !lib.isEmpty()) return new Library();
+        if (lib != null && !lib.isEmpty()) return new LibraryAst();
 
         var unt = file.unit();
 
@@ -190,9 +113,10 @@ public sealed interface PascalFileAst {
                     .map(RuleContext::getText)
                     .collect(Collectors.toList()));
 
-            var unit = new Unit(
+            var unit = new UnitAst(
                 id,
-                UnitInterface.of(unt.unitInterface()),
+                UnitInterfaceAst.of(unt.unitInterface()),
+                UnitImplementationAst.of(unt.unitImplementation()),
                 SourcePosition.of(unt),
                 comments
             );
@@ -206,7 +130,7 @@ public sealed interface PascalFileAst {
 
         var pkg = file.packageE();
         if (pkg != null && !pkg.isEmpty()) {
-            return new Package();
+            return new PackageAst();
         }
 
         throw new AstParseError("!!");

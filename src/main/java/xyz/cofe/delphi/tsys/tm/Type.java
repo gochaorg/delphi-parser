@@ -1,8 +1,8 @@
 package xyz.cofe.delphi.tsys.tm;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import xyz.cofe.delphi.ast.PascalFileAst;
 import xyz.cofe.delphi.ast.TypeDeclAst;
+import xyz.cofe.delphi.ast.UnitAst;
 import xyz.cofe.delphi.tsys.tm.json.jakson.FlatStr;
 import xyz.cofe.delphi.tsys.tm.json.jakson.FlatStrSer;
 import xyz.cofe.delphi.tsys.tm.json.jakson.UnitTypeRefSer;
@@ -81,7 +81,7 @@ public interface Type {
      */
     @JsonSerialize(using = UnitTypeRefSer.class)
     //@FlatStr("UnitTypeRef unit=${unit} type=${type}")
-    public static record UnitTypeRef(PascalFileAst.Unit unit, TypeDeclAst type) implements TypeRef {
+    public static record UnitTypeRef(UnitAst unit, TypeDeclAst type) implements TypeRef {
         @Override
         public String toString(){
             var sb = new StringBuilder();

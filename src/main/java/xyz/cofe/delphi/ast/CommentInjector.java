@@ -4,7 +4,6 @@ import xyz.cofe.coll.im.*;
 
 import java.util.*;
 import java.util.function.BiConsumer;
-import java.util.stream.StreamSupport;
 
 /**
  * Добавляет комментарии в дерево
@@ -21,7 +20,7 @@ public class CommentInjector {
         }
     };
 
-    private Map<Commented, List<Comment>> injectionsOf(PascalFileAst.Unit unit) {
+    private Map<Commented, List<Comment>> injectionsOf(UnitAst unit) {
         var result = new HashMap<Commented, List<Comment>>();
 
         var breakPointsMap = new TreeMap<SourcePosition, Commented>(sourcePositionComparator);
@@ -68,7 +67,7 @@ public class CommentInjector {
      * @param unit AST дерево
      * @return обновленное AST дерево
      */
-    public PascalFileAst.Unit inject(PascalFileAst.Unit unit) {
+    public UnitAst inject(UnitAst unit) {
         if (unit == null) throw new IllegalArgumentException("unit==null");
 
         var injections = injectionsOf(unit);

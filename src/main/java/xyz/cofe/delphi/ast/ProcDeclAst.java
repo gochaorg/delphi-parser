@@ -23,7 +23,7 @@ public record ProcDeclAst(
     Optional<ProcBody> body,
     SourcePosition position,
     ImList<Comment> comments
-) implements InterfaceDecl,
+) implements InterfaceDeclAst,
              DeclSectionAst,
              Commented<ProcDeclAst> // TODO Comments
 {

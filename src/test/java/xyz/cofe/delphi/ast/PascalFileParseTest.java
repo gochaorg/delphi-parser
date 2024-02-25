@@ -5,19 +5,9 @@ import xyz.cofe.coll.im.HTree;
 import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.coll.im.htree.Nest;
-import xyz.cofe.delphi.lexer.PreProcState;
-import xyz.cofe.delphi.lexer.PreProcessor;
 import xyz.cofe.delphi.lexer.TokenizedFile;
-import xyz.cofe.delphi.parser.DelphiLexer;
-import xyz.cofe.io.fs.File;
 
-import java.nio.charset.Charset;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static xyz.cofe.delphi.TextResource.textResource;
@@ -47,8 +37,8 @@ public class PascalFileParseTest {
                 TokenizedFile.parse(textResource("/samples/Map.pas"), "Map.pas"), true
             );
 
-        assertTrue(pascal_file instanceof PascalFileAst.Unit);
-        var unit = (PascalFileAst.Unit) pascal_file;
+        assertTrue(pascal_file instanceof UnitAst);
+        var unit = (UnitAst) pascal_file;
 
         assertTrue(
             unit.api().uses().containsAll(

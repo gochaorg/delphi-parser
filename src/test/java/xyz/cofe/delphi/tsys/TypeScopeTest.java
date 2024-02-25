@@ -18,8 +18,8 @@ public class TypeScopeTest {
         "Map.pas",true
     );
 
-    private static final PascalFileAst.Unit sampleUnit =
-        (PascalFileAst.Unit)sampleFile;
+    private static final UnitAst sampleUnit =
+        (UnitAst)sampleFile;
 
     @Test
     public void iStringMap(){
@@ -77,7 +77,7 @@ public class TypeScopeTest {
         }
 
         var fileParsed = PascalFileAst.parse(TokenizedFile.parse(file.path, Charset.forName("windows-1251")), true);
-        var unit = (PascalFileAst.Unit)fileParsed;
+        var unit = (UnitAst)fileParsed;
 
         var ts = new TypeScope();
         var tunit = ts.add(unit);

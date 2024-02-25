@@ -18,7 +18,7 @@ public class TypeImporter {
         this.typeFind = typeFind;
     }
 
-    public InterfaceType interfaceTypeOf(PascalFileAst.Unit unit, TypeIdentAst ident, InterfaceTypeAst astItf) {
+    public InterfaceType interfaceTypeOf(UnitAst unit, TypeIdentAst ident, InterfaceTypeAst astItf) {
         if (unit == null) throw new IllegalArgumentException("unit==null");
         if (ident == null) throw new IllegalArgumentException("ident==null");
         if (astItf == null) throw new IllegalArgumentException("astItf==null");
@@ -63,7 +63,7 @@ public class TypeImporter {
         return itf;
     }
 
-    public Result<ProcBase, String> procedureOrFunctionOf(PascalFileAst.Unit unit, ProcDeclAst proc) {
+    public Result<ProcBase, String> procedureOrFunctionOf(UnitAst unit, ProcDeclAst proc) {
         if (proc == null) throw new IllegalArgumentException("proc==null");
         if (unit == null) throw new IllegalArgumentException("unit==null");
 
@@ -107,7 +107,7 @@ public class TypeImporter {
     }
 
     @SuppressWarnings("RedundantCast")
-    public ClassType classTypeOf(PascalFileAst.Unit unit, TypeIdentAst ident, ClazzTypeAst astClass) {
+    public ClassType classTypeOf(UnitAst unit, TypeIdentAst ident, ClazzTypeAst astClass) {
         if (unit == null) throw new IllegalArgumentException("unit==null");
         if (ident == null) throw new IllegalArgumentException("ident==null");
         if (astClass == null) throw new IllegalArgumentException("astClass==null");
@@ -213,7 +213,7 @@ public class TypeImporter {
         return cls;
     }
 
-    protected Result<Constructor, String> constructorOf(PascalFileAst.Unit unit, Type self, TypeIdentAst selfName, ClassMethodAst.Constructor ctorAst) {
+    protected Result<Constructor, String> constructorOf(UnitAst unit, Type self, TypeIdentAst selfName, ClassMethodAst.Constructor ctorAst) {
         var ctor = new Constructor();
         ctor.setName(ctorAst.name());
         ctor.setVisibility(Visibility.Public);
@@ -228,7 +228,7 @@ public class TypeImporter {
         });
     }
 
-    protected Result<Destructor, String> destructorOf(PascalFileAst.Unit unit, Type self, TypeIdentAst selfName, ClassMethodAst.Destructor dtorAst) {
+    protected Result<Destructor, String> destructorOf(UnitAst unit, Type self, TypeIdentAst selfName, ClassMethodAst.Destructor dtorAst) {
         var dtor = new Destructor();
         dtor.setName(dtorAst.name());
         dtor.setVisibility(Visibility.Public);
@@ -242,7 +242,7 @@ public class TypeImporter {
         });
     }
 
-    protected Result<Operator, String> operatorOf(PascalFileAst.Unit unit, Type self, TypeIdentAst selfName, ClassMethodAst.Operator otor) {
+    protected Result<Operator, String> operatorOf(UnitAst unit, Type self, TypeIdentAst selfName, ClassMethodAst.Operator otor) {
         var op = new Operator();
         op.setName(otor.name());
         op.setVisibility(Visibility.Public);
@@ -255,7 +255,7 @@ public class TypeImporter {
         });
     }
 
-    protected Result<Field, String> fieldOf(PascalFileAst.Unit unit, Type self, TypeIdentAst selfName, ClassFieldAst fieldAst) {
+    protected Result<Field, String> fieldOf(UnitAst unit, Type self, TypeIdentAst selfName, ClassFieldAst fieldAst) {
         if (unit == null) throw new IllegalArgumentException("unit==null");
         if (self == null) throw new IllegalArgumentException("self==null");
         if (selfName == null) throw new IllegalArgumentException("selfName==null");
@@ -271,7 +271,7 @@ public class TypeImporter {
     }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    public Result<MethodProcedure, String> procedureOf(PascalFileAst.Unit unit, ClassMethodAst.Procedure proc, Optional<ClassOrItfNamedType> classItfName) {
+    public Result<MethodProcedure, String> procedureOf(UnitAst unit, ClassMethodAst.Procedure proc, Optional<ClassOrItfNamedType> classItfName) {
         if (unit == null) throw new IllegalArgumentException("unit==null");
         if (proc == null) throw new IllegalArgumentException("proc==null");
         //noinspection OptionalAssignedToNull
@@ -290,7 +290,7 @@ public class TypeImporter {
     }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    public Result<MethodFunction, String> functionOf(PascalFileAst.Unit unit, ClassMethodAst.Function fun, Optional<ClassOrItfNamedType> classItfName) {
+    public Result<MethodFunction, String> functionOf(UnitAst unit, ClassMethodAst.Function fun, Optional<ClassOrItfNamedType> classItfName) {
         var f = new MethodFunction();
         f.setName(fun.name());
         f.setReturns(typeOf(unit, classItfName, fun.result()));
@@ -305,7 +305,7 @@ public class TypeImporter {
         });
     }
 
-    protected Result<Property, String> propertyOf(PascalFileAst.Unit unit, Type self, TypeIdentAst selfName, ClassPropertyAst.Property prop) {
+    protected Result<Property, String> propertyOf(UnitAst unit, Type self, TypeIdentAst selfName, ClassPropertyAst.Property prop) {
         var p = new Property();
         p.setName(prop.name());
         argsParse(unit, prop.propertyArray(), Optional.of(new ClassOrItfNamedType(self, selfName))).fmap(arrArgs -> {
@@ -337,7 +337,7 @@ public class TypeImporter {
      * @return аргументы
      */
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    protected Result<ImList<Argument>, String> argsParse(PascalFileAst.Unit unit, ImList<ArgumentAst> arguments,
+    protected Result<ImList<Argument>, String> argsParse(UnitAst unit, ImList<ArgumentAst> arguments,
                                                          Optional<ClassOrItfNamedType> classItfName
     ) {
         return arguments.foldRight(
@@ -372,7 +372,7 @@ public class TypeImporter {
         );
     }
 
-    protected PropertySpecifier propertySpecifier(PascalFileAst.Unit unit, Type self, TypeIdentAst selfName, ClassPropertyAst.Specifier spec) {
+    protected PropertySpecifier propertySpecifier(UnitAst unit, Type self, TypeIdentAst selfName, ClassPropertyAst.Specifier spec) {
         if (spec instanceof ClassPropertyAst.Read r) {
             return new PropertySpecifier.Read(
                 r.name()
@@ -427,7 +427,7 @@ public class TypeImporter {
      * @param typeIdOrName ссылка
      * @return тип или Type.UnitTypeRef(unit, typeIdOrName)
      */
-    protected Type typeOf(PascalFileAst.Unit unit, Type self, TypeIdentAst selfName, TypeDeclAst typeIdOrName) {
+    protected Type typeOf(UnitAst unit, Type self, TypeIdentAst selfName, TypeDeclAst typeIdOrName) {
         if (selfName.equals(typeIdOrName)) {
             return self;
         } else if (typeIdOrName instanceof TypeIdentAst t) {
@@ -451,7 +451,7 @@ public class TypeImporter {
      * @param typeIdOrName ссылка
      * @return тип или Type.UnitTypeRef(unit, typeIdOrName)
      */
-    protected Type typeOf(PascalFileAst.Unit unit, TypeDeclAst typeIdOrName) {
+    protected Type typeOf(UnitAst unit, TypeDeclAst typeIdOrName) {
         if (typeIdOrName instanceof TypeIdentAst t) {
             return typeFind.apply(TypeName.of(t.name())).orElse(new Type.UnitTypeRef(unit, typeIdOrName));
         } else if (typeIdOrName instanceof VariantTypeAst) {
@@ -467,7 +467,7 @@ public class TypeImporter {
     }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    protected Type typeOf(PascalFileAst.Unit unit, Optional<ClassOrItfNamedType> classItfName, TypeDeclAst typeDeclAst) {
+    protected Type typeOf(UnitAst unit, Optional<ClassOrItfNamedType> classItfName, TypeDeclAst typeDeclAst) {
         return classItfName.map(obj -> typeOf(unit, obj.objType(), obj.objTypeName(), typeDeclAst)).orElseGet(() -> typeOf(unit, typeDeclAst));
     }
 }

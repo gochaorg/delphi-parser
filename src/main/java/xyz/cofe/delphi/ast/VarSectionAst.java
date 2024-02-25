@@ -11,7 +11,7 @@ import java.util.Optional;
  * Секция переменных
  */
 public sealed interface VarSectionAst
-    extends InterfaceDecl, DeclSectionAst {
+    extends InterfaceDeclAst, DeclSectionAst {
 
     /**
      * Перечень переменных

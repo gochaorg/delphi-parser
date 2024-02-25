@@ -1,11 +1,8 @@
 package xyz.cofe.delphi.tsys;
 
 import org.junit.jupiter.api.Test;
-import xyz.cofe.coll.im.ImListLinked;
-import xyz.cofe.coll.im.Tuple;
 import xyz.cofe.delphi.ast.PascalFileAst;
-import xyz.cofe.delphi.tsys.tm.Constructor;
-import xyz.cofe.delphi.tsys.tm.NamedType;
+import xyz.cofe.delphi.ast.UnitAst;
 import xyz.cofe.delphi.tsys.tm.TypeName;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -20,8 +17,8 @@ public class TypeResolverTest {
         "Map.pas",true
     );
 
-    private static final PascalFileAst.Unit sampleUnit =
-        (PascalFileAst.Unit)sampleFile;
+    private static final UnitAst sampleUnit =
+        (UnitAst)sampleFile;
 
     @Test
     public void findTypeRefs(){

@@ -10,7 +10,7 @@ import java.util.Optional;
 /**
  * Декларация метода класса
  */
-public sealed interface MethodDeclAst extends InterfaceDecl,
+public sealed interface MethodDeclAst extends InterfaceDeclAst,
                                               SrcPos,
                                               DeclSectionAst {
     /**
