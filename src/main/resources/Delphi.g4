@@ -49,9 +49,13 @@ packageE                     : packageHead requiresClause (containsClause)? 'end
                              ;
 packageHead                  : 'package' namespaceName ';'
                              ;
+
+// implementation
 unit                         : unitHead unitInterface unitImplementation? unitBlock '.'
                              ;
-unitHead                     : 'unit' namespaceName (hintingDirective)* ';' 
+
+// implementation
+unitHead                     : 'unit' namespaceName (hintingDirective)* ';'
                              ;
 
 // implementation
@@ -61,13 +65,18 @@ unitInterface                : 'interface' (usesClause)? (interfaceDecl)*
 // implementation
 unitImplementation           : 'implementation' (usesClause)? (declSection)* 
                              ;
+
+// implementation
 unitBlock                    : unitInitialization 'end'
                              | compoundStatement
                              | 'end'
                              ;
 
+// implementation
 unitInitialization           : 'initialization' statementList (unitFinalization)?
                              ;
+
+// implementation
 unitFinalization             : 'finalization' statementList
                              ;
 //****************************

@@ -6,6 +6,7 @@ import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.delphi.parser.DelphiLexer;
 import xyz.cofe.delphi.parser.DelphiParser;
 
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static xyz.cofe.delphi.impl.Indent.indent;
@@ -20,15 +21,17 @@ import static xyz.cofe.delphi.impl.Indent.indent;
  */
 public record UnitAst(
     ImList<String> name,
+    ImList<FDirective.Hinting> hintings,
     UnitInterfaceAst api,
-    UnitImplementationAst impl,
+    Optional<UnitImplementationAst> impl,
+    UnitBlock unitBlock,
     SourcePosition position,
     ImList<Comment> comments
 ) implements PascalFileAst,
              Commented<UnitAst> {
     @Override
     public UnitAst withComments(ImList<Comment> comments) {
-        return new UnitAst(name, api, impl, position, comments);
+        return new UnitAst(name, hintings, api, impl, unitBlock, position, comments);
     }
 
     @Override

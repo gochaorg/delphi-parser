@@ -1,12 +1,14 @@
 package xyz.cofe.delphi.ast;
 
 import java.util.BitSet;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.atn.ATNConfigSet;
 import org.antlr.v4.runtime.dfa.DFA;
+import xyz.cofe.coll.im.ImList;
 import xyz.cofe.coll.im.ImListLinked;
 import xyz.cofe.delphi.lexer.PreProcState;
 import xyz.cofe.delphi.lexer.PreProcessor;
@@ -115,8 +117,14 @@ public sealed interface PascalFileAst permits LibraryAst,
 
             var unit = new UnitAst(
                 id,
+                unt.unitHead().hintingDirective()!=null
+                    ? ImList.of(unt.unitHead().hintingDirective()).map(FDirective::of)
+                    : ImList.of(),
                 UnitInterfaceAst.of(unt.unitInterface()),
-                UnitImplementationAst.of(unt.unitImplementation()),
+                unt.unitImplementation()!=null
+                    ? Optional.of(UnitImplementationAst.of(unt.unitImplementation()))
+                    : Optional.empty(),
+                UnitBlock.of(unt.unitBlock()),
                 SourcePosition.of(unt),
                 comments
             );
